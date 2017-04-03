@@ -5,7 +5,7 @@ var gShaderProgram;
 
 function onload () {
     // initialize GL
-    var canvas = document.getElementById("glcanvas");
+    var canvas = document.getElementById('c');
     var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
     // do one-time initialization of graphics resources
@@ -127,3 +127,5 @@ function draw (gl) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gTriangleIndexBuffer);
     gl.drawElements(gl.TRIANGLES, indexCount, indexType, firstIndexOffsetInBytes);
 }
+
+setTimeout(onload, 99);
