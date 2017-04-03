@@ -7,7 +7,7 @@ attribute vec2 a_position;
 
 <script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
 precision mediump float;
-float time = 1.0;
+uniform float time;
 vec2 r = vec2(1920.0, 1080.0);
 
 void main() {
@@ -81,9 +81,9 @@ function init() {
   render();
 }
 
-time = 0;
+time = 0.0;
 function render() {
-  //window.requestAnimationFrame(render, canvas);
+  window.requestAnimationFrame(render, canvas);
 
   gl.clearColor(1.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -92,8 +92,8 @@ function render() {
   var location = gl.getUniformLocation(program, 'time');
 
   // send the time value
-  time += 1;
-  gl.uniform1f(location, time);
+  gl.uniform1f(location, time/100);
+  time = time + 1.0;
 
   positionLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionLocation);
