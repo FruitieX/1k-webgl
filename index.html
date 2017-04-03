@@ -85,8 +85,8 @@ function init() {
   render();
 }
 
-time = 0.0;
-function render() {
+t = 0.0;
+function render(timestamp) {
   window.requestAnimationFrame(render, canvas);
 
   gl.clearColor(1.0, 0.0, 0.0, 1.0);
@@ -96,8 +96,8 @@ function render() {
   var location = gl.getUniformLocation(program, 'time');
 
   // send the time value
-  gl.uniform1f(location, time/100);
-  time = time + 1.0;
+  gl.uniform1f(location, t / 1000);
+  t = timestamp;
 
   positionLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionLocation);
