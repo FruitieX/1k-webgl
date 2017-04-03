@@ -12,7 +12,8 @@ function onload () {
     init(gl);
 
     // call draw() approx. 60 times per second. (60fps)
-    setInterval(function () { draw(gl); }, 1000/60);
+    //setInterval(function () { draw(gl); }, 1000/60);
+    draw(gl);
 }
 
 function init (gl) {
@@ -44,6 +45,12 @@ function init (gl) {
                                "void main() {\n" +
                                "    gl_FragColor = fragmentColor;\n" +
                                "}\n";
+
+    fragmentShaderSource = `
+    void main(void) {
+        gl_FragColor = vec4(0.5, 1.0, 1.0, 1.0);
+      }
+    `;
 
     // allocate and upload vertex data
     gTriangleVertexBuffer = gl.createBuffer();
