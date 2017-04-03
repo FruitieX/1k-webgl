@@ -296,8 +296,17 @@ window.onload = init;
 function init() {
   canvas        = document.getElementById('c');
   gl            = canvas.getContext('webgl');
-  canvas.width  = 1024;
-  canvas.height = 600;
+
+  // / 2 because potato PC
+  canvas.width  = 1920 / 2;
+  canvas.height = 1080 / 2;
+
+  // your problem if aspect ratio is incorrect
+  canvas.style='height: 100%; width: 100%';
+
+  // get rid of stupid body margin, FIXME: fewer bytes
+  body = document.getElementsByTagName('body')[0];
+  body.style='margin: 0';
 
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
