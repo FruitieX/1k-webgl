@@ -6,9 +6,26 @@ attribute vec2 a_position;
 // ]]></script>
 
 <script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
+precision mediump float;
+float time = 1.0;
+vec2 r = vec2(1920.0, 1080.0);
+
 void main() {
-    gl_FragColor = vec4(gl_FragCoord.x / 640.0, gl_FragCoord.y / 480.0, 0, 1);
-  }
+  vec3 c;
+	float l=time;
+  float z=time;
+	for(int i=0;i<3;i++) {
+		vec2 uv,p=gl_FragCoord.xy/r;
+		uv=p;
+		p-=.5;
+		p.x*=r.x/r.y;
+		z+=.07;
+		l=length(p);
+		uv+=p/l*(sin(z)+1.)*abs(sin(l*9.-z*2.));
+		c[i]=.01/length(abs(mod(uv,1.)-.5));
+	}
+	gl_FragColor=vec4(c/l,time);
+}
 // ]]></script>
 
 <script type="text/javascript">
@@ -52,7 +69,10 @@ function init() {
   gl.shaderSource(fragmentShader, shaderSource);
   gl.compileShader(fragmentShader);
 
+  console.log(gl.getShaderInfoLog(fragmentShader));
+
   program = gl.createProgram();
+
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
@@ -61,11 +81,19 @@ function init() {
   render();
 }
 
+time = 0;
 function render() {
-  window.requestAnimationFrame(render, canvas);
+  //window.requestAnimationFrame(render, canvas);
 
   gl.clearColor(1.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // get the location of the "time" variable in the shader
+  var location = gl.getUniformLocation(program, 'time');
+
+  // send the time value
+  time += 1;
+  gl.uniform1f(location, time);
 
   positionLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionLocation);
