@@ -8,8 +8,8 @@ attribute vec2 a_position;
 <script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
 precision mediump float;
 //precision highp float;
-uniform float time;
-vec2 r = vec2(640.0, 480.0);
+uniform float t;
+uniform vec2 r;
 
 float boundSin(float x) {
   return sin(x) / 2.0 + 0.5;
@@ -87,22 +87,22 @@ float calcPlasma(float x, float y, float z, float t) {
 
 vec2 map( in vec3 pos )
 {
-    float plasma = calcPlasma(pos.x, pos.y, pos.z, time / 10.0);
-    //float hue = time * 10.0;
-    float hue = sin(plasma) * 100.0 + time * 10.0;
+    float plasma = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+    //float hue = t * 10.0;
+    float hue = sin(plasma) * 100.0 + t * 10.0;
 
     vec2 res = opU(vec2(sdPlane(pos), 0.0),
 
       // Sphere
       vec2(sdSphere(pos-vec3(1.0,0.5,0.0), 0.5 )
-        + plasma * sin(time / 20.0)
-        //+ sin(0.2 * sin(time / 8.0)) // size
+        + plasma * sin(t / 20.0)
+        //+ sin(0.2 * sin(t / 8.0)) // size
         /*
         + 1.0 / 100.0
         * sin(
           5.0*sin(10.0*pos.x)
-          + 2.0*sin(sin(time)*12.0*pos.y)
-          + 4.0*sin(sin(time)*13.0*pos.z)
+          + 2.0*sin(sin(t)*12.0*pos.y)
+          + 4.0*sin(sin(t)*13.0*pos.z)
         )
         */
         , hue
@@ -261,8 +261,8 @@ void main()
 #endif
 
 		// camera
-        //vec3 ro = vec3( -0.5+3.5*cos(0.1*time), 1.0, 0.5 + 4.0*sin(0.1*time) );
-        vec3 ro = vec3( -0.5+3.5*cos(0.01*time), 1.0, 0.5 + 4.0*sin(0.01*time) );
+        //vec3 ro = vec3( -0.5+3.5*cos(0.1*t), 1.0, 0.5 + 4.0*sin(0.1*t) );
+        vec3 ro = vec3( -0.5+3.5*cos(0.01*t), 1.0, 0.5 + 4.0*sin(0.01*t) );
         vec3 ta = vec3( -0.5, -0.4, 0.5 );
         // camera-to-world transformation
         mat3 ca = setCamera( ro, ta, 0.0 );
@@ -296,8 +296,8 @@ window.onload = init;
 function init() {
   canvas        = document.getElementById('c');
   gl            = canvas.getContext('webgl');
-  canvas.width  = 640;
-  canvas.height = 480;
+  canvas.width  = 1024;
+  canvas.height = 600;
 
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
@@ -343,16 +343,16 @@ function init() {
   render();
 }
 
-t = 0;
-function render(timestamp) {
+function render(t) {
   window.requestAnimationFrame(render, canvas);
 
-  // get the location of the "time" variable in the shader
-  var location = gl.getUniformLocation(program, 'time');
+  // set the "r" resolution variable
+  var resolutionUniformLocation = gl.getUniformLocation(program, 'r');
+  gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-  // send the time value
-  gl.uniform1f(location, t / 1000);
-  t = timestamp;
+  // set the "time" variable
+  var timeUniformlocation = gl.getUniformLocation(program, 't');
+  gl.uniform1f(timeUniformlocation, t / 1000);
 
   positionLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionLocation);
