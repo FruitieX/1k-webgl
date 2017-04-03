@@ -7,6 +7,7 @@ attribute vec2 a_position;
 
 <script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
 precision mediump float;
+//precision highp float;
 uniform float time;
 vec2 r = vec2(640.0, 480.0);
 
@@ -14,6 +15,7 @@ float boundSin(float x) {
   return sin(x) / 2.0 + 0.5;
 }
 
+// antialias
 #define AA 1   // make this 1 is your machine is too slow
 
 //------------------------------------------------------------------
@@ -30,21 +32,26 @@ float sdSphere( vec3 p, float s )
 
 //------------------------------------------------------------------
 
+/*
 float opS( float d1, float d2 )
 {
     return max(-d2,d1);
 }
+*/
 
 vec2 opU( vec2 d1, vec2 d2 )
 {
 	return (d1.x<d2.x) ? d1 : d2;
 }
 
+/*
 vec3 opRep( vec3 p, vec3 c )
 {
     return mod(p,c)-0.5*c;
 }
+*/
 
+/*
 vec3 opTwist( vec3 p )
 {
     float  c = cos(10.0*p.y+10.0);
@@ -52,6 +59,7 @@ vec3 opTwist( vec3 p )
     mat2   m = mat2(c,-s,s,c);
     return vec3(m*p.xz,p.y);
 }
+*/
 
 float PI = 3.141592;
 
@@ -70,20 +78,25 @@ float calcPlasma(float x, float y, float z, float t) {
 
   float blend = sine1 + sine2 + sine3;
 
-  blend *= 2.0 + sin(t / 4.0) * 2.0;
-  //blend *= 4.0;
+  blend *= 1.0 + sin(t / 4.0) * 2.0;
+  //blend *= 3.0;
   blend = sin(blend * PI / 2.0) / 2.0 + 0.5;
-  blend = pow(blend, 2.0);
+  //blend = pow(blend, 2.0);
   return blend;
 }
 
 vec2 map( in vec3 pos )
 {
+    float plasma = calcPlasma(pos.x, pos.y, pos.z, time / 10.0);
+    //float hue = time * 10.0;
+    float hue = sin(plasma) * 100.0 + time * 10.0;
+
     vec2 res = opU(vec2(sdPlane(pos), 0.0),
 
       // Sphere
-      vec2(sdSphere(pos-vec3(1.0,0.5,1.0), 0.25 )
-        + -0.1 * boundSin(calcPlasma(pos.x, pos.y, pos.z, time / 10.0))
+      vec2(sdSphere(pos-vec3(1.0,0.5,0.0), 0.5 )
+        + plasma * sin(time / 20.0)
+        //+ sin(0.2 * sin(time / 8.0)) // size
         /*
         + 1.0 / 100.0
         * sin(
@@ -92,7 +105,7 @@ vec2 map( in vec3 pos )
           + 4.0*sin(sin(time)*13.0*pos.z)
         )
         */
-        , time * 10.0
+        , hue
       )
     );
 
@@ -115,7 +128,7 @@ vec2 castRay( in vec3 ro, in vec3 rd )
     float m = -1.0;
     for( int i=0; i<64; i++ )
     {
-	    float precis = 0.0005*t;
+	    float precis = 0.000001*t;
 	    vec2 res = map( ro+rd*t );
         if( res.x<precis || t>tmax ) break;
         t += res.x;
@@ -187,12 +200,14 @@ vec3 render( in vec3 ro, in vec3 rd )
 
         // material
 		col = 0.45 + 0.35*sin( vec3(0.05,0.08,0.10)*(m-1.0) );
+    /*
         if( m<1.5 )
         {
 
             float f = mod( floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
             col = 0.3 + 0.1*f*vec3(1.0);
         }
+        */
 
         // lighitng
         float occ = calcAO( pos, nor );
@@ -240,7 +255,7 @@ void main()
     {
         // pixel coordinates
         vec2 o = vec2(float(m),float(n)) / float(AA) - 0.5;
-        vec2 p = (-r.xy + 2.0*(gl_FragCoord+o))/r.y;
+        vec2 p = (-r.xy + 2.0*(gl_FragCoord.xy+o))/r.y;
 #else
         vec2 p = (-r.xy + 2.0*gl_FragCoord.xy)/r.y;
 #endif
@@ -328,12 +343,9 @@ function init() {
   render();
 }
 
-t = 0.0;
+t = 0;
 function render(timestamp) {
   window.requestAnimationFrame(render, canvas);
-
-  gl.clearColor(1.0, 0.0, 0.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
 
   // get the location of the "time" variable in the shader
   var location = gl.getUniformLocation(program, 'time');
