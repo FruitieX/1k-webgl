@@ -19,7 +19,7 @@ float boundSin(float x) {
 
 // antialias
 // TODO: in production get rid of #if statements
-#define AA 1   // make this 1 is your machine is too slow
+#define AA 2   // make this 1 is your machine is too slow
 
 //------------------------------------------------------------------
 
@@ -296,9 +296,11 @@ window.onload = _ => {
   canvas        = d.getElementById('c');
   gl            = canvas.getContext('webgl');
 
-  // / 2 because potato PC
-  canvas.width  = 1920 / 8;
-  canvas.height = 1080 / 8;
+  // potato level for PC, higher = faster :-)
+  // TODO: remove in production
+  potato = 2;
+  canvas.width  = 1920 / potato;
+  canvas.height = 1080 / potato;
 
   // your problem if aspect ratio is incorrect
   canvas.style='height: 100%; width: 100%';
