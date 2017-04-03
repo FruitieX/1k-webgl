@@ -53,21 +53,46 @@ vec3 opTwist( vec3 p )
     return vec3(m*p.xz,p.y);
 }
 
+float PI = 3.141592;
+
 //------------------------------------------------------------------
+float calcPlasma(float x, float y, float z, float t) {
+  // horizontal sinusoid
+  float sine1 = sin(x * 10.0 + t * 2.0);
+
+  // rotating sinusoid
+  float sine2 = sin(10.0 * (x * sin(t / 2.0) + z * cos(t / 3.0)) + t);
+
+  // circular sinusoid
+  float cx = x + 0.5 * sin(t / 5.0);
+  float cy = y + 0.5 * cos(t / 3.0);
+  float sine3 = sin(sqrt(100.0 * (cx * cx + cy * cy) + 1.0) + t);
+
+  float blend = sine1 + sine2 + sine3;
+
+  blend *= 2.0 + sin(t / 4.0) * 2.0;
+  //blend *= 4.0;
+  blend = sin(blend * PI / 2.0) / 2.0 + 0.5;
+  blend = pow(blend, 2.0);
+  return blend;
+}
 
 vec2 map( in vec3 pos )
 {
     vec2 res = opU(vec2(sdPlane(pos), 0.0),
 
       // Sphere
-      vec2(0.5*sdSphere(pos-vec3(1.0,0.5,1.0), 0.5 )
+      vec2(sdSphere(pos-vec3(1.0,0.5,1.0), 0.25 )
+        + -0.1 * boundSin(calcPlasma(pos.x, pos.y, pos.z, time / 10.0))
+        /*
         + 1.0 / 100.0
         * sin(
           5.0*sin(10.0*pos.x)
           + 2.0*sin(sin(time)*12.0*pos.y)
           + 4.0*sin(sin(time)*13.0*pos.z)
         )
-        , 65.0
+        */
+        , time * 10.0
       )
     );
 
