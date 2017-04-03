@@ -69,7 +69,11 @@ function init() {
   gl.shaderSource(fragmentShader, shaderSource);
   gl.compileShader(fragmentShader);
 
-  console.log(gl.getShaderInfoLog(fragmentShader));
+  // Check for any compilation error
+  if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+      alert(gl.getShaderInfoLog(fragmentShader));
+      return null;
+  }
 
   program = gl.createProgram();
 
