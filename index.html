@@ -1,21 +1,12 @@
-<script id="v" type="x-shader/x-vertex">
-attribute vec2 p;
-  void main() {
-    gl_Position = vec4(p, 0, 1);
-  }
-</script>
-
 <script id="f" type="x-shader/x-fragment">
 precision mediump float;
 //precision highp float;
 uniform float t;
 uniform vec2 r;
 
-/*
 float boundSin(float x) {
   return sin(x) / 2.0 + 0.5;
 }
-*/
 
 // antialias
 // TODO: in production get rid of #if statements
@@ -50,7 +41,7 @@ float calcPlasma(float x, float y, float z, float t) {
 
   float blend = sine1 + sine2 + sine3;
 
-  blend *= 1.0 + sin(t / 4.0) * 2.0;
+  //blend *= 1.0 + sin(t / 4.0) * 2.0;
   //blend *= 3.0;
   blend = sin(blend * PI / 2.0) / 2.0 + 0.5;
   //blend = pow(blend, 2.0);
@@ -59,9 +50,58 @@ float calcPlasma(float x, float y, float z, float t) {
 
 float sdPlasmaSphere( vec3 p, float s, float t)
 {
-    float plasma = calcPlasma(p.x, p.y, p.z, t / 10.0);
+    float plasma = calcPlasma(p.x, p.y, p.z, t / 1.0);
 
     return sdSphere(p, s) + plasma * sin(t / 20.0);
+}
+
+float calcPlasma2(float x, float y, float z, float t) {
+  // horizontal sinusoid
+  float sine1 = sin(x * 10.0 + t * 2.0);
+
+  // rotating sinusoid
+  float sine2 = sin(10.0 * (x * sin(t / 2.0) + z * cos(t / 3.0)) + t);
+
+  // circular sinusoid
+  float cx = x + 0.5 * sin(t / 5.0);
+  float cy = y + 0.5 * cos(t / 3.0);
+  float sine3 = sin(sqrt(100.0 * (cx * cx + cy * cy) + 1.0) + t);
+
+  float blend = sine1 + sine2 + sine3;
+
+  //blend *= 1.0 + sin(t / 4.0) * 2.0;
+  blend *= 3.0;
+  blend = sin(blend * PI / 2.0) / 2.0;
+  //blend /= 1.0;
+  //blend = pow(blend, 2.0);
+  return blend;
+}
+
+float sdPlasma( vec3 p, float t)
+{
+    float plasma = calcPlasma2(p.x, p.y, p.z, t / 100.0);
+    return plasma;
+}
+
+float random( vec2 p )
+{
+    vec2 r = vec2(
+        23.14069263277926, // e^pi (Gelfond's constant)
+         2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    );
+    return fract( cos( mod( 12345678., 256. * dot(p,r) ) ) );
+}
+
+float sdRandom( vec3 p )
+{
+    return length(random(vec2(p.x, p.y)));
+}
+
+float sdRandomSphere( vec3 p )
+{
+    float rand = length(random(vec2(p.x, p.y)));
+
+    return sdSphere(p, rand);
 }
 
 //------------------------------------------------------------------
@@ -89,25 +129,79 @@ vec3 opTwist( vec3 p )
     return vec3(m*p.xz,p.y);
 }
 
+float sdTunnelThing(vec3 p)
+{
+    return (cos(p.x * 2.0) + sin(p.y) + sin(p.z)) / 20.0 * (sin(t / 20.0) + 2.0);
+}
+
 vec2 map( in vec3 pos )
 {
     float plasma = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
     //float hue = t * 10.0;
     float hue = sin(plasma) * 100.0 + t * 10.0;
 
-    vec3 offs = vec3(0.0,0.5,0.0);
+    vec3 offs = vec3(0.0, 0.0, 0.0);
 
-    // Plane
-    vec2 res = vec2(sdPlane(vec3(pos.x, pos.y, pos.z)), 5.0);
+    vec2 res = vec2(1.0, 1.0);
 
+    // Tunnel thing
     res = opU(res,
-
-      // Sphere
-      vec2(sdPlasmaSphere(//opRep(
-        pos-offs,
-        //vec3(1.0, 1.0, 1.0)
-      /*),*/ 0.5, t), hue)
+      vec2(sdTunnelThing(pos-offs), 0.0)
     );
+
+    // Random sphere thing
+    /*
+    res = opU(res,
+      vec2(sdRandomSphere(pos-offs), hue)
+    );
+    */
+
+    // Sphere
+    /*
+    res = opU(res,
+      vec2(sdSphere(
+       pos-offs,
+      0.5), hue)
+    );
+    */
+
+    /*
+    // Plasma sphere with repetition
+    res = opU(res,
+      vec2(sdPlasmaSphere(opRep(
+        pos-offs,
+        vec3(1.5, 1.0, 1.0)
+      ), 0.5, t), hue)
+    );
+    */
+
+    // Full screen cool plasma thing
+    offs = vec3(0.0,0.0,0.0);
+    res = opU(res,
+      vec2(sdPlasma(pos-offs, t), hue)
+    );
+
+    // Plasma sphere
+    /*
+    offs = vec3(0.0,0.75,0.0);
+    res = opU(res,
+      vec2(sdPlasmaSphere(
+       pos-offs,
+      0.5, t), hue)
+    );
+    */
+
+    // Repeated spheres
+    /*
+    res = opU(res,
+      vec2(sdSphere(
+        opRep(
+          pos-offs,
+          vec3(2.0, 2.0, 2.0)
+       ),
+      0.5), hue)
+    );
+    */
 
     return res;
 }
@@ -117,7 +211,7 @@ vec2 castRay( in vec3 ro, in vec3 rd )
     float tmin = 0.2;
     float tmax = 20.0;
 
-#if 1
+#if 0
     // bounding volume
     float tp1 = (0.0-ro.y)/rd.y; if( tp1>0.0 ) tmax = min( tmax, tp1 );
     float tp2 = (1.6-ro.y)/rd.y; if( tp2>0.0 ) { if( ro.y>1.6 ) tmin = max( tmin, tp2 );
@@ -188,7 +282,7 @@ float calcAO( in vec3 pos, in vec3 nor )
 
 vec3 render( in vec3 ro, in vec3 rd )
 {
-    vec3 col = vec3(0.9, 1.0, 1.0);
+    vec3 col = vec3(0.0, 0.0, 0.0);
     //vec3 col = vec3(0.05, 0.05, 0.05) +rd.y*0.1;
     vec2 res = castRay(ro,rd);
     float t = res.x;
@@ -256,7 +350,7 @@ void main()
     {
         // pixel coordinates
         vec2 o = vec2(float(m),float(n)) / float(AA) - 0.5;
-        vec2 p = (-r.xy + 2.0*(gl_FragCoord.xy+o))/r.y;
+        vec2 p = (-r.xy + 3.0*(gl_FragCoord.xy+o))/r.y;
 #else
         vec2 p = (-r.xy + 2.0*gl_FragCoord.xy)/r.y;
 #endif
@@ -286,6 +380,14 @@ void main()
     gl_FragColor = vec4( tot, 1.0 );
 }
 </script>
+
+<script id="v" type="x-shader/x-vertex">
+attribute vec2 p;
+  void main() {
+    gl_Position = vec4(p, 0, 1);
+  }
+</script>
+
 
 <script type="text/javascript">
 d = document;
