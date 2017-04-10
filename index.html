@@ -131,7 +131,12 @@ vec3 opTwist( vec3 p )
 
 float sdTunnelThing(vec3 p)
 {
-    return (cos(p.x * 2.0) + sin(p.y) + sin(p.z)) / 20.0 * (sin(t / 20.0) + 2.0);
+    return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (2.0 * (sin(t / 20.0) + 1.15));
+}
+
+float sdTunnelThingPlasma(vec3 p)
+{
+    return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(t / 20.0) + 2.0);
 }
 
 vec2 map( in vec3 pos )
@@ -144,15 +149,34 @@ vec2 map( in vec3 pos )
 
     vec2 res = vec2(1.0, 1.0);
 
+    /* ---------- SCENES --------- */
+
     // Tunnel thing
     res = opU(res,
-      vec2(sdTunnelThing(pos-offs), 0.0)
+      vec2(
+        sdTunnelThing(pos-offs)
+        + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z) * sin(plasma),
+        hue / 3.0)
     );
 
     // Random sphere thing
     /*
     res = opU(res,
       vec2(sdRandomSphere(pos-offs), hue)
+    );
+    */
+
+    // weird ass sphere
+    /*
+    offs = vec3(sin(t) / 4.0,0.75,0.0);
+    res = opU(res,
+      vec2(0.5 *
+        sdSphere(
+          pos - offs, 0.5
+        )
+        + 0.01 * sin(100.0 * pos.x) * sin(100.0 * pos.y) * sin(100.0 * pos.z),
+        165.0
+      )
     );
     */
 
@@ -175,11 +199,17 @@ vec2 map( in vec3 pos )
     );
     */
 
-    // Full screen cool plasma thing
-    offs = vec3(0.0,0.0,0.0);
+    // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
+    /*
     res = opU(res,
-      vec2(sdPlasma(pos-offs, t), hue)
+      vec2(
+        sdTunnelThingPlasma(pos),
+        hue / 3.0)
     );
+    res = opU(res,
+      vec2(sdPlasma(pos, t), hue)
+    );
+    */
 
     // Plasma sphere
     /*
@@ -209,14 +239,14 @@ vec2 map( in vec3 pos )
 vec2 castRay( in vec3 ro, in vec3 rd )
 {
     float tmin = 0.2;
-    float tmax = 20.0;
+    float tmax = 50.0;
 
-#if 0
+    /*
     // bounding volume
     float tp1 = (0.0-ro.y)/rd.y; if( tp1>0.0 ) tmax = min( tmax, tp1 );
     float tp2 = (1.6-ro.y)/rd.y; if( tp2>0.0 ) { if( ro.y>1.6 ) tmin = max( tmin, tp2 );
                                                  else           tmax = min( tmax, tp2 ); }
-#endif
+    */
 
     float t = tmin;
     float m = -1.0;
@@ -398,7 +428,7 @@ window.onload = _ => {
 
   // potato level for PC, higher = faster :-)
   // TODO: remove in production
-  potato = 1;
+  potato = 4;
   canvas.width  = 1920 / potato;
   canvas.height = 1080 / potato;
 
