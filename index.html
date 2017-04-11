@@ -118,39 +118,51 @@ float sdTunnelThingPlasma(vec3 p) {
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
-  float plasma = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
   //float hue = t * 10.0;
-  float hue = sin(plasma) * 100.0 + t * 10.0;
 
+  float hue = 0.0;
   vec3 offs = vec3(0.0, 0.0, 0.0);
-
   vec2 res = vec2(1.0, 1.0);
 
   /* ---------- SCENES --------- */
 
+  // select scene
+  #define SCENE 0
+
   // Tunnel thing
+  #if SCENE == 0
+  float plasma1 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  hue = sin(plasma1) * 100.0 + t * 10.0;
   res = opU(res,
     vec2(
       // tunnel shape
       sdTunnelThing(pos-offs)
 
       // blobby surface
-      + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z) * sin(plasma),
+      + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z) * sin(plasma1),
 
       // color
       hue / 3.0
     )
   );
+  #endif
 
   // Random sphere thing
-  /*
+  #if SCENE == 1
   res = opU(res,
     vec2(sdRandomSphere(pos-offs), hue)
   );
-  */
+  #endif
+
+  // Earth in space?
+  #if SCENE == 2
+  res = opU(res,
+    vec2(sdSphere(pos-offs, 1.0), hue)
+  );
+  #endif
 
   // weird ass sphere
-  /*
+  #if SCENE == 3
   offs = vec3(sin(t) / 4.0,0.75,0.0);
   res = opU(res,
     vec2(0.5 *
@@ -161,29 +173,34 @@ vec2 map(in vec3 pos, in vec3 origin) {
       165.0
     )
   );
-  */
+  #endif
 
   // Sphere
-  /*
+  #if SCENE == 4
   res = opU(res,
     vec2(sdSphere(
      pos-offs,
-    0.5), hue)
+    0.5), 1.0)
   );
-  */
+  #endif
 
-  /*
   // Plasma sphere with repetition
+  #if SCENE == 5
+  float plasma2 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  hue = sin(plasma2) * 100.0 + t * 10.0;
   res = opU(res,
     vec2(sdPlasmaSphere(opRep(
       pos-offs,
       vec3(1.5, 1.0, 1.0)
     ), 0.5, t), hue)
   );
-  */
+  #endif
 
   // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
-  /*
+  // works best with tmin = 0.2?
+  #if SCENE == 6
+  float plasma3 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  hue = sin(plasma3) * 100.0 + t * 10.0;
   res = opU(res,
     vec2(
       sdTunnelThingPlasma(pos),
@@ -192,20 +209,77 @@ vec2 map(in vec3 pos, in vec3 origin) {
   res = opU(res,
     vec2(sdPlasma(pos, t), hue)
   );
-  */
+  #endif
 
   // Plasma sphere
-  /*
+  #if SCENE == 7
+  float plasma4 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  hue = sin(plasma4) * 100.0 + t * 10.0;
   offs = vec3(0.0,0.75,0.0);
   res = opU(res,
     vec2(sdPlasmaSphere(
      pos-offs,
     0.25, t), hue)
   );
-  */
+  #endif
+
+  // stars with pattern
+  #if SCENE == 8
+  res = opU(res,
+    vec2(5.0 *
+      opS(
+        sdSphere(
+          pos - offs, 5.0
+        )
+        + 5.0 * sin(20.0 * pos.x) * sin(20.0 * pos.y) * sin(20.0 * pos.z),
+        // bounding sphere
+        sdSphere(
+          pos - offs, 9.0
+        )
+      ),
+      0.0
+    )
+  );
+  #endif
+
+  // ????? bounding sphere
+  #if SCENE == 9
+  res = opU(res,
+    vec2(5.5 *
+      opS(
+        sdSphere(
+          pos - offs, 5.0
+        )
+        + 5.0 * sin(20.0 * pos.x) * sin(20.0 * pos.y) * sin(20.0 * pos.z),
+        // bounding sphere
+        sdSphere(
+          pos - offs, 3.0
+        )
+      ),
+      50.0
+    )
+  );
+  #endif
+
+  // Plasma starfield thing
+  // works best with very low tmin
+  #if SCENE == 10
+  float plasma = calcPlasma(pos.x, pos.y, pos.z, t / 2.0);
+  hue = sin(plasma) * 80.0 + t * 1.0;
+  res = opU(res,
+    vec2(sdSphere(
+      opRep(
+        pos-offs,
+        vec3(sin(t / 20.0) / 4.0, cos(t / 17.4) / 4.0, cos(t / 21.24) / 4.0) // WTF alternative
+        //vec3(.1, .1, .1)
+     ),
+    //(sin(t / 15.0) + 1.0) * 0.01), hue)
+    (1.0 + sin(t + 5.0 * (pos.y + pos.x + pos.z))) * 0.01), hue) // WTF alternative
+  );
+  #endif
 
   // Repeated spheres
-  /*
+  #if SCENE == 11
   res = opU(res,
     vec2(sdSphere(
       opRep(
@@ -215,9 +289,9 @@ vec2 map(in vec3 pos, in vec3 origin) {
         ,
         vec3(2.0, 2.0, 2.0)
      ),
-    0.5), hue)
+    0.1), hue)
   );
-  */
+  #endif
 
   return res;
 }
@@ -392,7 +466,7 @@ window.onload = _ => {
 
   // potato level for PC, higher = faster :-)
   // TODO: remove in production
-  potato = 3;
+  potato = 2;
   canvas.width  = 1920 / potato;
   canvas.height = 1080 / potato;
 
