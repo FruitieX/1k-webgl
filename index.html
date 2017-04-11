@@ -156,8 +156,14 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // Earth in space?
   #if SCENE == 2
+  // hue 80.0 = water ish
+  // hue 240.0 = green ish
+  offs = vec3(0.5, 1.0, 0.0);
+  float plasma0 = calcPlasma(pos.x, pos.y, pos.z, 0.0);
+  float hueEarth = plasma0 < 0.5 ? 80.0 : 240.0;
   res = opU(res,
-    vec2(sdSphere(pos-offs, 1.0), hue)
+    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
+    vec2(sdSphere(pos-offs, .5), hueEarth)
   );
   #endif
 
