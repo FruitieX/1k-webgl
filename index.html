@@ -454,8 +454,12 @@ window.onload = _ => {
   render();
 }
 
+// TODO: remove me in production
+const initTime = new Date().getTime() - 1491925604666;
+
 render = t => {
   window.requestAnimationFrame(render, canvas);
+
 
   // set the "r" resolution variable
   resolutionUniformLocation = gl.getUniformLocation(program, 'r');
@@ -463,7 +467,7 @@ render = t => {
 
   // set the "time" variable
   timeUniformlocation = gl.getUniformLocation(program, 't');
-  gl.uniform1f(timeUniformlocation, t / 1000);
+  gl.uniform1f(timeUniformlocation, (t + initTime) / 1000);
 
   positionLocation = gl.getAttribLocation(program, 'p');
   gl.enableVertexAttribArray(positionLocation);
