@@ -15,6 +15,17 @@ float sdSphere(vec3 p, float s) {
   return length(p)-s;
 }
 
+float sdBlob2(vec3 p, vec2 t) {
+  //return sqrt(p.x*p.x*0.125 + p.y*p.y + p.z*p.z*0.125) - 0.1;
+  float P = 0.2;
+  float Q = 0.1;
+  return -pow(p.x*p.x + p.y*p.y, 2.0) + P * (p.x*p.x + p.y*p.y) + Q * p.z*p.z + 0.1;
+}
+
+float sdBloodCell(vec3 p, vec3 t) {
+  return pow(p.x*p.x + p.z*p.z, 2.0) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
+}
+
 float PI = 3.14;
 
 float calcPlasma(float x, float y, float z, float t) {
@@ -127,7 +138,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   /* ---------- SCENES --------- */
 
   // select scene
-  #define SCENE 0
+  #define SCENE 2
 
   // Tunnel thing
   #if SCENE == 0
@@ -154,16 +165,18 @@ vec2 map(in vec3 pos, in vec3 origin) {
   );
   #endif
 
-  // Earth in space?
+  // Blood cell thing
   #if SCENE == 2
   // hue 80.0 = water ish
   // hue 240.0 = green ish
-  offs = vec3(0.5, 1.0, 0.0);
-  float plasma0 = calcPlasma(pos.x, pos.y, pos.z, 0.0);
-  float hueEarth = plasma0 < 0.5 ? 80.0 : 240.0;
+  offs = vec3(0.0, 0.5, 0.0);
+  float hueBlood = 54.0;
   res = opU(res,
     //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
-    vec2(sdSphere(pos-offs, .5), hueEarth)
+    vec2(sdBloodCell(pos-offs,
+      // TODO: tweak parameters
+      vec3(-0.2, 1.0, 0.01)
+    ), hueBlood)
   );
   #endif
 
@@ -296,6 +309,20 @@ vec2 map(in vec3 pos, in vec3 origin) {
         vec3(2.0, 2.0, 2.0)
      ),
     0.1), hue)
+  );
+  #endif
+
+  #if SCENE == 12
+  res = opU(res,
+    vec2(sdSphere(
+      opRep(
+        //opTwist(
+          pos-offs
+        //)
+        ,
+        vec3(2.0, 2.0, 2.0)
+     ),
+    0.2), hue)
   );
   #endif
 
