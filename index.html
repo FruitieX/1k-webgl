@@ -169,14 +169,18 @@ vec2 map(in vec3 pos, in vec3 origin) {
   #if SCENE == 2
   // hue 80.0 = water ish
   // hue 240.0 = green ish
-  offs = vec3(0.0, 0.5, 0.0);
-  float hueBlood = 54.0;
+  offs = vec3(0.0, 0.75, 0.5);
+  hue = 54.0;
   res = opU(res,
     //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
-    vec2(sdBloodCell(pos-offs,
+    vec2(sdBloodCell(
+      opRep(
+        pos,
+        vec3(1.0, 1.0, 1.0)
+      ),
       // TODO: tweak parameters
-      vec3(-0.2, 1.0, 0.01)
-    ), hueBlood)
+      vec3(-0.15, 1.275, -0.001)
+    ), hue)
   );
   #endif
 
