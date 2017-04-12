@@ -35,9 +35,12 @@ float sdBloodCell(vec3 p, vec3 t) {
 }
 float sdBloodCell2(vec3 p) {
   vec2 t = vec2(.2, .2);
-  vec3 b = vec3(.2,.06,.2);
+  // vec3 b = vec3(.2,.06,.2);
+  vec2 h = vec2(.3,.06);
   float d1 = length(vec2(length(p.xz)-t.x*1.5,p.y)) - t.y/2.2;
-  float d2 = udBox(p,b);
+  // float d2 = udBox(p,b);
+  vec2 d = abs(vec2(length(p.xz),p.y)) - h;
+  d2 = min(max(d.x,d.y),0.0) + length(max(d,0.0));
   return smin(d1,d2,32.0);
 }
 
