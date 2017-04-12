@@ -503,7 +503,7 @@ window.onload = _ => {
 
   // potato level for PC, higher = faster :-)
   // TODO: remove in production
-  potato = 10;
+  potato = 4;
   canvas.width  = 1920 / potato;
   canvas.height = 1080 / potato;
 
@@ -579,7 +579,8 @@ render = t => {
 
   // set the "time" variable
   timeUniformlocation = gl.getUniformLocation(program, 't');
-  gl.uniform1f(timeUniformlocation, (t + initTime) / 1000);
+  //gl.uniform1f(timeUniformlocation, (t + initTime) / 1000);
+  gl.uniform1f(timeUniformlocation, t / 1000);
 
   positionLocation = gl.getAttribLocation(program, 'p');
   gl.enableVertexAttribArray(positionLocation);
