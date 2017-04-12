@@ -7,12 +7,20 @@ uniform vec2 r;
 // TODO: in production get rid of #if statements
 #define AA 2   // make this 1 is your machine is too slow
 
+float smin( float a, float b, float k ) {
+    return -log(exp( -k*a ) + exp( -k*b ))/k;
+}
+
 float sdPlane(vec3 p) {
   return p.y;
 }
 
 float sdSphere(vec3 p, float s) {
   return length(p)-s;
+}
+
+float udBox( vec3 p, vec3 b ) {
+  return length(max(abs(p)-b,0.0));
 }
 
 float sdBlob2(vec3 p, vec2 t) {
@@ -24,6 +32,13 @@ float sdBlob2(vec3 p, vec2 t) {
 
 float sdBloodCell(vec3 p, vec3 t) {
   return pow(p.x*p.x + p.z*p.z, 2.0) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
+}
+float sdBloodCell2(vec3 p) {
+  vec2 t = vec2(.2, .2);
+  vec3 b = vec3(.2,.06,.2);
+  float d1 = length(vec2(length(p.xz)-t.x*1.5,p.y)) - t.y/2.2;
+  float d2 = udBox(p,b);
+  return smin(d1,d2,32.0);
 }
 
 float PI = 3.14;
@@ -120,6 +135,10 @@ vec3 opTwist(vec3 p) {
   return vec3(m*p.xz,p.y);
 }
 
+float opBlend( float d1, float d2 ) {
+    return smin( d1, d2, 32.0 );
+}
+
 float sdTunnelThing(vec3 p) {
   return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (2.0 * (sin(t / 20.0) + 1.15));
 }
@@ -138,7 +157,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   /* ---------- SCENES --------- */
 
   // select scene
-  #define SCENE 2
+  #define SCENE 22
 
   // Tunnel thing
   #if SCENE == 0
@@ -180,6 +199,23 @@ vec2 map(in vec3 pos, in vec3 origin) {
       ),
       // TODO: tweak parameters
       vec3(-0.15, 1.275, -0.001)
+    ), hue)
+  );
+  #endif
+
+  // Blood cell thing v2
+  #if SCENE == 22
+  // hue 80.0 = water ish
+  // hue 240.0 = green ish
+  offs = vec3(0.0, 0.75, 0.5);
+  hue = 54.0;
+  res = opU(res,
+    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
+    vec2(sdBloodCell2(
+      opRep(
+        pos,
+        vec3(1.0, 1.0, 1.0)
+      )
     ), hue)
   );
   #endif
@@ -571,7 +607,6 @@ const initTime = new Date().getTime() - 1491925604666;
 
 render = t => {
   window.requestAnimationFrame(render, canvas);
-
 
   // set the "r" resolution variable
   resolutionUniformLocation = gl.getUniformLocation(program, 'r');
