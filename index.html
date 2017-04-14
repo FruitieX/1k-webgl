@@ -449,7 +449,7 @@ vec3 render(in vec3 ro, in vec3 rd) {
     }
     */
 
-    // lighitng
+    // lighitng. Seems Lighit
     float occ = calcAO( pos, nor );
     vec3  lig = normalize( vec3(-0.4, 0.7, -0.6) );
     float amb = clamp( 0.5+0.5*nor.y, 0.0, 1.0 );
