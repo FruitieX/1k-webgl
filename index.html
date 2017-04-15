@@ -150,6 +150,11 @@ float sdTunnelThingPlasma(vec3 p) {
   return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(t / 20.0) + 2.0);
 }
 
+float sdBloodVein(vec3 p) {
+  vec3 c = vec3(2.0,5.0,5.0);
+  return abs(length(p.xy-c.xz)-c.y);
+}
+
 vec2 map(in vec3 pos, in vec3 origin) {
   //float hue = t * 10.0;
 
@@ -160,7 +165,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   /* ---------- SCENES --------- */
 
   // select scene
-  #define SCENE 22
+  #define SCENE 13
 
   // Tunnel thing
   #if SCENE == 0
@@ -173,6 +178,24 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
       // blobby surface
       + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z) * sin(plasma1),
+
+      // color
+      hue / 3.0
+    )
+  );
+  #endif
+
+  // Yet another tunnel
+  #if SCENE == 13
+  // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  hue = 170.0;
+  res = opU(res,
+    vec2(
+      // tunnel shape
+      sdBloodVein(pos + vec3(2.0,1.5,0.0)),
+
+      // blobby surface
+      // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
 
       // color
       hue / 3.0
