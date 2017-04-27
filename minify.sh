@@ -15,3 +15,7 @@ glslmin ../src/vertex.glsl | node ../utils/findandreplace.js --template temp/tem
 # fragment shader
 #cat ../src/fragment.glsl | node ../utils/findandreplace.js --template temp/temp3.html --find 'require("./fragment.glsl")' --surround '`' > temp/temp4.html
 glslmin -m ../src/fragment.glsl | node ../utils/findandreplace.js --template temp/temp3.html --find 'require("./fragment.glsl")' --surround '`' > temp/temp4.html
+
+cp temp/temp4.html index.html
+
+echo "wrote index.html ($(cat index.html | wc -c) bytes)"
