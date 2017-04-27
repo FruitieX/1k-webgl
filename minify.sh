@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# install dependencies:
+#
+# npm install -g mishoo/UglifyJS2\#harmony
+# npm install -g glslmin
+
 rm -rf dist
 
 mkdir -p dist/temp
