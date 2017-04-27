@@ -1,6 +1,6 @@
 precision mediump float;
-uniform float t;
-uniform vec2 r;
+uniform float a;
+uniform vec2 b;
 
 // antialias
 // TODO: in production get rid of #if statements
@@ -103,8 +103,8 @@ float sdPlasma(vec3 p, float t) {
 
 float random(vec2 p) {
   vec2 r = vec2(
-    23.14069263277926, // e^pi (Gelfond's constant)
-    2.665144142690225 // 2^sqrt(2) (Gelfondâ€“Schneider constant)
+    23.14069263277926, // e^pi (Gelfonds constant)
+    2.665144142690225 // 2^sqrt(2) (GelfondSchneider constant)
   );
   return fract( cos( mod( 12345678., 256. * dot(p,r) ) ) );
 }
@@ -143,11 +143,11 @@ float opBlend( float d1, float d2 ) {
 }
 
 float sdTunnelThing(vec3 p) {
-  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (2.0 * (sin(t / 20.0) + 1.15));
+  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (2.0 * (sin(a / 20.0) + 1.15));
 }
 
 float sdTunnelThingPlasma(vec3 p) {
-  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(t / 20.0) + 2.0);
+  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(a / 20.0) + 2.0);
 }
 
 float sdBloodVein(vec3 p) {
@@ -160,7 +160,7 @@ float sdBloodVein2(vec3 p, vec3 t) {
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
-  //float hue = t * 10.0;
+  //float hue = a * 10.0;
 
   float hue = 0.0;
   vec3 offs = vec3(0.0, 0.0, 0.0);
@@ -173,8 +173,8 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // Tunnel thing
   #if SCENE == 0
-  float plasma1 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
-  hue = sin(plasma1) * 100.0 + t * 10.0;
+  float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
+  hue = sin(plasma1) * 100.0 + a * 10.0;
   res = opU(res,
     vec2(
       // tunnel shape
@@ -192,10 +192,10 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // Blood vein thing
   #if SCENE == 1
   offs = vec3(0.0, 0.75, 0.5);
-  float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   hue = 54.0;
   res = opU(res,
-    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
+    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
     vec2(sdBloodVein2(
       pos,
       // TODO: tweak parameters
@@ -215,10 +215,10 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // hue 80.0 = water ish
   // hue 240.0 = green ish
   offs = vec3(0.0, 0.75, 0.5);
-  float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   hue = 54.0;
   res = opU(res,
-    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
+    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
     vec2(sdBloodCell(
       opRep(
         pos,
@@ -242,7 +242,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   offs = vec3(0.0, 0.75, 0.5);
   hue = 54.0;
   res = opU(res,
-    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + t * 3.0)), 80.0)
+    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
     vec2(sdBloodCell2(
       opRep(
         pos,
@@ -254,7 +254,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // weird ass sphere
   #if SCENE == 3
-  offs = vec3(sin(t) / 4.0,0.75,0.0);
+  offs = vec3(sin(a) / 4.0,0.75,0.0);
   res = opU(res,
     vec2(0.5 *
       sdSphere(
@@ -277,40 +277,40 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // Plasma sphere with repetition
   #if SCENE == 5
-  float plasma2 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
-  hue = sin(plasma2) * 100.0 + t * 10.0;
+  float plasma2 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
+  hue = sin(plasma2) * 100.0 + a * 10.0;
   res = opU(res,
     vec2(sdPlasmaSphere(opRep(
       pos-offs,
       vec3(1.5, 1.0, 1.0)
-    ), 0.5, t), hue)
+    ), 0.5, a), hue)
   );
   #endif
 
   // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
   // works best with tmin = 0.2?
   #if SCENE == 6
-  float plasma3 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
-  hue = sin(plasma3) * 100.0 + t * 10.0;
+  float plasma3 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
+  hue = sin(plasma3) * 100.0 + a * 10.0;
   res = opU(res,
     vec2(
       sdTunnelThingPlasma(pos),
       hue / 3.0)
   );
   res = opU(res,
-    vec2(sdPlasma(pos, t), hue)
+    vec2(sdPlasma(pos, a), hue)
   );
   #endif
 
   // Plasma sphere
   #if SCENE == 7
-  float plasma4 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
-  hue = sin(plasma4) * 100.0 + t * 10.0;
+  float plasma4 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
+  hue = sin(plasma4) * 100.0 + a * 10.0;
   offs = vec3(0.0,0.75,0.0);
   res = opU(res,
     vec2(sdPlasmaSphere(
      pos-offs,
-    0.25, t), hue)
+    0.25, a), hue)
   );
   #endif
 
@@ -355,17 +355,17 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // Plasma starfield thing
   // works best with very low tmin
   #if SCENE == 10
-  float plasma = calcPlasma(pos.x, pos.y, pos.z, t / 2.0);
-  hue = sin(plasma) * 80.0 + t * 1.0;
+  float plasma = calcPlasma(pos.x, pos.y, pos.z, a / 2.0);
+  hue = sin(plasma) * 80.0 + a * 1.0;
   res = opU(res,
     vec2(sdSphere(
       opRep(
         pos-offs,
-        vec3(sin(t / 20.0) / 4.0, cos(t / 17.4) / 4.0, cos(t / 21.24) / 4.0) // WTF alternative
+        vec3(sin(a / 20.0) / 4.0, cos(a / 17.4) / 4.0, cos(a / 21.24) / 4.0) // WTF alternative
         //vec3(.1, .1, .1)
      ),
-    //(sin(t / 15.0) + 1.0) * 0.01), hue)
-    (1.0 + sin(t + 5.0 * (pos.y + pos.x + pos.z))) * 0.01), hue) // WTF alternative
+    //(sin(a / 15.0) + 1.0) * 0.01), hue)
+    (1.0 + sin(a + 5.0 * (pos.y + pos.x + pos.z))) * 0.01), hue) // WTF alternative
   );
   #endif
 
@@ -400,7 +400,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // Yet another tunnel
   #if SCENE == 13
-  // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, t / 10.0);
+  // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   hue = 170.0;
   res = opU(res,
     vec2(
@@ -540,14 +540,14 @@ void main() {
   for( int n=0; n<AA; n++ ) {
     // pixel coordinates
     vec2 o = vec2(float(m),float(n)) / float(AA) - 0.5;
-    vec2 p = (-r.xy + 3.0*(gl_FragCoord.xy+o))/r.y;
+    vec2 p = (-b.xy + 3.0*(gl_FragCoord.xy+o))/b.y;
 #else
-    vec2 p = (-r.xy + 2.0*gl_FragCoord.xy)/r.y;
+    vec2 p = (-b.xy + 2.0*gl_FragCoord.xy)/b.y;
 #endif
 
     // camera
-    //vec3 ro = vec3( -0.5+3.5*cos(0.1*t), 1.0, 0.5 + 4.0*sin(0.1*t) );
-    vec3 ro = vec3( -0.5+0.2*cos(0.1*t), 1.0, 0.0 + 2.0*sin(0.1*t) );
+    //vec3 ro = vec3( -0.5+3.5*cos(0.1*a), 1.0, 0.5 + 4.0*sin(0.1*a) );
+    vec3 ro = vec3( -0.5+0.2*cos(0.1*a), 1.0, 0.0 + 2.0*sin(0.1*a) );
     vec3 ta = vec3( 0.0, 0.5, 0.0 );
     // camera-to-world transformation
     mat3 ca = setCamera( ro, ta, 0.0 );

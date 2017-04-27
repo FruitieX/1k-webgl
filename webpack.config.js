@@ -2,14 +2,13 @@ const { resolve } = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-  entry: './index.js',
+  entry: './src/index.js',
   output: {
     path: resolve(__dirname, './dist'),
   },
   module: {
     rules: [
       { test: /\.glsl$/, use: [{ loader: 'webpack-glsl-loader' }] },
-      { test: /\.js$/, use: [{ loader: 'babel-loader' }] },
     ]
   },
   plugins: [
