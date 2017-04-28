@@ -62,7 +62,7 @@ buffer = gl.createBuffer();
 // gl.ARRAY_BUFFER = 34962
 gl.bindBuffer(34962, buffer);
 gl.bufferData(
-  gl.ARRAY_BUFFER,
+  34962,
   // TODO: optimize
   new Float32Array([
     -1.0, -1.0,
