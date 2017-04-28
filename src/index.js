@@ -1,21 +1,22 @@
-render = t => {
-  window.requestAnimationFrame(render, canvas);
+// potato level for PC, higher = faster :-)
+// TODO: remove in production
+potato = 4;
+c.width = 1920 / potato;
+c.height = 1080 / potato;
 
-  // set the "r" resolution variable
-  resolutionUniformLocation = gl.getUniformLocation(program, 'b');
-  gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+r = t => {
+  requestAnimationFrame(r, c);
 
-  // set the "time" variable
-  timeUniformlocation = gl.getUniformLocation(program, 'a');
-  gl.uniform1f(timeUniformlocation, t / 1000);
+  // set the "b" resolution variable
+  g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
 
-  positionLocation = gl.getAttribLocation(program, 'p');
-  gl.enableVertexAttribArray(positionLocation);
-  gl.vertexAttribPointer(positionLocation, 2, 5126, 0, 0, 0); // gl.FLOAT = 5126
-  gl.drawArrays(4, 0, 6); // gl.TRIANGLES = 4
+  // set the "a" time variable
+  g.uniform1f(g.getUniformLocation(P, 'a'), t / 1000);
+
+  g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
 }
 
-startMusic = _ => {
+m = _ => {
   // Initialize music generation (player).
   var player = new CPlayer();
   player.init(song);
@@ -39,66 +40,35 @@ startMusic = _ => {
   }, 0);
 }
 
-canvas        = document.getElementById('c');
-gl            = canvas.getContext('webgl');
+// onload
+l = () => {
+  g = c.getContext('webgl');
 
-// potato level for PC, higher = faster :-)
-// TODO: remove in production
-potato = 8;
-canvas.width  = 1920 / potato;
-canvas.height = 1080 / potato;
+  P = g.createProgram();
 
-// your problem if aspect ratio is incorrect
-canvas.style='height: 100%; width: 100%';
+  // vertex shader
+  g.shaderSource(S=g.createShader(35633), require('./vertex.glsl')); // g.VERTEX_SHADER = 35633
+  g.compileShader(S);g.attachShader(P,S);
 
-// get rid of stupid body margin, FIXME: fewer bytes
-body = document.getElementsByTagName('body')[0];
-body.style='margin: 0';
+  // fragment shader
+  g.shaderSource(S=g.createShader(35632), require('./fragment.glsl')); // g.FRAGMENT_SHADER = 35632
+  g.compileShader(S);g.attachShader(P,S);
 
-gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  // Check for any compilation error
+  // TODO: remove in production
+  if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
+      alert(g.getShaderInfoLog(S));
+  }
 
-buffer = gl.createBuffer();
+  g.linkProgram(P);
+  g.useProgram(P);
 
-// gl.ARRAY_BUFFER = 34962
-gl.bindBuffer(34962, buffer);
-gl.bufferData(
-  34962,
-  // TODO: optimize
-  new Float32Array([
-    -1.0, -1.0,
-    1.0, -1.0,
-    -1.0,  1.0,
-    -1.0,  1.0,
-    1.0, -1.0,
-  1.0,  1.0]),
-  gl.STATIC_DRAW
-);
+  // g.ARRAY_BUFFER = 34962
+  g.bindBuffer(34962, g.createBuffer());
+  g.bufferData(34962, new Int8Array([-3,1,1,-3,1,1]),35044); // 35044 = gl.STATIC_DRAW
+  g.enableVertexAttribArray(0);
+  g.vertexAttribPointer(0,2,5120,0,0,0); // g.BYTE = 5120
 
-// vertex shader
-v = 35633; // gl.VERTEX_SHADER = 35633
-shaderSource = require('./vertex.glsl');
-vertexShader = gl.createShader(v);
-gl.shaderSource(vertexShader, shaderSource);
-gl.compileShader(vertexShader);
-
-// fragment shader
-shaderSource = require('./fragment.glsl');
-fragmentShader = gl.createShader(v-1); // gl.FRAGMENT_SHADER = 35632
-gl.shaderSource(fragmentShader, shaderSource);
-gl.compileShader(fragmentShader);
-
-// Check for any compilation error
-// TODO: remove in production
-if (!gl.getShaderParameter(fragmentShader, 35713)) { // gl.COMPILE_STATUS = 35713
-    alert(gl.getShaderInfoLog(fragmentShader));
+  // start rendering and music playback
+  r();m();
 }
-
-program = gl.createProgram();
-
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
-gl.useProgram(program);
-
-render();
-startMusic();
