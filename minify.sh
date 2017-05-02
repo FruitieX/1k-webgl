@@ -12,7 +12,7 @@ cp mintemplate.html dist/temp/temp1.html
 cd dist
 
 # js src
-uglifyjs ../src/song.js ../src/player.js ../src/index.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp2.html
+uglifyjs ../src/song.js ../src/sonantx.js ../src/index.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp2.html
 
 # vertex shader
 glslmin ../src/vertex.glsl | node ../utils/findandreplace.js --template temp/temp2.html --find 'require("./vertex.glsl")' --surround '`' > temp/temp3.html

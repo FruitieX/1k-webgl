@@ -1,5 +1,8 @@
 precision mediump float;
+
+// time variable
 uniform float a;
+// resolution
 uniform vec2 b;
 
 // antialias

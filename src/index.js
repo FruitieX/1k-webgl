@@ -1,6 +1,6 @@
 // potato level for PC, higher = faster :-)
 // TODO: remove in production
-potato = 4;
+potato = 2;
 c.width = 1920 / potato;
 c.height = 1080 / potato;
 
@@ -16,29 +16,17 @@ r = t => {
   g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
 }
 
-m = _ => {
-  // Initialize music generation (player).
-  var player = new CPlayer();
-  player.init(song);
+// music
+x = new AudioContext();
+console.log(song);
+s = new sonantx.MusicGenerator(song);
+m = x.createBufferSource();
 
-  // Generate music...
-  var done = false;
-  setInterval(function () {
-    if (done) {
-      return;
-    }
-
-    done = player.generate() >= 1;
-
-    if (done) {
-      // Put the generated song in an Audio element.
-      var wave = player.createWave();
-      var audio = document.createElement("audio");
-      audio.src = URL.createObjectURL(new Blob([wave], {type: "audio/wav"}));
-      audio.play();
-    }
-  }, 0);
-}
+s.createAudioBuffer(b => {
+  m.buffer = b;
+  m.connect(x.destination);
+  m.start();
+});
 
 // onload
 g = c.getContext('webgl');
@@ -69,4 +57,4 @@ g.enableVertexAttribArray(0);
 g.vertexAttribPointer(0,2,5120,0,0,0); // g.BYTE = 5120
 
 // start rendering and music playback
-r();m();
+r();
