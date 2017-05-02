@@ -1,6 +1,6 @@
 // potato level for PC, higher = faster :-)
 // TODO: remove in production
-potato = 2;
+potato = 4;
 c.width = 1920 / potato;
 c.height = 1080 / potato;
 
@@ -17,16 +17,9 @@ r = t => {
 }
 
 // music
-x = new AudioContext();
-console.log(song);
 s = new sonantx.MusicGenerator(song);
-m = x.createBufferSource();
-
-s.createAudioBuffer(b => {
-  m.buffer = b;
-  m.connect(x.destination);
-  m.start();
-});
+s.connect(sonantx.audioCtx.destination);
+s.start(0);
 
 // onload
 g = c.getContext('webgl');
