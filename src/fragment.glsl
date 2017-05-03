@@ -172,7 +172,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   /* ---------- SCENES --------- */
 
   // select scene
-  #define SCENE 10
+  #define SCENE 0
 
   // Tunnel thing
   #if SCENE == 0

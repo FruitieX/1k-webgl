@@ -11,15 +11,14 @@ r = t => {
   g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
 
   // set the "a" time variable
-  g.uniform1f(g.getUniformLocation(P, 'a'), t / 1000);
+  g.uniform1f(g.getUniformLocation(P, 'a'), soundbox.audioCtx.currentTime);
 
   g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
 }
 
 // music
-s = new sonantx.MusicGenerator(song);
-s.connect(sonantx.audioCtx.destination);
-s.start(0);
+s = new soundbox.MusicGenerator();
+s.connect(soundbox.audioCtx.destination);
 
 // onload
 g = c.getContext('webgl');
@@ -51,3 +50,4 @@ g.vertexAttribPointer(0,2,5120,0,0,0); // g.BYTE = 5120
 
 // start rendering and music playback
 r();
+s.play(song);
