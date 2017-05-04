@@ -172,7 +172,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // select scene
   // TODO: warp between scenes according to time?
-  int SCENE = 0;
+  int SCENE = 0 + int(a / 10.0);
 
   // Tunnel thing
 
