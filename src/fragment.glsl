@@ -36,7 +36,7 @@ float sdBloodCell(vec3 p, vec3 t) {
 }
 
 float sdBloodCell2(vec3 p) {
-  vec2 t = vec2(.2, .2);
+  vec2 t = vec2(.2);
   // vec3 b = vec3(.2,.06,.2);
   vec2 h = vec2(.3,.06);
   float d1 = length(vec2(length(p.xz)-t.x*1.5,p.y)) - t.y/2.2;
@@ -232,7 +232,7 @@ vec2 scene2(vec3 pos) {
   return vec2(sdBloodCell(
     opRep(
       pos,
-      vec3(1., 1., 1.)
+      vec3(1.)
     ),
     // TODO: tweak parameters
     vec3(-.15, 1.275, -.001)
@@ -342,7 +342,7 @@ vec2 scene10(vec3 pos) {
     opRep(
       pos,
       vec3(sin(a / 20.) / 4., cos(a / 17.4) / 4., cos(a / 21.24) / 4.) // WTF alternative
-      //vec3(.1, .1, .1)
+      //vec3(.1)
     ),
     //(sin(a / 15.0) + 1.0) * 0.01), hue)
     (1. + sin(a + 5. * (pos.y + pos.x + pos.z))) * .01), hue // WTF alternative
@@ -358,7 +358,7 @@ vec2 scene11(vec3 pos) {
         pos
       //)
       ,
-      vec3(2.0, 2.0, 2.0)
+      vec3(2.)
     ),
     0.1), 0.0
   );
@@ -371,7 +371,7 @@ vec2 scene12(vec3 pos) {
         pos
       //)
       ,
-      vec3(2.0, 2.0, 2.0)
+      vec3(2.)
     ),
     0.2), 0.0
   );
@@ -400,7 +400,7 @@ vec2 scene14(vec3 pos) {
   return vec2(sdBloodCell2(
     opRep(
       pos,
-      vec3(1.0, 1.0, 1.0)
+      vec3(1.)
     )
   ), 54.0);
 }
@@ -596,7 +596,7 @@ vec3 render(in vec3 ro, in vec3 rd) {
     lin += .4*amb*vec3(.4,.6,1.)*occ;
     lin += .5*dom*vec3(.4,.6,1.)*occ;
     lin += .5*bac*vec3(.25,.25,.25)*occ;
-    lin += .25*fre*vec3(1.,1.,1.)*occ;
+    lin += .25*fre*vec3(1.)*occ;
     col = col*lin;
 
     col = mix( col, vec3(.8,.9,1.), 1.-exp( -.0002*t*t*t ) );
