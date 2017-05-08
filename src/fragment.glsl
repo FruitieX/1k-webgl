@@ -121,8 +121,37 @@ float sdRandomSphere(vec3 p) {
   return sdSphere(p, rand);
 }
 
-float opS(float d1, float d2) {
+float opS_1(float d1, float d2) {
   return max(-d2,d1);
+}
+
+vec2 opS(vec2 d1, vec2 d2) {
+  return (d1.x<-d2.x) ? d2 : d1;
+}
+
+float opBlend_1( float d1, float d2 ) {
+    return smin( d1, d2, 32.0 );
+}
+
+vec2 opBlend( vec2 d1, vec2 d2, float k ) {
+    return vec2(
+      smin( d1.x, d2.x, k ),
+      smin( d1.y, d2.y, k )
+    );
+}
+
+// t = time to start transition
+// tt = transition length
+vec2 opMorph( vec2 d1, vec2 d2, float t, float tt ) {
+  float k = (a - t) / tt;
+
+  k = min(1.0, k);
+  k = max(0.0, k);
+
+  return vec2(
+    d1.x * (1.0 - k) + d2.x * k,
+    d1.y * (1.0 - k) + d2.y * k
+  );
 }
 
 vec2 opU(vec2 d1, vec2 d2) {
@@ -138,10 +167,6 @@ vec3 opTwist(vec3 p) {
   float  s = sin(p.y);
   mat2   m = mat2(c,-s,s,c);
   return vec3(m*p.xz,p.y);
-}
-
-float opBlend( float d1, float d2 ) {
-    return smin( d1, d2, 32.0 );
 }
 
 float sdTunnelThing(vec3 p) {
@@ -269,7 +294,7 @@ vec2 scene7(vec3 pos) {
 vec2 scene8(vec3 pos) {
   // stars with pattern
   return vec2(5.0 *
-    opS(
+    opS_1(
       sdSphere(
         pos, 5.0
       )
@@ -286,7 +311,7 @@ vec2 scene8(vec3 pos) {
 vec2 scene9(vec3 pos) {
   // ????? bounding sphere
   return vec2(5.5 *
-    opS(
+    opS_1(
       sdSphere(
         pos, 5.0
       )
@@ -382,7 +407,7 @@ vec2 scene15(vec3 pos) {
 }
 vec2 scene16(vec3 pos) {
   vec3 offs = vec3(0.0, -0.35, 0.2);
-  return vec2(opBlend(
+  return vec2(opBlend_1(
     sdSphere(pos, .3),
     sdSphere(pos + offs, .3)
   ), 184.0);
@@ -390,54 +415,56 @@ vec2 scene16(vec3 pos) {
 
 vec2 map(in vec3 pos, in vec3 origin) {
 
-  float hue = 0.0;
-  vec3 offs = vec3(0.0, 0.0, 0.0);
-  vec2 res = vec2(1.0, 1.0);
+  vec2 res = vec2(.0, .0);
+
+  float transitionTime = 10.0;
+  float end0 = 2.;
+  float end1 = 14.;
+  float end2 = 28.;
+
+  // Uncomment when debugging single scene
+  //return scene0(pos);
 
   /* ---------- SCENES --------- */
 
-  // select scene
-  // TODO: warp between scenes according to time?
-  int SCENE = 0 + int(a / 10.0);
-  //SCENE = 8; // TODO: broken
-  SCENE = 0;
-
-  // Tunnel thing
-
-  if (SCENE == 0) {
+  // first scene
+  if (a < end0 + transitionTime) {
     res = scene0(pos);
-  } else if (SCENE == 1) {
-    res = scene1(pos);
-  } else if (SCENE == 2) {
-    res = scene2(pos);
-  } else if (SCENE == 3) {
-    res = scene3(pos);
-  } else if (SCENE == 4) {
-    res = scene4(pos);
-  } else if (SCENE == 5) {
-    res = scene5(pos);
-  } else if (SCENE == 6) {
-    res = scene6(pos);
-  } else if (SCENE == 7) {
-    res = scene7(pos);
-  } else if (SCENE == 8) {
-    res = scene8(pos);
-  } else if (SCENE == 9) {
-    res = scene9(pos);
-  } else if (SCENE == 10) {
-    res = scene10(pos);
-  } else if (SCENE == 11) {
-    res = scene11(pos);
-  } else if (SCENE == 12) {
-    res = scene12(pos);
-  } else if (SCENE == 13) {
-    res = scene13(pos);
-  } else if (SCENE == 14) {
-    res = scene14(pos);
-  } else if (SCENE == 15) {
-    res = scene15(pos);
-  } else if (SCENE == 16) {
-    res = scene16(pos);
+  }
+
+  // start rendering after previous scene,
+  // stop rendering after transitioning to next scene
+  if (a >= end0 && a < end1 + transitionTime) {
+    res = opMorph(res,
+      scene2(pos + vec3(a, .0, sin(a))),
+
+      // Timing
+      end0,
+      transitionTime
+    );
+  }
+
+  // start rendering after previous scene,
+  // stop rendering after transitioning to next scene
+  if (a >= end1 && a < end2 + transitionTime) {
+    res = opMorph(res,
+      scene10(pos),
+
+      // Timing
+      end1,
+      transitionTime
+    );
+  }
+
+  // last scene
+  if (a >= end2) {
+    res = opMorph(res,
+      scene16(pos),
+
+      // Timing
+      end2,
+      transitionTime
+    );
   }
 
   return res;
