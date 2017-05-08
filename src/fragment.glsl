@@ -203,6 +203,7 @@ vec2 scene0(vec3 pos) {
   );
 }
 
+/*
 vec2 scene1(vec3 pos) {
   // Blood vein thing
 
@@ -215,6 +216,7 @@ vec2 scene1(vec3 pos) {
   // color
   54.0);
 }
+*/
 
 vec2 scene2(vec3 pos) {
   // Blood cell thing
@@ -238,15 +240,16 @@ vec2 scene2(vec3 pos) {
   54.0);
 }
 
+/*
 vec2 scene3(vec3 pos) {
-  // weird ass sphere
+  // virus
   vec3 offs = vec3(sin(a) / 4.0,0.75,0.0);
   return vec2(0.5 *
     sdSphere(
       pos - offs, 0.5
     )
     + 0.01 * sin(100.0 * pos.x) * sin(100.0 * pos.y) * sin(100.0 * pos.z),
-    165.0
+    .0
   );
 }
 
@@ -324,6 +327,7 @@ vec2 scene9(vec3 pos) {
     50.0
   );
 }
+*/
 
 vec2 scene10(vec3 pos) {
   // Plasma starfield thing
@@ -341,6 +345,7 @@ vec2 scene10(vec3 pos) {
   );
 }
 
+/*
 vec2 scene11(vec3 pos) {
   // Repeated spheres
   return vec2(sdSphere(
@@ -395,6 +400,7 @@ vec2 scene14(vec3 pos) {
     )
   ), 54.0);
 }
+*/
 
 vec2 scene15(vec3 pos) {
   // wtf ceiling and floor is this
