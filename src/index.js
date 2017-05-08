@@ -7,11 +7,19 @@ c.height = 1080 / potato;
 r = t => {
   requestAnimationFrame(r, c);
 
-  // set the "b" resolution variable
-  g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
+  // run fft
+  analyser.getByteFrequencyData(analyserArray);
 
   // set the "a" time variable
   g.uniform1f(g.getUniformLocation(P, 'a'), soundbox.audioCtx.currentTime);
+
+  // set the "b" resolution variable
+  g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
+
+  // set the "c" bass volume variable
+  g.uniform1f(g.getUniformLocation(P, 'c'), analyserArray[11] / 255);
+  // set the "d" treble volume variable
+  g.uniform1f(g.getUniformLocation(P, 'd'), analyserArray[222] / 255);
 
   g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
 }
@@ -19,6 +27,9 @@ r = t => {
 // music
 s = new soundbox.MusicGenerator();
 s.connect(soundbox.audioCtx.destination);
+analyser = soundbox.audioCtx.createAnalyser();
+analyserArray = new Uint8Array(analyser.frequencyBinCount);
+s.connect(analyser);
 
 // onload
 g = c.getContext('webgl');

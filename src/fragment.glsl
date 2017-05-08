@@ -5,6 +5,11 @@ uniform float a;
 // resolution (1920.0, 1080.0)
 uniform vec2 b;
 
+// bass
+uniform float c;
+// treble
+uniform float d;
+
 float PI = 3.14;
 
 float smin( float a, float b, float k ) {
@@ -225,7 +230,7 @@ vec2 scene0(vec3 pos) {
     sdTunnelThing(pos)
 
     // blobby surface
-    + .05 * sin(10. * pos.x) * sin(10. * pos.y) * sin(10. * pos.z) * sin(plasma1),
+    + (1. - c * .5) * .05 * sin(10. * pos.x) * sin(10. * pos.y) * sin(10. * pos.z) * sin(plasma1),
 
     // color
     hue / 3.
@@ -463,10 +468,10 @@ vec2 map(in vec3 pos, in vec3 origin) {
   vec2 res = vec2(.0);
 
   float transitionTime = 10.;
-  float end0 = 2.;
-  float end1 = 14.;
-  float end2 = 26.;
-  float end3 = 38.;
+  float end0 = 8.;
+  float end1 = 24.;
+  float end2 = 36.;
+  float end3 = 48.;
 
   // Uncomment when debugging single scene
   //return scene16(pos);
