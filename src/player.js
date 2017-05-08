@@ -284,6 +284,7 @@ soundbox.MusicGenerator = function() {
     ];
 
     this.mixer = audioCtx.createGain();
+    this.mixer.gain.value = 0.25;
 
     // connect each column in each track to the mixer and start oscillators
     this.tracks.forEach(track =>
@@ -300,13 +301,18 @@ soundbox.MusicGenerator = function() {
 soundbox.MusicGenerator.prototype.play = function(song, when = 0) {
   song.songData.forEach((track, tIndex) =>
     this.tracks[tIndex].forEach((column, cIndex) => {
+      // TODO: better way of resetting lfo?
+      // currently it's recreated
+      column.lfo.disconnect();
+      column.lfo = audioCtx.createOscillator();
+      column.lfo.connect(column.modulationGain);
+      column.lfo.start();
+
       // Set initial parameters for each column
       setParams(track.i, song.rowLen / 44100, column);
 
       // Program notes for each oscillator
       setNotes(track.i, track.c, track.p, song.rowLen / 44100, song.patternLen, when, column, cIndex);
-
-      // TODO: how to reset lfo
     })
   );
 };
@@ -321,6 +327,8 @@ soundbox.MusicGenerator.prototype.stop = function() {
       column.osc1env.gain.value = 0;
       column.osc2env.gain.value = 0;
       column.osc3env.gain.value = 0;
+
+      column.lfo.stop();
     })
   );
 };
