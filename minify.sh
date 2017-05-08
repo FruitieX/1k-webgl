@@ -16,7 +16,12 @@ cd dist
 #uglifyjs ../src/song.js ../src/player.js ../src/index.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp2.html
 # crunch with regpack
 echo "uglifying..."
-uglifyjs ../src/song.js ../src/player.js ../src/index.js > temp/temp1.js
+uglifyjs ../src/song.js ../src/player.js ../src/index.js \
+  -c \
+    unsafe,unsafe_comps,unused,dead_code,drop_console,unsafe_math \
+  -m \
+    toplevel,eval \
+> temp/temp1.js
 
 # vertex shader
 echo "minifying vertex shader..."
