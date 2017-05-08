@@ -406,11 +406,20 @@ vec2 scene15(vec3 pos) {
   ), 84.0);
 }
 vec2 scene16(vec3 pos) {
-  vec3 offs = vec3(0.0, -0.35, 0.2);
-  return vec2(opBlend_1(
-    sdSphere(pos, .3),
-    sdSphere(pos + offs, .3)
-  ), 184.0);
+  vec3 offs = vec3(-.5, -0.35 * sin(a) / 5.0, sin(a) / 4.0);
+  vec2 res = vec2(opBlend_1(
+    sdSphere(pos, .5),
+    sdSphere(pos + offs, .5)
+  ), abs(50.0 + sin(pos.x)*100.0));
+
+  res = opU(res,
+    vec2(
+      -sdSphere(pos, 5.8),
+      abs(50.0 + sin(pos.x) * 10.0)
+    )
+  );
+
+  return res;
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
@@ -420,10 +429,11 @@ vec2 map(in vec3 pos, in vec3 origin) {
   float transitionTime = 10.0;
   float end0 = 2.;
   float end1 = 14.;
-  float end2 = 28.;
+  float end2 = 26.;
+  float end3 = 38.;
 
   // Uncomment when debugging single scene
-  //return scene0(pos);
+  //return scene16(pos);
 
   /* ---------- SCENES --------- */
 
@@ -456,13 +466,23 @@ vec2 map(in vec3 pos, in vec3 origin) {
     );
   }
 
-  // last scene
-  if (a >= end2) {
+  if (a >= end2 && a < end3 + transitionTime) {
     res = opMorph(res,
       scene16(pos),
 
       // Timing
       end2,
+      transitionTime
+    );
+  }
+
+  // last scene
+  if (a >= end3) {
+    res = opMorph(res,
+      scene15(pos),
+
+      // Timing
+      end3,
       transitionTime
     );
   }
@@ -605,7 +625,7 @@ void main() {
     vec3 col = render( ro, rd );
 
   	// gamma
-    col = pow( col, vec3(0.4545) );
+    col = pow( col, vec3(.5) );
 
     tot += col;
   }
