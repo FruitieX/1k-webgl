@@ -1,40 +1,46 @@
-precision mediump float;
+precision highp float;
 
-// time variable
+// time variable (seconds)
 uniform float a;
-// resolution
+// resolution (1920.0, 1080.0)
 uniform vec2 b;
 
-// antialias
-// TODO: in production get rid of if statements
+float PI = 3.14;
 
 float smin( float a, float b, float k ) {
-    return -log(exp( -k*a ) + exp( -k*b ))/k;
+  return -log(exp( -k*a ) + exp( -k*b ))/k;
 }
 
+/*
 float sdPlane(vec3 p) {
   return p.y;
 }
+*/
 
 float sdSphere(vec3 p, float s) {
   return length(p)-s;
 }
 
+/*
 float udBox( vec3 p, vec3 b ) {
   return length(max(abs(p)-b,.0));
 }
+*/
 
+/*
 float sdBlob2(vec3 p, vec2 t) {
   //return sqrt(p.x*p.x*.125 + p.y*p.y + p.z*p.z*.125) - .1;
   float P = .2;
   float Q = .1;
   return -pow(p.x*p.x + p.y*p.y, 2.) + P * (p.x*p.x + p.y*p.y) + Q * p.z*p.z + .1;
 }
+*/
 
 float sdBloodCell(vec3 p, vec3 t) {
   return pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
 }
 
+/*
 float sdBloodCell2(vec3 p) {
   vec2 t = vec2(.2);
   // vec3 b = vec3(.2,.06,.2);
@@ -45,8 +51,7 @@ float sdBloodCell2(vec3 p) {
   float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
   return smin(d1,d2,32.);
 }
-
-float PI = 3.14;
+*/
 
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
@@ -70,12 +75,15 @@ float calcPlasma(float x, float y, float z, float t) {
   return blend;
 }
 
+/*
 float sdPlasmaSphere(vec3 p, float s, float t) {
   float plasma = calcPlasma(p.x, p.y, p.z, t / 1.);
 
   return sdSphere(p, s) + plasma * sin(t / 20.);
 }
+*/
 
+/*
 float calcPlasma2(float x, float y, float z, float t) {
   // horizontal sinusoid
   float sine1 = sin(x * 10. + t * 2.);
@@ -97,11 +105,14 @@ float calcPlasma2(float x, float y, float z, float t) {
   //blend = pow(blend, 2.);
   return blend;
 }
+*/
 
+/*
 float sdPlasma(vec3 p, float t) {
   float plasma = calcPlasma2(p.x, p.y, p.z, t / 100.);
   return plasma;
 }
+*/
 
 /*
 float random(vec2 p) {
@@ -123,9 +134,11 @@ float sdRandomSphere(vec3 p) {
 }
 */
 
+/*
 float opS_1(float d1, float d2) {
   return max(-d2,d1);
 }
+*/
 
 // TODO: test me
 vec2 opS(vec2 d1, vec2 d2) {
@@ -137,20 +150,26 @@ float opBlend_1( float d1, float d2 ) {
     return smin( d1, d2, 32. );
 }
 
+/*
 vec2 opBlend( vec2 d1, vec2 d2, float k ) {
     return vec2(
       smin( d1.x, d2.x, k ),
       smin( d1.y, d2.y, k )
     );
 }
+*/
 
 // t = time to start transition
 // tt = transition length
 vec2 opMorph( vec2 d1, vec2 d2, float t, float tt ) {
   float k = (a - t) / tt;
 
+  /*
   k = min(1., k);
   k = max(0., k);
+  */
+
+  k = clamp(0., k, 1.);
 
   return vec2(
     d1.x * (1. - k) + d2.x * k,
@@ -166,21 +185,26 @@ vec3 opRep(vec3 p, vec3 c) {
   return mod(p,c)-.5*c;
 }
 
+/*
 vec3 opTwist(vec3 p) {
   float  c = cos(p.y);
   float  s = sin(p.y);
   mat2   m = mat2(c,-s,s,c);
   return vec3(m*p.xz,p.y);
 }
+*/
 
 float sdTunnelThing(vec3 p) {
   return (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
 }
 
+/*
 float sdTunnelThingPlasma(vec3 p) {
   return (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (sin(a / 20.) + 2.);
 }
+*/
 
+/*
 float sdBloodVein(vec3 p) {
   vec3 c = vec3(2.,5.,5.);
   return abs(length(p.xy-c.xz)-c.y);
@@ -189,6 +213,7 @@ float sdBloodVein(vec3 p) {
 float sdBloodVein2(vec3 p, vec3 t) {
   return -pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
 }
+*/
 
 // SCENES
 vec2 scene0(vec3 pos) {
@@ -408,13 +433,15 @@ vec2 scene14(vec3 pos) {
 
 vec2 scene15(vec3 pos) {
   // wtf ceiling and floor is this
-  return vec2(sdBloodCell2(
+  return vec2(sdBloodCell(
     opRep(
       pos,
       vec3(sin(a / 5.) * .4, 1., sin(a / 5.) * .4)
-    )
+    ),
+    vec3(-.15, 1.275, -.001)
   ), 84.);
 }
+
 vec2 scene16(vec3 pos) {
   vec3 offs = vec3(-.5, -.35 * sin(a) / 5., sin(a) / 4.);
   vec2 res = vec2(opBlend_1(
@@ -433,7 +460,6 @@ vec2 scene16(vec3 pos) {
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
-
   vec2 res = vec2(.0);
 
   float transitionTime = 10.;
@@ -640,7 +666,7 @@ void main() {
     tot += col;
   }
 
-  tot /= float(4); // AA * AA
+  tot /= 4.; // AA * AA
 
   gl_FragColor = vec4( tot, 1. );
 }
