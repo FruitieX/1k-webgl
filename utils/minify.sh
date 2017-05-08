@@ -32,7 +32,7 @@ echo "minifying fragment shader..."
 glslmin -m ../src/fragment.glsl | node ../utils/findandreplace.js --template temp/temp2.js --find 'require("./fragment.glsl")' --surround '`' > temp/temp3.js
 
 echo "running regpack..."
-regpack temp/temp3.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
+node ../node_modules/.bin/regpack temp/temp3.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
 

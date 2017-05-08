@@ -872,7 +872,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@2.9.x:
+commander@2.9.x, commander@~2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
@@ -1005,6 +1005,16 @@ css-select@^1.1.0:
 css-what@2.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-2.1.0.tgz#9467d032c38cfaefb9f2d79501253062f87fa1bd"
+
+cssauron-glsl@0.0.0, cssauron-glsl@X.X.X:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/cssauron-glsl/-/cssauron-glsl-0.0.0.tgz#e35f3f5ecb62f33f635b92a93ef9406b9f8e1dba"
+  dependencies:
+    cssauron X.X.X
+
+cssauron@0.0.2, cssauron@X.X.X:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/cssauron/-/cssauron-0.0.2.tgz#6812797e6f2ac2cb9a695a92df7c420ee4dc6a62"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -1457,6 +1467,44 @@ glob@^7.0.5:
 globals@^9.0.0:
   version "9.17.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-9.17.0.tgz#0c0ca696d9b9bb694d2e5470bd37777caad50286"
+
+glsl-deparser@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/glsl-deparser/-/glsl-deparser-0.0.1.tgz#3b17dc39a8974c97f07048a2737228285242c298"
+  dependencies:
+    cssauron-glsl X.X.X
+    through "~1.1.2"
+
+glsl-min-stream@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/glsl-min-stream/-/glsl-min-stream-0.0.2.tgz#6a4441d5d3880196c02535de22bee0cd0f8c7d96"
+  dependencies:
+    cssauron-glsl X.X.X
+    shortest "0.0.0"
+    through "~1.1.2"
+
+glsl-parser@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/glsl-parser/-/glsl-parser-0.0.1.tgz#94150879f80e549b38f6904c4dc6963cfd8cd7c1"
+  dependencies:
+    glsl-tokenizer "~0.0.2"
+
+glsl-tokenizer@0.0.6, glsl-tokenizer@~0.0.2:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/glsl-tokenizer/-/glsl-tokenizer-0.0.6.tgz#09fa79dabe6fb97dd152e5f509bb6c31f8019054"
+
+glslmin@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/glslmin/-/glslmin-0.0.0.tgz#5dac421b6f56ae09d3eb9e5fff8c4476b0a931cd"
+  dependencies:
+    cssauron "0.0.2"
+    cssauron-glsl "0.0.0"
+    glsl-deparser "0.0.1"
+    glsl-min-stream "0.0.2"
+    glsl-parser "0.0.1"
+    glsl-tokenizer "0.0.6"
+    nopt "~2.0.0"
+    through "~1.1.2"
 
 graceful-fs@^4.1.2:
   version "4.1.11"
@@ -1995,7 +2043,7 @@ minimist@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
-minimist@^1.2.0:
+minimist@>=1.1.0, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
@@ -2081,6 +2129,12 @@ nopt@^4.0.1:
   dependencies:
     abbrev "1"
     osenv "^0.1.4"
+
+nopt@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/nopt/-/nopt-2.0.0.tgz#ca7416f20a5e3f9c3b86180f96295fa3d0b52e0d"
+  dependencies:
+    abbrev "1"
 
 normalize-package-data@^2.3.2:
   version "2.3.6"
@@ -2487,6 +2541,12 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
+regpack@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/regpack/-/regpack-5.0.1.tgz#f43ab16c8c881dab0b8d3ac6590eb75a478e29d2"
+  dependencies:
+    minimist ">=1.1.0"
+
 relateurl@0.2.x:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
@@ -2650,6 +2710,10 @@ sha.js@^2.3.6:
   resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.8.tgz#37068c2c476b6baf402d14a49c67f597921f634f"
   dependencies:
     inherits "^2.0.1"
+
+shortest@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/shortest/-/shortest-0.0.0.tgz#dc4c8d0722e7a9208ec7d2098e4cda8cac6e567d"
 
 signal-exit@^3.0.0:
   version "3.0.2"
@@ -2834,6 +2898,10 @@ tar@^2.2.1:
     fstream "^1.0.2"
     inherits "2"
 
+through@~1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/through/-/through-1.1.2.tgz#344a5425a3773314ca7e0eb6512fbafaf76c0bfe"
+
 through@~2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
@@ -2893,6 +2961,15 @@ uglify-js@2.8.x, uglify-js@^2.8.5:
   dependencies:
     source-map "~0.5.1"
     yargs "~3.10.0"
+  optionalDependencies:
+    uglify-to-browserify "~1.0.0"
+
+uglify-js@mishoo/UglifyJS2#harmony:
+  version "3.0.1"
+  resolved "https://codeload.github.com/mishoo/UglifyJS2/tar.gz/e0ae8da0892fa92ff6c471bfdaf1e8e725fd9035"
+  dependencies:
+    commander "~2.9.0"
+    source-map "~0.5.1"
   optionalDependencies:
     uglify-to-browserify "~1.0.0"
 
