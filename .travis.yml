@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - "node"
+script: yarn build
+deploy:
+  provider: surge
+  project: ./dist/
+  domain: fruitiex-4k.surge.sh
