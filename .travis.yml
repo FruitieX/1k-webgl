@@ -6,3 +6,4 @@ deploy:
   provider: surge
   project: ./dist/
   domain: fruitiex-4k.surge.sh
+  skip_cleanup: true
