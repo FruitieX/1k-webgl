@@ -200,7 +200,7 @@ vec3 opTwist(vec3 p) {
 */
 
 float sdTunnelThing(vec3 p) {
-  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
+  return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
 }
 
 /*
@@ -230,7 +230,7 @@ vec2 scene0(vec3 pos) {
     sdTunnelThing(pos)
 
     // blobby surface
-    + (1. - c * .5) * .05 * sin(10. * pos.x) * sin(10. * pos.y) * sin(10. * pos.z) * sin(plasma1),
+    + (1. - c) * .05 * sin(10. * pos.x) * sin(10. * pos.y) * sin(10. * pos.z) * sin(plasma1),
 
     // color
     hue / 3.
