@@ -468,10 +468,10 @@ vec2 map(in vec3 pos, in vec3 origin) {
   vec2 res = vec2(.0);
 
   float transitionTime = 10.;
-  float end0 = 8.;
-  float end1 = 24.;
-  float end2 = 36.;
-  float end3 = 48.;
+  float end0 = 11.;
+  float end1 = 34.;
+  float end2 = 50.;
+  float end3 = 70.;
 
   // Uncomment when debugging single scene
   //return scene16(pos);
