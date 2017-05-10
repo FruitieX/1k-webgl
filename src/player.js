@@ -102,7 +102,11 @@ let initCol = () => {
   osc2.connect(osc2env);
   osc3.connect(osc3env);
 
+  // delay output goes to master
   delayGain.connect(out);
+  // connect delay to itself to create feedback loop
+  delayGain.connect(delay);
+  // connect delay to delayGain to allow fading it out
   delay.connect(delayGain);
 
   panNode.connect(out);
@@ -172,7 +176,7 @@ let setParams = (params, rowLen, column) => {
       panAmt = params[24] / 255,
       panFreq = 3.14 * Math.pow(2, params[25] - 9) / rowLen,
       dlyAmt = params[26] / 255,
-      dly = params[27] * rowLen;
+      dly = params[27] * rowLen / 2;
 
     // master
     column.out.gain.value = drive;
