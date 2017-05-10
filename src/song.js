@@ -5,23 +5,23 @@
 // use it in a demo.
 
 // Song data
-song = {
+var song = {
   songData: [
     { // Instrument 0
       i: [
       0, // OSC1_WAVEFORM
-      255, // OSC1_VOL
+      171, // OSC1_VOL
       116, // OSC1_SEMI
       1, // OSC1_XENV
       0, // OSC2_WAVEFORM
-      255, // OSC2_VOL
-      116, // OSC2_SEMI
+      178, // OSC2_VOL
+      109, // OSC2_SEMI
       0, // OSC2_DETUNE
       1, // OSC2_XENV
-      0, // NOISE_VOL
-      9, // ENV_ATTACK
-      6, // ENV_SUSTAIN
-      35, // ENV_RELEASE
+      7, // NOISE_VOL
+      13, // ENV_ATTACK
+      8, // ENV_SUSTAIN
+      36, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
       0, // LFO_WAVEFORM
@@ -29,38 +29,38 @@ song = {
       0, // LFO_FREQ
       0, // LFO_FX_FREQ
       2, // FX_FILTER
-      14, // FX_FREQ
+      53, // FX_FREQ
       13, // FX_RESONANCE
       0, // FX_DIST
       32, // FX_DRIVE
       0, // FX_PAN_AMT
       0, // FX_PAN_FREQ
       0, // FX_DELAY_AMT
-      0 // FX_DELAY_TIME
+      2 // FX_DELAY_TIME
       ],
       // Patterns
-      p: [1,1,1,1,1,1,1,1,1,1,1,1],
+      p: [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       // Columns
       c: [
-        {n: [140,,,141,,,,,140,,,141,,,,,140,,,141,,,,,140,,,141],
+        {n: [140,,137,,,,,,140,,137,,,,,,140,,137,,,,,,140,,137],
          f: []}
       ]
     },
     { // Instrument 1
       i: [
-      0, // OSC1_WAVEFORM
-      132, // OSC1_VOL
-      121, // OSC1_SEMI
+      1, // OSC1_WAVEFORM
+      134, // OSC1_VOL
+      119, // OSC1_SEMI
       1, // OSC1_XENV
       0, // OSC2_WAVEFORM
-      128, // OSC2_VOL
-      120, // OSC2_SEMI
+      0, // OSC2_VOL
+      128, // OSC2_SEMI
       0, // OSC2_DETUNE
-      1, // OSC2_XENV
+      0, // OSC2_XENV
       210, // NOISE_VOL
       4, // ENV_ATTACK
-      7, // ENV_SUSTAIN
-      41, // ENV_RELEASE
+      8, // ENV_SUSTAIN
+      43, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
       0, // LFO_WAVEFORM
@@ -78,7 +78,7 @@ song = {
       1 // FX_DELAY_TIME
       ],
       // Patterns
-      p: [,,1,1,1,1,1,1,1,1,1,1],
+      p: [,,,,,,1,1,1,1,1,1],
       // Columns
       c: [
         {n: [,,144,,,,144,,,,144,,,,144,,,,144,,,,144,,,,144,,,,144],
@@ -96,7 +96,7 @@ song = {
       140, // OSC2_SEMI
       0, // OSC2_DETUNE
       0, // OSC2_XENV
-      60, // NOISE_VOL
+      29, // NOISE_VOL
       4, // ENV_ATTACK
       10, // ENV_SUSTAIN
       34, // ENV_RELEASE
@@ -114,10 +114,10 @@ song = {
       108, // FX_PAN_AMT
       5, // FX_PAN_FREQ
       16, // FX_DELAY_AMT
-      4 // FX_DELAY_TIME
+      2 // FX_DELAY_TIME
       ],
       // Patterns
-      p: [,,1,1,1,1,1,1,1,1,1,1],
+      p: [,,,,1,1,1,1,1,1,1,1],
       // Columns
       c: [
         {n: [128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128,,128],
@@ -126,71 +126,75 @@ song = {
     },
     { // Instrument 3
       i: [
-      0, // OSC1_WAVEFORM
-      0, // OSC1_VOL
-      140, // OSC1_SEMI
+      2, // OSC1_WAVEFORM
+      91, // OSC1_VOL
+      128, // OSC1_SEMI
       0, // OSC1_XENV
-      0, // OSC2_WAVEFORM
-      0, // OSC2_VOL
-      140, // OSC2_SEMI
+      3, // OSC2_WAVEFORM
+      72, // OSC2_VOL
+      128, // OSC2_SEMI
       0, // OSC2_DETUNE
       0, // OSC2_XENV
-      60, // NOISE_VOL
-      4, // ENV_ATTACK
-      10, // ENV_SUSTAIN
-      34, // ENV_RELEASE
+      15, // NOISE_VOL
+      0, // ENV_ATTACK
+      113, // ENV_SUSTAIN
+      176, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
       0, // LFO_WAVEFORM
-      187, // LFO_AMT
-      5, // LFO_FREQ
-      0, // LFO_FX_FREQ
-      1, // FX_FILTER
-      239, // FX_FREQ
-      135, // FX_RESONANCE
-      0, // FX_DIST
-      32, // FX_DRIVE
-      108, // FX_PAN_AMT
-      5, // FX_PAN_FREQ
-      16, // FX_DELAY_AMT
-      4 // FX_DELAY_TIME
+      108, // LFO_AMT
+      6, // LFO_FREQ
+      1, // LFO_FX_FREQ
+      2, // FX_FILTER
+      49, // FX_FREQ
+      173, // FX_RESONANCE
+      17, // FX_DIST
+      28, // FX_DRIVE
+      136, // FX_PAN_AMT
+      4, // FX_PAN_FREQ
+      107, // FX_DELAY_AMT
+      6 // FX_DELAY_TIME
       ],
       // Patterns
-      p: [],
+      p: [,,1,2,1,2],
       // Columns
       c: [
+        {n: [104,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,116],
+         f: []},
+        {n: [106,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,118],
+         f: []}
       ]
     },
     { // Instrument 4
       i: [
-      0, // OSC1_WAVEFORM
-      0, // OSC1_VOL
-      140, // OSC1_SEMI
+      1, // OSC1_WAVEFORM
+      60, // OSC1_VOL
+      128, // OSC1_SEMI
       0, // OSC1_XENV
-      0, // OSC2_WAVEFORM
-      0, // OSC2_VOL
-      140, // OSC2_SEMI
-      0, // OSC2_DETUNE
+      2, // OSC2_WAVEFORM
+      132, // OSC2_VOL
+      116, // OSC2_SEMI
+      6, // OSC2_DETUNE
       0, // OSC2_XENV
-      60, // NOISE_VOL
-      4, // ENV_ATTACK
-      10, // ENV_SUSTAIN
-      34, // ENV_RELEASE
+      3, // NOISE_VOL
+      12, // ENV_ATTACK
+      20, // ENV_SUSTAIN
+      25, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
       0, // LFO_WAVEFORM
-      187, // LFO_AMT
-      5, // LFO_FREQ
-      0, // LFO_FX_FREQ
-      1, // FX_FILTER
-      239, // FX_FREQ
-      135, // FX_RESONANCE
+      101, // LFO_AMT
+      4, // LFO_FREQ
+      1, // LFO_FX_FREQ
+      3, // FX_FILTER
+      94, // FX_FREQ
+      93, // FX_RESONANCE
       0, // FX_DIST
       32, // FX_DRIVE
       108, // FX_PAN_AMT
       5, // FX_PAN_FREQ
-      16, // FX_DELAY_AMT
-      4 // FX_DELAY_TIME
+      33, // FX_DELAY_AMT
+      1 // FX_DELAY_TIME
       ],
       // Patterns
       p: [],
@@ -201,36 +205,36 @@ song = {
     { // Instrument 5
       i: [
       1, // OSC1_WAVEFORM
-      163, // OSC1_VOL
+      43, // OSC1_VOL
       128, // OSC1_SEMI
       0, // OSC1_XENV
-      1, // OSC2_WAVEFORM
-      159, // OSC2_VOL
+      2, // OSC2_WAVEFORM
+      48, // OSC2_VOL
       116, // OSC2_SEMI
-      9, // OSC2_DETUNE
+      2, // OSC2_DETUNE
       0, // OSC2_XENV
-      0, // NOISE_VOL
+      5, // NOISE_VOL
       6, // ENV_ATTACK
       22, // ENV_SUSTAIN
       34, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
       0, // LFO_WAVEFORM
-      69, // LFO_AMT
-      3, // LFO_FREQ
+      255, // LFO_AMT
+      4, // LFO_FREQ
       1, // LFO_FX_FREQ
-      1, // FX_FILTER
-      23, // FX_FREQ
-      167, // FX_RESONANCE
+      2, // FX_FILTER
+      157, // FX_FREQ
+      209, // FX_RESONANCE
       0, // FX_DIST
       32, // FX_DRIVE
-      77, // FX_PAN_AMT
-      6, // FX_PAN_FREQ
-      25, // FX_DELAY_AMT
-      6 // FX_DELAY_TIME
+      109, // FX_PAN_AMT
+      4, // FX_PAN_FREQ
+      104, // FX_DELAY_AMT
+      2 // FX_DELAY_TIME
       ],
       // Patterns
-      p: [,,2,3,2,3,5,6,,4],
+      p: [,,7,8,9,10,5,6,4,4],
       // Columns
       c: [
         {n: [],
@@ -244,39 +248,47 @@ song = {
         {n: [164,162,161,160,158,155,152,147,152,147,150,151,152,156,155,152,155,156,159,156,150,147,148,149,152,147,150,151,152,153,154,155,128,,,131,,,130,,,129,128,127,128,,,131,,,130,,,129,128,127,128,,128,,129,,130],
          f: []},
         {n: [164,162,161,160,158,155,152,147,152,147,150,151,152,156,155,152,155,156,159,156,150,147,148,149,152,147,150,151,152,,,,128,,,131,,,130,,,129,128,127,128,,,131,,,130,,,129,128,127,128,,128],
+         f: []},
+        {n: [128,,,131,,,130,,,,,,,129,128,127,128,,,131,,,130],
+         f: []},
+        {n: [130,,,133,,,132,,,,,,,131,130,129,130,,,133,,,132],
+         f: []},
+        {n: [128,,,131,,,130,,,,,,,129,128,127,128,,,131,,,130,,128,,128,,129,,130],
+         f: []},
+        {n: [130,,,133,,,132,,,,,,,131,130,129,130,,,133,,,132,,130,,130,,130,,129],
          f: []}
       ]
     },
     { // Instrument 6
       i: [
-      2, // OSC1_WAVEFORM
-      146, // OSC1_VOL
-      140, // OSC1_SEMI
+      0, // OSC1_WAVEFORM
+      128, // OSC1_VOL
+      152, // OSC1_SEMI
       0, // OSC1_XENV
       0, // OSC2_WAVEFORM
-      224, // OSC2_VOL
-      128, // OSC2_SEMI
-      3, // OSC2_DETUNE
+      101, // OSC2_VOL
+      152, // OSC2_SEMI
+      12, // OSC2_DETUNE
       0, // OSC2_XENV
-      0, // NOISE_VOL
-      92, // ENV_ATTACK
+      7, // NOISE_VOL
+      5, // ENV_ATTACK
       0, // ENV_SUSTAIN
-      95, // ENV_RELEASE
+      29, // ENV_RELEASE
       0, // ARP_CHORD
       0, // ARP_SPEED
-      3, // LFO_WAVEFORM
-      179, // LFO_AMT
-      5, // LFO_FREQ
-      1, // LFO_FX_FREQ
+      0, // LFO_WAVEFORM
+      0, // LFO_AMT
+      0, // LFO_FREQ
+      0, // LFO_FX_FREQ
       2, // FX_FILTER
-      124, // FX_FREQ
-      135, // FX_RESONANCE
-      11, // FX_DIST
+      107, // FX_FREQ
+      0, // FX_RESONANCE
+      0, // FX_DIST
       32, // FX_DRIVE
-      150, // FX_PAN_AMT
+      47, // FX_PAN_AMT
       3, // FX_PAN_FREQ
-      157, // FX_DELAY_AMT
-      6 // FX_DELAY_TIME
+      147, // FX_DELAY_AMT
+      4 // FX_DELAY_TIME
       ],
       // Patterns
       p: [],
@@ -322,7 +334,7 @@ song = {
       ]
     }
   ],
-  rowLen: 6615,   // In sample lengths
+  rowLen: 7782,   // In sample lengths
   patternLen: 32,  // Rows per pattern
-  endPattern: 13  // End pattern
+  endPattern: 15  // End pattern
 };
