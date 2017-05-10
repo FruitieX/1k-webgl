@@ -9,6 +9,10 @@ uniform vec2 b;
 uniform float c;
 // treble
 uniform float d;
+// accumulated bass
+uniform float e;
+// frequency of lead synth
+uniform float f;
 
 float PI = 3.14;
 
@@ -190,6 +194,13 @@ vec3 opRep(vec3 p, vec3 c) {
   return mod(p,c)-.5*c;
 }
 
+// Rotate around a coordinate axis (i.e. in a plane perpendicular to that axis) by angle <a>.
+// Read like this: R(p.xz, a) rotates "x towards z".
+// This is fast if <a> is a compile-time constant and slower (but still practical) if not.
+vec2 pR(vec2 p, float a) {
+	return cos(a)*p + sin(a)*vec2(p.y, -p.x);
+}
+
 /*
 vec3 opTwist(vec3 p) {
   float  c = cos(p.y);
@@ -199,8 +210,52 @@ vec3 opTwist(vec3 p) {
 }
 */
 
+float fCapsule(vec3 p, float r, float c) {
+	return mix(length(p.xz) - r, length(vec3(p.x, abs(p.y) - c, p.z)) - r, step(c, abs(p.y)));
+}
+
 float sdTunnelThing(vec3 p) {
   return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
+}
+
+vec2 heart(vec3 p) {
+  float plasma1 = calcPlasma(p.x, p.y, p.z, a / 10.);
+  float hue = sin(plasma1) * 100. + a * 10.;
+
+  return vec2(
+    // tunnel shape
+    sdTunnelThing(p)
+
+    // blobby surface
+    + (1. - c) * .05 * sin(10. * p.x) * sin(10. * p.y) * sin(10. * p.z) * sin(plasma1),
+
+    // color
+    hue / 3.
+  );
+}
+
+vec2 bloodCellField(vec3 p) {
+  float plasmaBlood = calcPlasma(p.x, p.y, p.z, a / 10.);
+  //vec2(sdSphere(p-offs, .5 - 0.01 * sin(20.0* p.x + 15.0*p.y + a * 3.0)), 80.0)
+
+  vec3 repeated =
+    opRep(
+      p + vec3(.0, .0, e + a),
+      vec3(1.5)
+    );
+    // TODO: tweak parameters
+
+  repeated.xy = pR(repeated.xy, p.z / 4.0);
+
+  return vec2(sdBloodCell(
+    repeated,
+    vec3(-.15, 1.275, -.001)
+  )
+  // blobby surface
+  + .0005 * sin(30. * p.x) * sin(30. * p.y) * sin(30. * p.z) * sin(plasmaBlood),
+
+  // color
+  54.);
 }
 
 /*
@@ -222,18 +277,9 @@ float sdBloodVein2(vec3 p, vec3 t) {
 
 // SCENES
 vec2 scene0(vec3 pos) {
-  float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.);
-  float hue = sin(plasma1) * 100. + a * 10.;
-
-  return vec2(
-    // tunnel shape
-    sdTunnelThing(pos)
-
-    // blobby surface
-    + (1. - c) * .05 * sin(10. * pos.x) * sin(10. * pos.y) * sin(10. * pos.z) * sin(plasma1),
-
-    // color
-    hue / 3.
+  return opU(
+    heart(pos),
+    bloodCellField(pos)
   );
 }
 
@@ -268,7 +314,7 @@ vec2 scene2(vec3 pos) {
     vec3(-.15, 1.275, -.001)
   )
   // blobby surface
-  + .0005 * sin(30. * pos.x) * sin(30. * pos.y) * sin(30. * pos.z) * sin(plasmaBlood),
+  + d * .005 * sin(30. * pos.x) * sin(30. * pos.y) * sin(30. * pos.z) * sin(plasmaBlood),
 
   // color
   54.);
@@ -367,7 +413,7 @@ vec2 scene10(vec3 pos) {
   // Plasma starfield thing
   // works best with very low tmin
   float plasma = calcPlasma(pos.x, pos.y, pos.z, a / 2.);
-  float hue = sin(plasma) * 80. + a * 1.;
+  float hue = sin(plasma) * 80. + a + mod(f / 4., 360.);
   return vec2(sdSphere(
     opRep(
       pos,

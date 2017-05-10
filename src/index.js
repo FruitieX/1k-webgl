@@ -4,6 +4,10 @@ potato = 4;
 c.width = 1920 / potato;
 c.height = 1080 / potato;
 
+// accumulators
+bAcc = 0;
+fAcc = 0;
+
 r = t => {
   requestAnimationFrame(r, c);
 
@@ -20,6 +24,10 @@ r = t => {
   g.uniform1f(g.getUniformLocation(P, 'c'), analyserArray[11] / 255);
   // set the "d" treble volume variable
   g.uniform1f(g.getUniformLocation(P, 'd'), analyserArray[222] / 255);
+  // accumulated bass
+  g.uniform1f(g.getUniformLocation(P, 'e'), bAcc += analyserArray[11] / 1024);
+  // frequency of lead synth
+  g.uniform1f(g.getUniformLocation(P, 'f'), fAcc = 0.9 * fAcc + 0.1 * s.tracks[5][0].osc1.frequency.value);
 
   g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
 }
@@ -29,7 +37,12 @@ s = new soundbox.MusicGenerator();
 s.connect(soundbox.audioCtx.destination);
 analyser = soundbox.audioCtx.createAnalyser();
 analyserArray = new Uint8Array(analyser.frequencyBinCount);
-s.connect(analyser);
+
+// connect kick drum track, first column to analyser
+s.tracks[0][0].out.connect(analyser);
+
+// connect hihat drum track, first column to analyser
+s.tracks[2][0].out.connect(analyser);
 
 // onload
 g = c.getContext('webgl');
