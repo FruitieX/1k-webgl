@@ -698,9 +698,12 @@ void main() {
     vec2 p = (-b.xy + 3.*(gl_FragCoord.xy+o))/b.y;
 
     // camera
+    // ro = ray origin = where the camera is
+    // ta = camera direction (where the camera is looking)
+    // cr = camera rotation
     //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
     vec3 ro = vec3( -.5+.2*cos(.1*a), 1., .0 + 2.*sin(.1*a) );
-    vec3 ta = vec3( .0, .5, .0 );
+    vec3 ta = vec3( .0 );
     // camera-to-world transformation
     mat3 ca = setCamera( ro, ta, .0 );
     // ray direction
