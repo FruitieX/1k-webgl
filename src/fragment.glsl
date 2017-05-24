@@ -30,6 +30,12 @@ float sdSphere(vec3 p, float s) {
   return length(p)-s;
 }
 
+float sdBox( vec3 p, vec3 b )
+{
+  vec3 d = abs(p) - b;
+  return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+}
+
 /*
 float udBox( vec3 p, vec3 b ) {
   return length(max(abs(p)-b,.0));
@@ -52,7 +58,7 @@ float sdBloodCell(vec3 p) {
 */
 
 
-float sdBloodCell2(vec3 p) {
+float sdBloodCell(vec3 p) {
   float d1 = length(vec2(length(p.xz)-.3,p.y)) - .1;
   vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(.3,.06);
   float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
@@ -157,14 +163,12 @@ float opBlend_1( float d1, float d2 ) {
     return smin( d1, d2, 32. );
 }
 
-/*
 vec2 opBlend( vec2 d1, vec2 d2, float k ) {
     return vec2(
       smin( d1.x, d2.x, k ),
       smin( d1.y, d2.y, k )
     );
 }
-*/
 
 // t = time to start transition
 // tt = transition length
@@ -192,21 +196,26 @@ vec3 opRep(vec3 p, vec3 c) {
   return mod(p,c)-.5*c;
 }
 
+// Repeat in three dimensions
+vec3 pMod3(inout vec3 p, vec3 size) {
+	vec3 c = floor((p + size*0.5)/size);
+	p = mod(p + size*0.5, size) - size*0.5;
+	return c;
+}
+
 // Rotate around a coordinate axis (i.e. in a plane perpendicular to that axis) by angle <a>.
 // Read like this: R(p.xz, a) rotates "x towards z".
 // This is fast if <a> is a compile-time constant and slower (but still practical) if not.
-vec2 pR(vec2 p, float a) {
-	return cos(a)*p + sin(a)*vec2(p.y, -p.x);
+void pR(inout vec2 p, float a) {
+	p = cos(a)*p + sin(a)*vec2(p.y, -p.x);
 }
 
-/*
 vec3 opTwist(vec3 p) {
   float  c = cos(p.y);
   float  s = sin(p.y);
   mat2   m = mat2(c,-s,s,c);
   return vec3(m*p.xz,p.y);
 }
-*/
 
 float fCapsule(vec3 p, float r, float c) {
 	return mix(length(p.xz) - r, length(vec3(p.x, abs(p.y) - c, p.z)) - r, step(c, abs(p.y)));
@@ -217,16 +226,10 @@ float sdTunnelThing(vec3 p) {
 }
 
 
-vec2 sphere(vec3 p) {
-  float s = sdSphere(vec3(0.),2.);
-  float hue = 100.;
-  return vec2(s, hue);
-}
-
-float sdBloodVein(vec3 p) {
+float sdTorus(vec3 p) {
   // the first constant sets size of torus
   // second sets size of middle
-  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
+  return -(length(vec2(length(p.xz)-14.,p.y)) - 3. * (1. - c * .1));
 }
 
 vec2 heart(vec3 p) {
@@ -245,20 +248,89 @@ vec2 heart(vec3 p) {
   );
 }
 
+float pModPolar(inout vec2 p, float repetitions) {
+	float angle = 2.*PI/repetitions;
+	float a = atan(p.y, p.x) + angle/2.;
+	float r = length(p);
+	float c = floor(a/angle);
+	a = mod(a,angle) - angle/2.;
+	p = vec2(cos(a), sin(a))*r;
+	// For an odd number of repetitions, fix cell index of the cell in -x direction
+	// (cell index would be e.g. -5 and 5 in the two halves of the cell):
+	if (abs(c) >= (repetitions/2.)) c = abs(c);
+	return c;
+}
+
 vec2 bloodCellField(vec3 p) {
+  //return vec2(sdBloodCell(p), 54.);
+
+  // failed attempts
   //float plasmaBlood = calcPlasma(p.x, p.y, p.z, a / 10.);
   //vec2(sdSphere(p-offs, .5 - 0.01 * sin(20.0* p.x + 15.0*p.y + a * 3.0)), 80.0)
+
+  p += vec3(.0, .0, e + a);
+
+  vec2 res = vec2(sdBloodCell(opRep(p, vec3(3.))), 54.);
+
+  pR(p.xy, 1.);
+  p += vec3(.0, .0, a * .1);
+  res = opU(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.));
+
+  pR(p.yz, 1.);
+  p += vec3(.0, .0, a * .1);
+  res = opU(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.));
+/*
+  // manual repeat, slow AF
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      vec3 thisPos = repeated + vec3(x, y, x + int(mod(float(y * 4), 5.)));
+      pR(thisPos.xy, float(x + y));
+
+      res = opU(
+        res,
+        vec2(sdBloodCell(thisPos), 54.)
+      );
+    }
+  }
+  */
+  // TODO start value??
+  /*
+  vec2 res = vec2(0.2, 54.);
+
+  // manual repeat, slow AF
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      vec3 thisPos = repeated + vec3(x, y, x + int(mod(float(y * 4), 5.)));
+      pR(thisPos.xy, float(x + y));
+
+      res = opU(
+        res,
+        vec2(sdBloodCell(thisPos), 54.)
+      );
+    }
+  }
+  */
+
+  return res;
+
+/*
+
+  pR(p.xy, p.x * 0.1);
 
   vec3 repeated =
     opRep(
       p + vec3(.0, .0, e + a),
-      vec3(1.5)
+      vec3(1.2)
     );
     // TODO: tweak parameters
 
+  //repeated = opTwist(repeated);
   //repeated.xy = pR(repeated.xy, a);
+  //repeated =
+  //pR(p.xz, a);
 
-  return vec2(sdBloodCell2(repeated), 54.);
+  return vec2(sdBloodCell(repeated), 54.);
+  */
 }
 
 /*
@@ -271,10 +343,10 @@ float sdTunnelThingPlasma(vec3 p) {
 vec2 bloodVein(vec3 pos) {
   return vec2(
     // tunnel shape
-    sdBloodVein(pos + vec3(3.,-1.,1.))
+    sdTorus(pos + vec3(14.,0.,0.))
 
     // blobby surface
-    + 0.05 * sin(3.0 * pos.z),
+    - 0.05 * (1. + sin(3.0 * (pos.z - a))),
 
     // color
     54.0
@@ -291,16 +363,17 @@ vec2 scene0(vec3 pos) {
 }
 
 vec2 scene1(vec3 pos) {
-  return opU(
+  return opBlend(
     bloodVein(pos),
-    bloodCellField(pos)
+    bloodCellField(pos),
+    9.
   );
 }
 /*
 vec2 scene1(vec3 pos) {
   // Blood vein thing
 
-  return vec2(sdBloodVein2(
+  return vec2(sdTorus(
     pos,
     // TODO: tweak parameters
     vec3(2.0, 3.2, 2.0)
@@ -319,7 +392,7 @@ vec2 scene2(vec3 pos) {
   float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, a / 10.);
   //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
 
-  return vec2(sdBloodCell2(
+  return vec2(sdBloodCell(
     opRep(
       pos,
       vec3(1.5)
@@ -353,30 +426,12 @@ vec2 scene14(vec3 pos) {
   // hue 80.0 = water ish
   // hue 240.0 = green ish
     //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
-  return vec2(sdBloodCell2(
+  return vec2(sdBloodCell(
     opRep(
       pos,
       vec3(1.)
     )
   ), 54.0);
-}
-
-
-vec2 scene16(vec3 pos) {
-  vec3 offs = vec3(-.5, -.35 * sin(a) / 5., sin(a) / 4.);
-  vec2 res = vec2(opBlend_1(
-    sdSphere(pos, .5),
-    sdSphere(pos + offs, .5)
-  ), abs(50. + sin(pos.x)*100.));
-
-  res = opU(res,
-    vec2(
-      -sdSphere(pos, 6.),
-      abs(50. + sin(pos.x) * 10.)
-    )
-  );
-
-  return res;
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
@@ -467,7 +522,7 @@ vec2 castRay(in vec3 ro, in vec3 rd) {
 
 
 float softshadow(in vec3 ro, in vec3 rd, in float mint, in float tmax) {
-  float res = 1.;
+  float res = 2.;
   float t = mint;
 
   for( int i=0; i<16; i++ ) {
@@ -545,7 +600,13 @@ vec3 render(in vec3 ro, in vec3 rd) {
     lin += .25*fre*vec3(1.)*occ;
     col = col*lin;
 
-    col = mix( col, vec3(.0), 1.-exp( -.002*t*t*t ) );
+    // fog
+    col = mix( col, vec3(.0), 1.-exp( -.001*t*t*t ) );
+
+    /*
+    float fade = 1. - min(1., (a - 2.)  / 8.);
+    col = mix( col, vec3(.0), fade );
+    */
   }
 
   return vec3( clamp(col,.0,1.) );
@@ -573,7 +634,7 @@ void main() {
     // ta = camera direction (where the camera is looking)
     // cr = camera rotation
     //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
-    vec3 ro = vec3( -.5+2.*sin(1.*a), 1.+.5*cos(a), 2. );
+    vec3 ro = vec3( -.5+2.*sin(.25*a), 1.+.5*cos(.25*a), 2. );
     vec3 ta = vec3( .0 );
     // camera-to-world transformation
     mat3 ca = setCamera( ro, ta, .0 );
