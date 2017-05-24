@@ -45,9 +45,11 @@ float sdBlob2(vec3 p, vec2 t) {
 }
 */
 
-float sdBloodCell(vec3 p, vec3 t) {
-  return pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
+/*
+float sdBloodCell(vec3 p) {
+  return pow(p.x*p.x + p.z*p.z, 2.) -.15 * (p.x*p.x + p.z*p.z) + 1.275 * p.y*p.y -.001;
 }
+*/
 
 
 float sdBloodCell2(vec3 p) {
@@ -214,11 +216,19 @@ float sdTunnelThing(vec3 p) {
   return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
 }
 
+
 vec2 sphere(vec3 p) {
   float s = sdSphere(vec3(0.),2.);
   float hue = 100.;
   return vec2(s, hue);
 }
+
+float sdBloodVein(vec3 p) {
+  // the first constant sets size of torus
+  // second sets size of middle
+  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
+}
+
 vec2 heart(vec3 p) {
   float plasma1 = calcPlasma(p.x, p.y, p.z, a / 10.);
   float hue = sin(plasma1) * 100. + a * 10.;
@@ -236,7 +246,7 @@ vec2 heart(vec3 p) {
 }
 
 vec2 bloodCellField(vec3 p) {
-  float plasmaBlood = calcPlasma(p.x, p.y, p.z, a / 10.);
+  //float plasmaBlood = calcPlasma(p.x, p.y, p.z, a / 10.);
   //vec2(sdSphere(p-offs, .5 - 0.01 * sin(20.0* p.x + 15.0*p.y + a * 3.0)), 80.0)
 
   vec3 repeated =
@@ -246,17 +256,9 @@ vec2 bloodCellField(vec3 p) {
     );
     // TODO: tweak parameters
 
-  repeated.xy = pR(repeated.xy, p.z / 4.0);
+  //repeated.xy = pR(repeated.xy, a);
 
-  return vec2(sdBloodCell(
-    repeated,
-    vec3(-.15, 1.275, -.001)
-  )
-  // blobby surface
-  + .0005 * sin(30. * p.x) * sin(30. * p.y) * sin(30. * p.z) * sin(plasmaBlood),
-
-  // color
-  54.);
+  return vec2(sdBloodCell2(repeated), 54.);
 }
 
 /*
@@ -265,10 +267,18 @@ float sdTunnelThingPlasma(vec3 p) {
 }
 */
 
-float sdBloodVein(vec3 p) {
-  // the first constant sets size of torus
-  // second sets size of middle
-  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
+
+vec2 bloodVein(vec3 pos) {
+  return vec2(
+    // tunnel shape
+    sdBloodVein(pos + vec3(3.,-1.,1.))
+
+    // blobby surface
+    + 0.05 * sin(3.0 * pos.z),
+
+    // color
+    54.0
+  );
 }
 
 
@@ -280,6 +290,12 @@ vec2 scene0(vec3 pos) {
   //);
 }
 
+vec2 scene1(vec3 pos) {
+  return opU(
+    bloodVein(pos),
+    bloodCellField(pos)
+  );
+}
 /*
 vec2 scene1(vec3 pos) {
   // Blood vein thing
@@ -299,22 +315,24 @@ vec2 scene2(vec3 pos) {
   // Blood cell thing
   // hue 80.0 = water ish
   // hue 240.0 = green ish
+  /*
   float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, a / 10.);
   //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
 
-  return vec2(sdBloodCell(
+  return vec2(sdBloodCell2(
     opRep(
       pos,
-      vec3(1.)
-    ),
-    // TODO: tweak parameters
-    vec3(-.15, 1.275, -.001)
+      vec3(1.5)
+    )
   )
   // blobby surface
   + d * .005 * sin(30. * pos.x) * sin(30. * pos.y) * sin(30. * pos.z) * sin(plasmaBlood),
 
   // color
   54.);
+  */
+
+  return bloodCellField(pos);
 }
 
 /*
@@ -450,20 +468,6 @@ vec2 scene12(vec3 pos) {
   );
 }
 */
-vec2 scene13(vec3 pos) {
-  // Yet another tunnel
-  // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
-  return vec2(
-    // tunnel shape
-    sdBloodVein(pos + vec3(3.,-1.,1.)),
-
-    // blobby surface
-    // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
-
-    // color
-    10.0 * a
-  );
-}
 
 vec2 scene14(vec3 pos) {
   // Blood cell thing v2
@@ -481,12 +485,11 @@ vec2 scene14(vec3 pos) {
 
 vec2 scene15(vec3 pos) {
   // wtf ceiling and floor is this
-  return vec2(sdBloodCell(
+  return vec2(sdBloodCell2(
     opRep(
       pos,
       vec3(sin(a / 5.) * .4, 1., sin(a / 5.) * .4)
-    ),
-    vec3(-.15, 1.275, -.001)
+    )
   ), 84.);
 }
 
@@ -517,13 +520,13 @@ vec2 map(in vec3 pos, in vec3 origin) {
   float end3 = 70.;
 
   // Uncomment when debugging single scene
-  return scene13(pos);
+  return scene1(pos);
 
   /* ---------- SCENES --------- */
 
   // first scene
   if (a < end0 + transitionTime) {
-    res = scene13(pos);
+    res = scene0(pos);
   }
 
   // start rendering after previous scene,
@@ -673,7 +676,7 @@ vec3 render(in vec3 ro, in vec3 rd) {
     lin += .25*fre*vec3(1.)*occ;
     col = col*lin;
 
-    col = mix( col, vec3(.8,.9,1.), 1.-exp( -.0002*t*t*t ) );
+    col = mix( col, vec3(.0), 1.-exp( -.002*t*t*t ) );
   }
 
   return vec3( clamp(col,.0,1.) );
@@ -712,7 +715,7 @@ void main() {
     vec3 col = render( ro, rd );
 
   	// gamma
-    col = pow( col, vec3(.5) );
+    col = pow( col, vec3(.7) );
 
     tot += col;
   }
