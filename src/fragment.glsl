@@ -267,7 +267,9 @@ float sdBloodVein(vec3 p) {
 }
 
 float sdBloodVein2(vec3 p) {
-  return abs(length(vec2(length(p.xz)-3.,p.y)) - .3);
+  // the first constant sets size of torus
+  // second sets size of middle
+  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
 }
 
 
@@ -454,7 +456,7 @@ vec2 scene13(vec3 pos) {
   // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   return vec2(
     // tunnel shape
-    sdBloodVein2(pos + vec3(-2.,-1.,2.)),
+    sdBloodVein2(pos + vec3(3.,-1.,1.)),
 
     // blobby surface
     // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
