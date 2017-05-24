@@ -335,7 +335,7 @@ vec2 scene2(vec3 pos) {
   return bloodCellField(pos);
 }
 
-/*
+
 vec2 scene3(vec3 pos) {
   // virus
   vec3 offs = vec3(sin(a) / 4.,.75,.0);
@@ -347,127 +347,6 @@ vec2 scene3(vec3 pos) {
     .0
   );
 }
-
-vec2 scene4(vec3 pos) {
-  // Sphere
-  return vec2(sdSphere(
-    pos,
-  .5), 1.);
-}
-
-vec2 scene5(vec3 pos) {
-  // Plasma sphere with repetition
-  float plasma2 = calcPlasma(pos.x, pos.y, pos.z, a / 10.);
-  float hue = sin(plasma2) * 100. + a * 10.;
-  return vec2(sdPlasmaSphere(opRep(
-    pos,
-    vec3(1.5, 1.0, 1.0)
-  ), .5, a), hue);
-}
-
-vec2 scene6(vec3 pos) {
-  // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
-  // works best with tmin = 0.2?
-  float plasma3 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
-  float hue = sin(plasma3) * 100.0 + a * 10.0;
-  vec2 res = vec2(
-    sdTunnelThingPlasma(pos),
-    hue / 3.0
-  );
-  return opU(res,
-    vec2(sdPlasma(pos, a), hue)
-  );
-}
-
-vec2 scene7(vec3 pos) {
-  // Plasma sphere
-  float plasma4 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
-  float hue = sin(plasma4) * 100.0 + a * 10.0;
-  vec3 offs = vec3(0.0,0.75,0.0);
-  return vec2(sdPlasmaSphere(
-    pos-offs,
-  0.25, a), hue);
-}
-
-vec2 scene8(vec3 pos) {
-  // stars with pattern
-  return vec2(5.0 *
-    opS_1(
-      sdSphere(
-        pos, 5.0
-      )
-      + 5.0 * sin(20.0 * pos.x) * sin(20.0 * pos.y) * sin(20.0 * pos.z),
-      // bounding sphere
-      sdSphere(
-        pos, 9.0
-      )
-    ),
-    0.0
-  );
-}
-
-vec2 scene9(vec3 pos) {
-  // ????? bounding sphere
-  return vec2(5.5 *
-    opS_1(
-      sdSphere(
-        pos, 5.0
-      )
-      + 5.0 * sin(20.0 * pos.x) * sin(20.0 * pos.y) * sin(20.0 * pos.z),
-      // bounding sphere
-      sdSphere(
-        pos, 3.0
-      )
-    ),
-    50.0
-  );
-}
-*/
-
-vec2 scene10(vec3 pos) {
-  // Plasma starfield thing
-  // works best with very low tmin
-  float plasma = calcPlasma(pos.x, pos.y, pos.z, a / 2.);
-  float hue = sin(plasma) * 80. + a + mod(f / 4., 360.);
-  return vec2(sdSphere(
-    opRep(
-      pos,
-      vec3(sin(a / 20.) / 4., cos(a / 17.4) / 4., cos(a / 21.24) / 4.) // WTF alternative
-      //vec3(.1)
-    ),
-    //(sin(a / 15.0) + 1.0) * 0.01), hue)
-    (1. + sin(a + 5. * (pos.y + pos.x + pos.z))) * .01), hue // WTF alternative
-  );
-}
-
-/*
-vec2 scene11(vec3 pos) {
-  // Repeated spheres
-  return vec2(sdSphere(
-    opRep(
-      //opTwist(
-        pos
-      //)
-      ,
-      vec3(2.)
-    ),
-    0.1), 0.0
-  );
-}
-
-vec2 scene12(vec3 pos) {
-  return vec2(sdSphere(
-    opRep(
-      //opTwist(
-        pos
-      //)
-      ,
-      vec3(2.)
-    ),
-    0.2), 0.0
-  );
-}
-*/
 
 vec2 scene14(vec3 pos) {
   // Blood cell thing v2
@@ -482,16 +361,6 @@ vec2 scene14(vec3 pos) {
   ), 54.0);
 }
 
-
-vec2 scene15(vec3 pos) {
-  // wtf ceiling and floor is this
-  return vec2(sdBloodCell2(
-    opRep(
-      pos,
-      vec3(sin(a / 5.) * .4, 1., sin(a / 5.) * .4)
-    )
-  ), 84.);
-}
 
 vec2 scene16(vec3 pos) {
   vec3 offs = vec3(-.5, -.35 * sin(a) / 5., sin(a) / 4.);
@@ -545,7 +414,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // stop rendering after transitioning to next scene
   if (a >= end1 && a < end2 + transitionTime) {
     res = opMorph(res,
-      scene10(pos),
+      scene1(pos),
 
       // Timing
       end1,
@@ -555,7 +424,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   if (a >= end2 && a < end3 + transitionTime) {
     res = opMorph(res,
-      scene16(pos),
+      scene14(pos),
 
       // Timing
       end2,
@@ -566,7 +435,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // last scene
   if (a >= end3) {
     res = opMorph(res,
-      scene15(pos),
+      scene1(pos),
 
       // Timing
       end3,
