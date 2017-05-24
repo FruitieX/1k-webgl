@@ -4,12 +4,22 @@ potato = 4;
 c.width = 1920 / potato;
 c.height = 1080 / potato;
 
+// time at previous frame
+oldTime = 0;
+
 // accumulators
 bAcc = 0;
 fAcc = 0;
+bPeak = 0; // bass peak, max(bass, bPeak)
 
 r = t => {
   requestAnimationFrame(r, c);
+
+  d = (t - oldTime) / 16;
+
+  bass = analyserArray[11] / 255;
+  treble = analyserArray[222] / 255;
+  bPeak = Math.max(0.95 * bPeak + 0.05 * bass * d, bass);
 
   // run fft
   analyser.getByteFrequencyData(analyserArray);
@@ -21,15 +31,17 @@ r = t => {
   g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
 
   // set the "c" bass volume variable
-  g.uniform1f(g.getUniformLocation(P, 'c'), analyserArray[11] / 255);
+  g.uniform1f(g.getUniformLocation(P, 'c'), bPeak);
   // set the "d" treble volume variable
-  g.uniform1f(g.getUniformLocation(P, 'd'), analyserArray[222] / 255);
-  // accumulated bass
-  g.uniform1f(g.getUniformLocation(P, 'e'), bAcc += analyserArray[11] / 1024);
+  g.uniform1f(g.getUniformLocation(P, 'd'), treble);
+  // accumulated bass for bass synced blood cell movement
+  g.uniform1f(g.getUniformLocation(P, 'e'), bAcc = 0.9 * bAcc + 0.1 * bPeak * d);
   // frequency of lead synth
-  g.uniform1f(g.getUniformLocation(P, 'f'), fAcc = 0.9 * fAcc + 0.1 * s.tracks[5][0].osc1.frequency.value);
+  g.uniform1f(g.getUniformLocation(P, 'f'), fAcc = 0.9 * fAcc + 0.1 * s.tracks[5][0].osc1.frequency.value * d);
 
   g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
+
+  oldTime = t;
 }
 
 // music
@@ -73,5 +85,5 @@ g.enableVertexAttribArray(0);
 g.vertexAttribPointer(0,2,5120,0,0,0); // g.BYTE = 5120
 
 // start rendering and music playback
-r();
+r(0);
 s.play(song);
