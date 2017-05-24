@@ -16,56 +16,6 @@ uniform float f;
 
 float PI = 3.14;
 
-float smin( float a, float b, float k ) {
-  return -log(exp( -k*a ) + exp( -k*b ))/k;
-}
-
-/*
-float sdPlane(vec3 p) {
-  return p.y;
-}
-*/
-
-float sdSphere(vec3 p, float s) {
-  return length(p)-s;
-}
-
-float sdBox( vec3 p, vec3 b )
-{
-  vec3 d = abs(p) - b;
-  return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
-}
-
-/*
-float udBox( vec3 p, vec3 b ) {
-  return length(max(abs(p)-b,.0));
-}
-*/
-
-/*
-float sdBlob2(vec3 p, vec2 t) {
-  //return sqrt(p.x*p.x*.125 + p.y*p.y + p.z*p.z*.125) - .1;
-  float P = .2;
-  float Q = .1;
-  return -pow(p.x*p.x + p.y*p.y, 2.) + P * (p.x*p.x + p.y*p.y) + Q * p.z*p.z + .1;
-}
-*/
-
-/*
-float sdBloodCell(vec3 p) {
-  return pow(p.x*p.x + p.z*p.z, 2.) -.15 * (p.x*p.x + p.z*p.z) + 1.275 * p.y*p.y -.001;
-}
-*/
-
-
-float sdBloodCell(vec3 p) {
-  float d1 = length(vec2(length(p.xz)-.3,p.y)) - .1;
-  vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(.3,.06);
-  float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
-  return smin(d1,d2,32.);
-}
-
-
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
   float sine1 = sin(x * 10. + t * 2.);
@@ -88,64 +38,9 @@ float calcPlasma(float x, float y, float z, float t) {
   return blend;
 }
 
-/*
-float sdPlasmaSphere(vec3 p, float s, float t) {
-  float plasma = calcPlasma(p.x, p.y, p.z, t / 1.);
-
-  return sdSphere(p, s) + plasma * sin(t / 20.);
+float smin( float a, float b, float k ) {
+  return -log(exp( -k*a ) + exp( -k*b ))/k;
 }
-*/
-
-/*
-float calcPlasma2(float x, float y, float z, float t) {
-  // horizontal sinusoid
-  float sine1 = sin(x * 10. + t * 2.);
-
-  // rotating sinusoid
-  float sine2 = sin(10. * (x * sin(t / 2.) + z * cos(t / 3.)) + t);
-
-  // circular sinusoid
-  float cx = x + .5 * sin(t / 5.);
-  float cy = y + .5 * cos(t / 3.);
-  float sine3 = sin(sqrt(100. * (cx * cx + cy * cy) + 1.) + t);
-
-  float blend = sine1 + sine2 + sine3;
-
-  //blend *= 1. + sin(t / 4.) * 2.;
-  blend *= 3.;
-  blend = sin(blend * PI / 2.) / 2.;
-  //blend /= 1.;
-  //blend = pow(blend, 2.);
-  return blend;
-}
-*/
-
-/*
-float sdPlasma(vec3 p, float t) {
-  float plasma = calcPlasma2(p.x, p.y, p.z, t / 100.);
-  return plasma;
-}
-*/
-
-/*
-float random(vec2 p) {
-  vec2 r = vec2(
-    23.14069263277926, // e^pi (Gelfonds constant)
-    2.665144142690225 // 2^sqrt(2) (GelfondSchneider constant)
-  );
-  return fract( cos( mod( 12345678., 256. * dot(p,r) ) ) );
-}
-
-float sdRandom(vec3 p) {
-  return length(random(vec2(p.x, p.y)));
-}
-
-float sdRandomSphere(vec3 p) {
-  float rand = length(random(vec2(p.x, p.y)));
-
-  return sdSphere(p, rand);
-}
-*/
 
 /*
 float opS_1(float d1, float d2) {
@@ -196,12 +91,14 @@ vec3 opRep(vec3 p, vec3 c) {
   return mod(p,c)-.5*c;
 }
 
-// Repeat in three dimensions
-vec3 pMod3(inout vec3 p, vec3 size) {
-	vec3 c = floor((p + size*0.5)/size);
-	p = mod(p + size*0.5, size) - size*0.5;
-	return c;
+/*
+vec3 opTwist(vec3 p) {
+  float  c = cos(p.y);
+  float  s = sin(p.y);
+  mat2   m = mat2(c,-s,s,c);
+  return vec3(m*p.xz,p.y);
 }
+*/
 
 // Rotate around a coordinate axis (i.e. in a plane perpendicular to that axis) by angle <a>.
 // Read like this: R(p.xz, a) rotates "x towards z".
@@ -210,21 +107,20 @@ void pR(inout vec2 p, float a) {
 	p = cos(a)*p + sin(a)*vec2(p.y, -p.x);
 }
 
-vec3 opTwist(vec3 p) {
-  float  c = cos(p.y);
-  float  s = sin(p.y);
-  mat2   m = mat2(c,-s,s,c);
-  return vec3(m*p.xz,p.y);
-}
-
 float fCapsule(vec3 p, float r, float c) {
 	return mix(length(p.xz) - r, length(vec3(p.x, abs(p.y) - c, p.z)) - r, step(c, abs(p.y)));
 }
 
-float sdTunnelThing(vec3 p) {
-  return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
+float sdSphere(vec3 p, float s) {
+  return length(p)-s;
 }
 
+float sdBloodCell(vec3 p) {
+  float d1 = length(vec2(length(p.xz)-.3,p.y)) - .1;
+  vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(.3,.06);
+  float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
+  return smin(d1,d2,32.);
+}
 
 float sdTorus(vec3 p) {
   // the first constant sets size of torus
@@ -238,7 +134,7 @@ vec2 heart(vec3 p) {
 
   return vec2(
     // tunnel shape
-    sdTunnelThing(p)
+    (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15))
 
     // blobby surface
     + (1. - c) * .05 * sin(10. * p.x) * sin(10. * p.y) * sin(10. * p.z) * sin(plasma1),
@@ -262,12 +158,6 @@ float pModPolar(inout vec2 p, float repetitions) {
 }
 
 vec2 bloodCellField(vec3 p) {
-  //return vec2(sdBloodCell(p), 54.);
-
-  // failed attempts
-  //float plasmaBlood = calcPlasma(p.x, p.y, p.z, a / 10.);
-  //vec2(sdSphere(p-offs, .5 - 0.01 * sin(20.0* p.x + 15.0*p.y + a * 3.0)), 80.0)
-
   p += vec3(.0, .0, e + a);
 
   vec2 res = vec2(sdBloodCell(opRep(p, vec3(3.))), 54.);
@@ -279,66 +169,9 @@ vec2 bloodCellField(vec3 p) {
   pR(p.yz, 1.);
   p += vec3(.0, .0, a * .1);
   res = opU(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.));
-/*
-  // manual repeat, slow AF
-  for (int x = 0; x < 2; x++) {
-    for (int y = 0; y < 2; y++) {
-      vec3 thisPos = repeated + vec3(x, y, x + int(mod(float(y * 4), 5.)));
-      pR(thisPos.xy, float(x + y));
-
-      res = opU(
-        res,
-        vec2(sdBloodCell(thisPos), 54.)
-      );
-    }
-  }
-  */
-  // TODO start value??
-  /*
-  vec2 res = vec2(0.2, 54.);
-
-  // manual repeat, slow AF
-  for (int x = 0; x < 2; x++) {
-    for (int y = 0; y < 2; y++) {
-      vec3 thisPos = repeated + vec3(x, y, x + int(mod(float(y * 4), 5.)));
-      pR(thisPos.xy, float(x + y));
-
-      res = opU(
-        res,
-        vec2(sdBloodCell(thisPos), 54.)
-      );
-    }
-  }
-  */
 
   return res;
-
-/*
-
-  pR(p.xy, p.x * 0.1);
-
-  vec3 repeated =
-    opRep(
-      p + vec3(.0, .0, e + a),
-      vec3(1.2)
-    );
-    // TODO: tweak parameters
-
-  //repeated = opTwist(repeated);
-  //repeated.xy = pR(repeated.xy, a);
-  //repeated =
-  //pR(p.xz, a);
-
-  return vec2(sdBloodCell(repeated), 54.);
-  */
 }
-
-/*
-float sdTunnelThingPlasma(vec3 p) {
-  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (sin(a / 20.) + 2.);
-}
-*/
-
 
 vec2 bloodVein(vec3 pos) {
   return vec2(
@@ -353,36 +186,22 @@ vec2 bloodVein(vec3 pos) {
   );
 }
 
-
 // SCENES
-vec2 scene0(vec3 pos) {
-  return opU(
-    heart(pos),
-    bloodCellField(pos));
-  //);
-}
 
-vec2 scene1(vec3 pos) {
+vec2 scene0(vec3 pos) {
   return opBlend(
     bloodVein(pos),
     bloodCellField(pos),
     9.
   );
 }
-/*
+
 vec2 scene1(vec3 pos) {
-  // Blood vein thing
-
-  return vec2(sdTorus(
-    pos,
-    // TODO: tweak parameters
-    vec3(2.0, 3.2, 2.0)
-  ),
-
-  // color
-  54.0);
+  return opU(
+    heart(pos),
+    bloodCellField(pos)
+  );
 }
-*/
 
 vec2 scene2(vec3 pos) {
   // Blood cell thing
@@ -421,19 +240,6 @@ vec2 scene3(vec3 pos) {
   );
 }
 
-vec2 scene14(vec3 pos) {
-  // Blood cell thing v2
-  // hue 80.0 = water ish
-  // hue 240.0 = green ish
-    //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
-  return vec2(sdBloodCell(
-    opRep(
-      pos,
-      vec3(1.)
-    )
-  ), 54.0);
-}
-
 vec2 map(in vec3 pos, in vec3 origin) {
   vec2 res = vec2(.0);
 
@@ -443,8 +249,9 @@ vec2 map(in vec3 pos, in vec3 origin) {
   float end2 = 50.;
   float end3 = 70.;
 
+  /* ---------- DEBUGGING ---------- */
   // Uncomment when debugging single scene
-  return scene1(pos);
+  //return scene1(pos);
 
   /* ---------- SCENES --------- */
 
@@ -457,7 +264,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // stop rendering after transitioning to next scene
   if (a >= end0 && a < end1 + transitionTime) {
     res = opMorph(res,
-      scene2(pos + vec3(a, .0, sin(a))),
+      scene1(pos + vec3(a, .0, sin(a))),
 
       // Timing
       end0,
@@ -469,7 +276,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // stop rendering after transitioning to next scene
   if (a >= end1 && a < end2 + transitionTime) {
     res = opMorph(res,
-      scene1(pos),
+      scene2(pos),
 
       // Timing
       end1,
@@ -479,7 +286,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   if (a >= end2 && a < end3 + transitionTime) {
     res = opMorph(res,
-      scene14(pos),
+      scene3(pos),
 
       // Timing
       end2,
@@ -490,7 +297,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   // last scene
   if (a >= end3) {
     res = opMorph(res,
-      scene1(pos),
+      scene3(pos),
 
       // Timing
       end3,
