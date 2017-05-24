@@ -262,12 +262,12 @@ float sdTunnelThingPlasma(vec3 p) {
 
 
 float sdBloodVein(vec3 p) {
-  vec3 c = vec3(2.,5.,5.);
-  return abs(length(p.xy-c.xz)-c.y);
+  vec3 c = vec3(2.,3.,5.);
+  return -(length(p.xy-c.xz)-c.y);
 }
 
-float sdBloodVein2(vec3 p, vec3 t) {
-  return -pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
+float sdBloodVein2(vec3 p) {
+  return abs(length(vec2(length(p.xz)-3.,p.y)) - .3);
 }
 
 
@@ -454,13 +454,13 @@ vec2 scene13(vec3 pos) {
   // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   return vec2(
     // tunnel shape
-    sdBloodVein(pos + vec3(2.0,1.5,0.0)),
+    sdBloodVein2(pos + vec3(-2.,-1.,2.)),
 
     // blobby surface
     // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
 
     // color
-    170.0 / 3.0
+    10.0 * a
   );
 }
 
@@ -510,7 +510,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   vec2 res = vec2(.0);
 
   float transitionTime = 10.;
-  float end0 = 11.;
+  float end0 = 20.;
   float end1 = 34.;
   float end2 = 50.;
   float end3 = 70.;
