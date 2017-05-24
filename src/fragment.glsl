@@ -49,18 +49,14 @@ float sdBloodCell(vec3 p, vec3 t) {
   return pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
 }
 
-/*
+
 float sdBloodCell2(vec3 p) {
-  vec2 t = vec2(.2);
-  // vec3 b = vec3(.2,.06,.2);
-  vec2 h = vec2(.3,.06);
-  float d1 = length(vec2(length(p.xz)-t.x*1.5,p.y)) - t.y/2.2;
-  // float d2 = udBox(p,b);
-  vec2 d = abs(vec2(length(p.xz),p.y)) - h;
+  float d1 = length(vec2(length(p.xz)-.3,p.y)) - .1;
+  vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(.3,.06);
   float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
   return smin(d1,d2,32.);
 }
-*/
+
 
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
@@ -264,7 +260,7 @@ float sdTunnelThingPlasma(vec3 p) {
 }
 */
 
-/*
+
 float sdBloodVein(vec3 p) {
   vec3 c = vec3(2.,5.,5.);
   return abs(length(p.xy-c.xz)-c.y);
@@ -273,7 +269,7 @@ float sdBloodVein(vec3 p) {
 float sdBloodVein2(vec3 p, vec3 t) {
   return -pow(p.x*p.x + p.z*p.z, 2.) + t.x * (p.x*p.x + p.z*p.z) + t.y * p.y*p.y + t.z;
 }
-*/
+
 
 // SCENES
 vec2 scene0(vec3 pos) {
@@ -452,7 +448,7 @@ vec2 scene12(vec3 pos) {
     0.2), 0.0
   );
 }
-
+*/
 vec2 scene13(vec3 pos) {
   // Yet another tunnel
   // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
@@ -480,7 +476,7 @@ vec2 scene14(vec3 pos) {
     )
   ), 54.0);
 }
-*/
+
 
 vec2 scene15(vec3 pos) {
   // wtf ceiling and floor is this
@@ -526,7 +522,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // first scene
   if (a < end0 + transitionTime) {
-    res = scene0(pos);
+    res = scene13(pos);
   }
 
   // start rendering after previous scene,
