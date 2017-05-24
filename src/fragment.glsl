@@ -214,6 +214,11 @@ float sdTunnelThing(vec3 p) {
   return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
 }
 
+vec2 sphere(vec3 p) {
+  float s = sdSphere(vec3(0.),2.);
+  float hue = 100.;
+  return vec2(s, hue);
+}
 vec2 heart(vec3 p) {
   float plasma1 = calcPlasma(p.x, p.y, p.z, a / 10.);
   float hue = sin(plasma1) * 100. + a * 10.;
@@ -260,13 +265,7 @@ float sdTunnelThingPlasma(vec3 p) {
 }
 */
 
-
 float sdBloodVein(vec3 p) {
-  vec3 c = vec3(2.,3.,5.);
-  return -(length(p.xy-c.xz)-c.y);
-}
-
-float sdBloodVein2(vec3 p) {
   // the first constant sets size of torus
   // second sets size of middle
   return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
@@ -277,8 +276,8 @@ float sdBloodVein2(vec3 p) {
 vec2 scene0(vec3 pos) {
   return opU(
     heart(pos),
-    bloodCellField(pos)
-  );
+    bloodCellField(pos));
+  //);
 }
 
 /*
@@ -456,7 +455,7 @@ vec2 scene13(vec3 pos) {
   // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
   return vec2(
     // tunnel shape
-    sdBloodVein2(pos + vec3(3.,-1.,1.)),
+    sdBloodVein(pos + vec3(3.,-1.,1.)),
 
     // blobby surface
     // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
@@ -518,7 +517,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
   float end3 = 70.;
 
   // Uncomment when debugging single scene
-  //return scene16(pos);
+  return scene13(pos);
 
   /* ---------- SCENES --------- */
 
@@ -702,7 +701,7 @@ void main() {
     // ta = camera direction (where the camera is looking)
     // cr = camera rotation
     //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
-    vec3 ro = vec3( -.5+.2*cos(.1*a), 1., .0 + 2.*sin(.1*a) );
+    vec3 ro = vec3( -.5+2.*sin(1.*a), 1.+.5*cos(a), 2. );
     vec3 ta = vec3( .0 );
     // camera-to-world transformation
     mat3 ca = setCamera( ro, ta, .0 );
