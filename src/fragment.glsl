@@ -214,6 +214,18 @@ float sdTunnelThing(vec3 p) {
   return (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15));
 }
 
+float sdBloodVein(vec3 p) {
+  vec3 c = vec3(2.,3.,5.);
+  return -(length(p.xy-c.xz)-c.y);
+}
+
+float sdBloodVein2(vec3 p) {
+  // the first constant sets size of torus
+  // second sets size of middle
+  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
+}
+
+
 vec2 heart(vec3 p) {
   float plasma1 = calcPlasma(p.x, p.y, p.z, a / 10.);
   float hue = sin(plasma1) * 100. + a * 10.;
@@ -260,16 +272,17 @@ float sdTunnelThingPlasma(vec3 p) {
 }
 */
 
+vec2 bloodVein(vec3 pos) {
+  return vec2(
+    // tunnel shape
+    sdBloodVein2(pos + vec3(3.,-1.,1.)),
 
-float sdBloodVein(vec3 p) {
-  vec3 c = vec3(2.,3.,5.);
-  return -(length(p.xy-c.xz)-c.y);
-}
+    // blobby surface
+    // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
 
-float sdBloodVein2(vec3 p) {
-  // the first constant sets size of torus
-  // second sets size of middle
-  return -(length(vec2(length(p.xz)-4.,p.y)) - 1.5);
+    // color
+    10.0 * a
+  );
 }
 
 
@@ -281,6 +294,9 @@ vec2 scene0(vec3 pos) {
   );
 }
 
+vec2 scene1(vec3 pos) {
+  return bloodVein(pos);
+}
 /*
 vec2 scene1(vec3 pos) {
   // Blood vein thing
@@ -451,20 +467,6 @@ vec2 scene12(vec3 pos) {
   );
 }
 */
-vec2 scene13(vec3 pos) {
-  // Yet another tunnel
-  // float plasma1 = calcPlasma(pos.x, pos.y, pos.z, a / 10.0);
-  return vec2(
-    // tunnel shape
-    sdBloodVein2(pos + vec3(3.,-1.,1.)),
-
-    // blobby surface
-    // + 0.05 * sin(10.0 * pos.x) * sin(10.0 * pos.y) * sin(10.0 * pos.z),
-
-    // color
-    10.0 * a
-  );
-}
 
 vec2 scene14(vec3 pos) {
   // Blood cell thing v2
@@ -518,13 +520,13 @@ vec2 map(in vec3 pos, in vec3 origin) {
   float end3 = 70.;
 
   // Uncomment when debugging single scene
-  //return scene16(pos);
+  return scene1(pos);
 
   /* ---------- SCENES --------- */
 
   // first scene
   if (a < end0 + transitionTime) {
-    res = scene13(pos);
+    res = scene0(pos);
   }
 
   // start rendering after previous scene,
