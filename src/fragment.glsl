@@ -61,7 +61,7 @@ float opBlend_1( float d1, float d2 ) {
 vec2 opBlend( vec2 d1, vec2 d2, float k ) {
     return vec2(
       smin( d1.x, d2.x, k ),
-      smin( d1.y, d2.y, k )
+      d1.y // TODO: blend colors as well?
     );
 }
 
@@ -164,11 +164,11 @@ vec2 bloodCellField(vec3 p) {
 
   pR(p.xy, 1.);
   p += vec3(.0, .0, a * .1);
-  res = opU(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.));
+  res = opBlend(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.), 9.);
 
   pR(p.yz, 1.);
   p += vec3(.0, .0, a * .1);
-  res = opU(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.));
+  res = opBlend(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.), 9.);
 
   return res;
 }
@@ -251,7 +251,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   /* ---------- DEBUGGING ---------- */
   // Uncomment when debugging single scene
-  //return scene1(pos);
+  // return scene0(pos);
 
   /* ---------- SCENES --------- */
 
