@@ -17,12 +17,16 @@ r = t => {
 
   d = (t - oldTime) / 16;
 
-  bass = analyserArray[11] / 255;
-  treble = analyserArray[222] / 255;
+  //bass = analyserArray[11] / 255;
+  bass = s.tracks[0][0].osc1env.gain.value;
+  // treble = analyserArray[222] / 255;
+  // treble = s.tracks[0][0].osc1env.gain.value;
+  treble = 0; // TODO
+
   bPeak = Math.max(0.95 * bPeak + 0.05 * bass * d, bass);
 
   // run fft
-  analyser.getByteFrequencyData(analyserArray);
+  // analyser.getByteFrequencyData(analyserArray);
 
   // set the "a" time variable
   g.uniform1f(g.getUniformLocation(P, 'a'), soundbox.audioCtx.currentTime);
@@ -47,14 +51,14 @@ r = t => {
 // music
 s = new soundbox.MusicGenerator();
 s.connect(soundbox.audioCtx.destination);
-analyser = soundbox.audioCtx.createAnalyser();
-analyserArray = new Uint8Array(analyser.frequencyBinCount);
+// analyser = soundbox.audioCtx.createAnalyser();
+// analyserArray = new Uint8Array(analyser.frequencyBinCount);
 
 // connect kick drum track, first column to analyser
-s.tracks[0][0].out.connect(analyser);
+// s.tracks[0][0].out.connect(analyser);
 
 // connect hihat drum track, first column to analyser
-s.tracks[2][0].out.connect(analyser);
+// s.tracks[2][0].out.connect(analyser);
 
 // onload
 g = c.getContext('webgl');
