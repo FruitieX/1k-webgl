@@ -5,17 +5,6 @@ uniform float a;
 // resolution (1920.0, 1080.0)
 uniform vec2 b;
 
-// bass
-uniform float c;
-// treble
-uniform float d;
-// accumulated bass
-uniform float e;
-// frequency of lead synth
-uniform float f;
-
-float PI = 3.14;
-
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
   float sine1 = sin(x * 10. + t * 2.);
@@ -31,38 +20,12 @@ float calcPlasma(float x, float y, float z, float t) {
   float blend = sine1 + sine2 + sine3;
 
   //blend *= 1.0 + sin(t / 4.0) * 2.0;
-  //blend *= 3.0;
-  blend = sin(blend * PI / 2.) / 2. + .5;
+  blend *= 3.0;
+  //blend = sin(blend * 3.14 / 2.) / 2. + .5;
+  blend = sin(blend * 3.14 / 2.0) / 2.0;
   //blend = pow(blend, 2.0);
 
   return blend;
-}
-
-float smin( float a, float b, float k ) {
-  return -log(exp( -k*a ) + exp( -k*b ))/k;
-}
-
-/*
-float opS_1(float d1, float d2) {
-  return max(-d2,d1);
-}
-*/
-
-// TODO: test me
-vec2 opS(vec2 d1, vec2 d2) {
-  return (d1.x<-d2.x) ? d2 : d1;
-}
-
-// TODO: remove all _1 functions (take in float instead of vec2)
-float opBlend_1( float d1, float d2 ) {
-    return smin( d1, d2, 32. );
-}
-
-vec2 opBlend( vec2 d1, vec2 d2, float k ) {
-    return vec2(
-      smin( d1.x, d2.x, k ),
-      d1.y // TODO: blend colors as well?
-    );
 }
 
 // t = time to start transition
@@ -87,157 +50,64 @@ vec2 opU(vec2 d1, vec2 d2) {
   return (d1.x<d2.x) ? d1 : d2;
 }
 
-vec3 opRep(vec3 p, vec3 c) {
-  return mod(p,c)-.5*c;
-}
-
-/*
-vec3 opTwist(vec3 p) {
-  float  c = cos(p.y);
-  float  s = sin(p.y);
-  mat2   m = mat2(c,-s,s,c);
-  return vec3(m*p.xz,p.y);
-}
-*/
-
-// Rotate around a coordinate axis (i.e. in a plane perpendicular to that axis) by angle <a>.
-// Read like this: R(p.xz, a) rotates "x towards z".
-// This is fast if <a> is a compile-time constant and slower (but still practical) if not.
-void pR(inout vec2 p, float a) {
-	p = cos(a)*p + sin(a)*vec2(p.y, -p.x);
-}
-
-float fCapsule(vec3 p, float r, float c) {
-	return mix(length(p.xz) - r, length(vec3(p.x, abs(p.y) - c, p.z)) - r, step(c, abs(p.y)));
+float sdPlane(vec3 p) {
+  return p.y;
 }
 
 float sdSphere(vec3 p, float s) {
   return length(p)-s;
 }
 
-float sdBloodCell(vec3 p) {
-  float d1 = length(vec2(length(p.xz)-.3,p.y)) - .1;
-  vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(.3,.06);
-  float d2 = min(max(d.x,d.y),.0) + length(max(d,.0));
-  return smin(d1,d2,32.);
+float sdPlasmaSphere(vec3 p, float s) {
+  float plasma = calcPlasma(p.x, p.y, p.z, a);
+
+  return sdSphere(p, s) + plasma * sin(a / 100.0);
 }
 
-float sdTorus(vec3 p) {
-  // the first constant sets size of torus
-  // second sets size of middle
-  return -(length(vec2(length(p.xz)-14.,p.y)) - 3. * (1. - c * .1));
+vec2 plasmaSphere(vec3 p) {
+  float plasma4 = calcPlasma(p.x, p.y, p.z, a);
+  plasma4 += 1.;
+  float hue = sin(plasma4) * 100.0 + a;
+  return vec2(sdPlasmaSphere(p, 0.5), hue);
 }
 
-vec2 heart(vec3 p) {
-  float plasma1 = calcPlasma(p.x, p.y, p.z, a / 10.);
-  float hue = sin(plasma1) * 100. + a * 10.;
+vec2 plane(vec3 p) {
+  return vec2(sdPlane(p), 0.);
+}
 
-  return vec2(
-    // tunnel shape
-    (1. - c * .25) * (cos(p.x) + sin(p.y) + sin(p.z)) / 20. * (2. * (sin(a / 20.) + 1.15))
+float sdPlasma(vec3 p) {
+  float plasma = calcPlasma(p.x, p.y, p.z, a / 10.0);
+  return plasma;
+}
 
-    // blobby surface
-    + (1. - c) * .05 * sin(10. * p.x) * sin(10. * p.y) * sin(10. * p.z) * sin(plasma1),
+float sdTunnelThingPlasma(vec3 p) {
+  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(a / 10.0) + 2.0);
+}
 
-    // color
-    hue / 3.
+vec2 fullScreenPlasma(vec3 p) {
+  // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
+  // works best with tmin = 0.2?
+  float plasma3 = calcPlasma(p.x, p.y, p.z, a);
+  float hue = sin(plasma3) * 100.0 + a * 100.0;
+  vec2 res = vec2(
+    sdTunnelThingPlasma(p),
+    hue / 3.0
   );
-}
-
-float pModPolar(inout vec2 p, float repetitions) {
-	float angle = 2.*PI/repetitions;
-	float a = atan(p.y, p.x) + angle/2.;
-	float r = length(p);
-	float c = floor(a/angle);
-	a = mod(a,angle) - angle/2.;
-	p = vec2(cos(a), sin(a))*r;
-	// For an odd number of repetitions, fix cell index of the cell in -x direction
-	// (cell index would be e.g. -5 and 5 in the two halves of the cell):
-	if (abs(c) >= (repetitions/2.)) c = abs(c);
-	return c;
-}
-
-vec2 bloodCellField(vec3 p) {
-  p += vec3(.0, .0, e + a);
-
-  vec2 res = vec2(sdBloodCell(opRep(p, vec3(3.))), 54.);
-
-  pR(p.xy, 1.);
-  p += vec3(.0, .0, a * .1);
-  res = opBlend(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.), 9.);
-
-  pR(p.yz, 1.);
-  p += vec3(.0, .0, a * .1);
-  res = opBlend(res, vec2(sdBloodCell(opRep(p, vec3(3.))), 54.), 9.);
-
-  return res;
-}
-
-vec2 bloodVein(vec3 pos) {
-  return vec2(
-    // tunnel shape
-    sdTorus(pos + vec3(14.,0.,0.))
-
-    // blobby surface
-    - 0.05 * (1. + sin(3.0 * (pos.z - a))),
-
-    // color
-    54.0
+  return opU(res,
+    vec2(sdPlasma(p), hue)
   );
 }
 
 // SCENES
-
 vec2 scene0(vec3 pos) {
-  return opBlend(
-    bloodVein(pos),
-    bloodCellField(pos),
-    9.
+  return opU(
+    plasmaSphere(pos),
+    plane(pos + vec3(.5))
   );
 }
 
 vec2 scene1(vec3 pos) {
-  return opU(
-    heart(pos),
-    bloodCellField(pos)
-  );
-}
-
-vec2 scene2(vec3 pos) {
-  // Blood cell thing
-  // hue 80.0 = water ish
-  // hue 240.0 = green ish
-  /*
-  float plasmaBlood = calcPlasma(pos.x, pos.y, pos.z, a / 10.);
-  //vec2(sdSphere(pos-offs, .5 - 0.01 * sin(20.0* pos.x + 15.0*pos.y + a * 3.0)), 80.0)
-
-  return vec2(sdBloodCell(
-    opRep(
-      pos,
-      vec3(1.5)
-    )
-  )
-  // blobby surface
-  + d * .005 * sin(30. * pos.x) * sin(30. * pos.y) * sin(30. * pos.z) * sin(plasmaBlood),
-
-  // color
-  54.);
-  */
-
-  return bloodCellField(pos);
-}
-
-
-vec2 scene3(vec3 pos) {
-  // virus
-  vec3 offs = vec3(sin(a) / 4.,.75,.0);
-  return vec2(.5 *
-    sdSphere(
-      pos - offs, .5
-    )
-    + .01 * sin(100. * pos.x) * sin(100. * pos.y) * sin(100. * pos.z),
-    .0
-  );
+  return fullScreenPlasma(pos);
 }
 
 vec2 map(in vec3 pos, in vec3 origin) {
@@ -251,7 +121,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   /* ---------- DEBUGGING ---------- */
   // Uncomment when debugging single scene
-  // return scene0(pos);
+  return scene0(pos);
 
   /* ---------- SCENES --------- */
 
@@ -262,6 +132,7 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
   // start rendering after previous scene,
   // stop rendering after transitioning to next scene
+  /*
   if (a >= end0 && a < end1 + transitionTime) {
     res = opMorph(res,
       scene1(pos + vec3(a, .0, sin(a))),
@@ -271,36 +142,15 @@ vec2 map(in vec3 pos, in vec3 origin) {
       transitionTime
     );
   }
+  */
 
-  // start rendering after previous scene,
-  // stop rendering after transitioning to next scene
-  if (a >= end1 && a < end2 + transitionTime) {
+  // last scene
+  if (a >= end0) {
     res = opMorph(res,
-      scene2(pos),
+      scene1(pos),
 
       // Timing
       end1,
-      transitionTime
-    );
-  }
-
-  if (a >= end2 && a < end3 + transitionTime) {
-    res = opMorph(res,
-      scene3(pos),
-
-      // Timing
-      end2,
-      transitionTime
-    );
-  }
-
-  // last scene
-  if (a >= end3) {
-    res = opMorph(res,
-      scene3(pos),
-
-      // Timing
-      end3,
       transitionTime
     );
   }
@@ -310,8 +160,8 @@ vec2 map(in vec3 pos, in vec3 origin) {
 
 vec2 castRay(in vec3 ro, in vec3 rd) {
   const int maxIterations = 64;
-  float tmin = .02;
-  float tmax = 50.;
+  float tmin = .2;
+  float tmax = 30.;
 
   float t = tmin;
   float m = -1.;
@@ -366,7 +216,7 @@ float calcAO(in vec3 pos, in vec3 nor) {
 }
 
 vec3 render(in vec3 ro, in vec3 rd) {
-  vec3 col = vec3(.0);
+  vec3 col = vec3(0.);
   //vec3 col = vec3(.05, .05, .05) +rd.y*.1;
   vec2 res = castRay(ro,rd);
   float t = res.x;
@@ -419,9 +269,9 @@ vec3 render(in vec3 ro, in vec3 rd) {
   return vec3( clamp(col,.0,1.) );
 }
 
-mat3 setCamera(in vec3 ro, in vec3 ta, float cr) {
-	vec3 cw = normalize(ta-ro);
-	vec3 cp = vec3(sin(cr), cos(cr),.0);
+mat3 setCamera(in vec3 ro) {
+	vec3 cw = normalize(-ro);
+	vec3 cp = vec3(.0, 1., .0);
 	vec3 cu = normalize( cross(cw,cp) );
 	vec3 cv = normalize( cross(cu,cw) );
 
@@ -441,10 +291,9 @@ void main() {
     // ta = camera direction (where the camera is looking)
     // cr = camera rotation
     //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
-    vec3 ro = vec3( -.5+2.*sin(.25*a), 1.+.5*cos(.25*a), 2. );
-    vec3 ta = vec3( .0 );
+    vec3 ro = vec3( cos(a), 1., sin(a) );
     // camera-to-world transformation
-    mat3 ca = setCamera( ro, ta, .0 );
+    mat3 ca = setCamera(ro);
     // ray direction
     vec3 rd = ca * normalize( vec3(p.xy,2.) );
 
