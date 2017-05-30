@@ -14,13 +14,13 @@ vec2 map(vec3 p) {
     // rotating sinusoid
     sin(10. * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
     // circular sinusoid
-    sin(sqrt(100. * (
+    sin(sqrt(10. * (
       // cx
-      pow(p.x + .5 * sin(a / 5.), 2.) +
+      pow(p.x + .5 * sin(a / 2.), 2.) +
       // cy
       pow(p.y + .5 * cos(a / 3.), 2.)
     ) + 1.) + a)
-  ) * .5;
+  ) / 2.;
 
   return opU(
     // plasma sphere
