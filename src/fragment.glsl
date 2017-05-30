@@ -195,20 +195,8 @@ vec2 map(vec3 p) {
   // return res;
 }
 
-vec2 castRay(vec3 ro, vec3 rd) {
-  float tmin = .2;
-  float m = -1.;
-  for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
-    float precis = .000001*tmin;
-    vec2 res = map( ro+rd*tmin );
-    if( res.x<precis || tmin>30. ) break; // 30. = tmax
-    tmin += res.x;
-    m = res.y;
-  }
-
-  if( tmin>30. ) m=-1.; // 30. = tmax
-  return vec2( tmin, m );
-}
+// vec2 castRay(vec3 ro, vec3 rd) {
+// }
 
 
 // float softshadow(vec3 ro, vec3 rd, float mint, float tmax) {
@@ -322,7 +310,22 @@ void main() {
 
     // render
     //vec3 col = render( ro, rd );
-    vec2 res = castRay(ro,rd);
+
+    // castRay(ro, rd)
+    float tmin = .2;
+    float mat = -1.;
+    for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
+      float precis = .000001*tmin;
+      vec2 rayRes = map( ro+rd*tmin );
+      if( rayRes.x<precis || tmin>30. ) break; // 30. = tmax
+      tmin += rayRes.x;
+      mat = rayRes.y;
+    }
+
+    if( tmin>30. ) mat=-1.; // 30. = tmax
+    vec2 res = vec2( tmin, mat );
+    // end
+
     vec3 nor = calcNormal(ro + res.x*rd);
     vec3 ref = reflect( rd, nor );
     tot += 1. + sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
