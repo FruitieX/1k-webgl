@@ -249,52 +249,47 @@ vec3 calcNormal(vec3 pos) {
 // }
 
 vec3 render(vec3 ro, vec3 rd) {
-  vec3 col = vec3(0.);
   //vec3 col = vec3(.05, .05, .05) +rd.y*.1;
   vec2 res = castRay(ro,rd);
   float t = res.x;
   float m = res.y;
-  if( m>-.5 ) {
-    vec3 pos = ro + t*rd;
-    vec3 nor = calcNormal( pos );
-    vec3 ref = reflect( rd, nor );
+  vec3 pos = ro + t*rd;
+  vec3 nor = calcNormal( pos );
+  vec3 ref = reflect( rd, nor );
 
-    // material
-    col = .45 + .45*sin( vec3(.05,.08,.10)*m );
-    /*
-    if( m<1.5 ) {
-      float f = mod( floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
-      col = .3 + .1*f*vec3(1.0);
-    }
-    */
-
-    // lighitng. Seems Lighit
-    //float occ = calcAO( pos, nor );
-    //float amb = clamp( .5+.5*nor.y, .0, 1. );
-    //float bac = clamp( dot( nor, normalize(vec3(-lig.x,.0,-lig.z))), .0, 1. )*clamp( 1.-pos.y,.0,1.);
-    //float fre = pow( clamp(1.+dot(nor,rd),.0,1.), 2. );
-    //float spe = pow(clamp( dot( ref, lig ), .0, 1. ),16.);
-
-    //dif *= softshadow( pos, lig, .02, 2.5 );
-    //dom *= softshadow( pos, ref, .02, 2.5 );
-
-    //lin += 2.*spe*vec3(1.,.9,.7)*dif;
-    //lin += .4*amb*vec3(.4,.6,1.);
-    //lin += .5*bac*vec3(.25,.25,.25);
-    //lin += .25*fre*vec3(1.);
-    col *= dot( nor, normalize( vec3(1.) ))*vec3(1.)+ref.y*vec3(1.);
-
-    // fog
-    //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
-
-    /*
-    float fade = 1. - min(1., (a - 2.)  / 8.);
-    col = mix( col, vec3(.0), fade );
-    */
+  // material
+  /*
+  if( m<1.5 ) {
+    float f = mod( floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
+    col = .3 + .1*f*vec3(1.0);
   }
+  */
+
+  // lighitng. Seems Lighit
+  //float occ = calcAO( pos, nor );
+  //float amb = clamp( .5+.5*nor.y, .0, 1. );
+  //float bac = clamp( dot( nor, normalize(vec3(-lig.x,.0,-lig.z))), .0, 1. )*clamp( 1.-pos.y,.0,1.);
+  //float fre = pow( clamp(1.+dot(nor,rd),.0,1.), 2. );
+  //float spe = pow(clamp( dot( ref, lig ), .0, 1. ),16.);
+
+  //dif *= softshadow( pos, lig, .02, 2.5 );
+  //dom *= softshadow( pos, ref, .02, 2.5 );
+
+  //lin += 2.*spe*vec3(1.,.9,.7)*dif;
+  //lin += .4*amb*vec3(.4,.6,1.);
+  //lin += .5*bac*vec3(.25,.25,.25);
+  //lin += .25*fre*vec3(1.);
+  return .1 + .5*sin( vec3(.05,.08,.1)*m ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
+
+  // fog
+  //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
+
+  /*
+  float fade = 1. - min(1., (a - 2.)  / 8.);
+  col = mix( col, vec3(.0), fade );
+  */
 
   //return vec3( clamp(col,.0,1.) );
-  return vec3(col);
 }
 
 void main() {
