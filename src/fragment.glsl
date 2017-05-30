@@ -26,7 +26,7 @@ vec2 map(vec3 p) {
     // plasma sphere
 
     // return vec2(sdPlasmaSphere(p, 0.5), hue);
-    vec2(length(p)-.5 + plasma * sin(a / 100.0), sin(plasma) * 100. + a),
+    vec2(length(p)-.5 + plasma * sin(a / 10.0), 100. * sin(plasma) + a),
     // plane
     vec2(p.y + 1., 0.)
   );
