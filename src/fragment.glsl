@@ -251,10 +251,7 @@ vec3 calcNormal(vec3 pos) {
 vec3 render(vec3 ro, vec3 rd) {
   //vec3 col = vec3(.05, .05, .05) +rd.y*.1;
   vec2 res = castRay(ro,rd);
-  float t = res.x;
-  float m = res.y;
-  vec3 pos = ro + t*rd;
-  vec3 nor = calcNormal( pos );
+  vec3 nor = calcNormal(ro + res.x*rd);
   vec3 ref = reflect( rd, nor );
 
   // material
@@ -279,7 +276,7 @@ vec3 render(vec3 ro, vec3 rd) {
   //lin += .4*amb*vec3(.4,.6,1.);
   //lin += .5*bac*vec3(.25,.25,.25);
   //lin += .25*fre*vec3(1.);
-  return .1 + .5*sin( vec3(.05,.08,.1)*m ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
+  return .1 + .5*sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
 
   // fog
   //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
