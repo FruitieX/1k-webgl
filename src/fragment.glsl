@@ -12,11 +12,11 @@ vec2 opU(vec2 d1, vec2 d2) {
 vec2 map(vec3 p) {
   float plasma = sin(5. *
     // horizontal sinusoid
-    sin(10. * p.x + a * 2.) +
+    sin(1e1 * p.x + a * 2.) +
     // rotating sinusoid
-    sin(10. * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
+    sin(1e1 * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
     // circular sinusoid
-    sin(sqrt(10. * (
+    sin(sqrt(1e1 * (
       // cx
       pow(p.x * sin(a / 2.), 2.) +
       // cy
@@ -28,7 +28,7 @@ vec2 map(vec3 p) {
     // plasma sphere
 
     // return vec2(sdPlasmaSphere(p, 0.5), hue);
-    vec2(length(p)-.5 + plasma * sin(a / 10.), 100. * sin(plasma) + a),
+    vec2(length(p)-.5 + plasma * sin(a / 1e1), 1e2 * sin(plasma) + a),
     // plane
     vec2(1. + p.y, .0)
   );
@@ -77,7 +77,7 @@ void main() {
 
   // castRay(ro, rd)
   float tmin = 1., mat = -1.;
-  for( float i=.0; i<100.; i++ ) { // 64 = maxIterations
+  for( float i=.0; i<1e2; i++ ) { // 64 = maxIterations
     cw = ro+rd*tmin;
     vec2 rayRes = map(cw);
     //float precis = .000001*tmin;
