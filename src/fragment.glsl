@@ -69,30 +69,31 @@ vec2 opU(vec2 d1, vec2 d2) {
   return (d1.x<d2.x) ? d1 : d2;
 }
 
-float sdPlane(vec3 p) {
-  return p.y;
-}
+// float sdPlane(vec3 p) {
+//   return p.y;
+// }
 
-float sdSphere(vec3 p, float s) {
-  return length(p)-s;
-}
+// float sdSphere(vec3 p, float s) {
+//   return length(p)-s;
+// }
 
-float sdPlasmaSphere(vec3 p, float s) {
-  float plasma = calcPlasma(p);
+// float sdPlasmaSphere(vec3 p, float s) {
+//   float plasma = calcPlasma(p);
+//
+//   return length(p)-s + plasma * sin(a / 100.0);
+// }
 
-  return sdSphere(p, s) + plasma * sin(a / 100.0);
-}
+// vec2 plasmaSphere(vec3 p) {
+//   float plasma = calcPlasma(p);
+//   plasma += 1.;
+//   float hue = sin(plasma) * 100.0 + a;
+//   // return vec2(sdPlasmaSphere(p, 0.5), hue);
+//   return vec2(length(p)-.5 + plasma * sin(a / 100.0), hue);
+// }
 
-vec2 plasmaSphere(vec3 p) {
-  float plasma4 = calcPlasma(p);
-  plasma4 += 1.;
-  float hue = sin(plasma4) * 100.0 + a;
-  return vec2(sdPlasmaSphere(p, 0.5), hue);
-}
-
-vec2 plane(vec3 p) {
-  return vec2(sdPlane(p), 0.);
-}
+// vec2 plane(vec3 p) {
+//   return vec2(sdPlane(p), 0.);
+// }
 
 // float sdPlasma(vec3 p) {
 //   float plasma = calcPlasma(p.x, p.y, p.z, a / 10.0);
@@ -118,18 +119,26 @@ vec2 plane(vec3 p) {
 // }
 
 // SCENES
-vec2 scene0(vec3 pos) {
-  return opU(
-    plasmaSphere(pos),
-    plane(pos + vec3(.5))
-  );
-}
+// vec2 scene0(vec3 pos) {
+//   return opU(
+//     float plasma = calcPlasma(p);
+//     plasma += 1.;
+//     float hue = sin(plasma) * 100.0 + a;
+//     // return vec2(sdPlasmaSphere(p, 0.5), hue);
+//     return vec2(length(p)-.5 + plasma * sin(a / 100.0), hue);
+//     plasmaSphere(pos),
+//     // plane
+//     vec2(pos.y + .5, 0.)
+//   );
+// }
 
 // vec2 scene1(vec3 pos) {
 //   return fullScreenPlasma(pos);
 // }
 
-vec2 map(vec3 pos) {
+vec2 map(vec3 p) {
+  float plasma = calcPlasma(p);
+  plasma += 1.;
   // vec2 res = vec2(.0);
   //
   // float transitionTime = 10.;
@@ -138,9 +147,18 @@ vec2 map(vec3 pos) {
   // float end2 = 50.;
   // float end3 = 70.;
 
+  return opU(
+    // plasma sphere
+
+    // return vec2(sdPlasmaSphere(p, 0.5), hue);
+    vec2(length(p)-.5 + plasma * sin(a / 100.0), sin(plasma) * 100. + a),
+    // plane
+    vec2(p.y + .5, 0.)
+  );
+
   /* ---------- DEBUGGING ---------- */
   // Uncomment when debugging single scene
-  return scene0(pos);
+  //return scene0(pos);
 
   /* ---------- SCENES --------- */
 
