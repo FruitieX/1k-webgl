@@ -197,35 +197,33 @@ vec2 map(vec3 p) {
 
 vec2 castRay(vec3 ro, vec3 rd) {
   float tmin = .2;
-  float tmax = 30.;
-
   float m = -1.;
   for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
     float precis = .000001*tmin;
     vec2 res = map( ro+rd*tmin );
-    if( res.x<precis || tmin>tmax ) break;
+    if( res.x<precis || tmin>30. ) break; // 30. = tmax
     tmin += res.x;
     m = res.y;
   }
 
-  if( tmin>tmax ) m=-1.;
+  if( tmin>30. ) m=-1.; // 30. = tmax
   return vec2( tmin, m );
 }
 
 
-float softshadow(vec3 ro, vec3 rd, float mint, float tmax) {
-  float res = 2.;
-  float t = mint;
-
-  for( float i=0.; i<16.; i++ ) {
-    float h = map( ro + rd*t ).x;
-    res = min( res, 8.*h/t );
-    t += clamp( h, .02, .10 );
-    if( h<.001 || t>tmax ) break;
-  }
-
-  return clamp( res, .0, 1. );
-}
+// float softshadow(vec3 ro, vec3 rd, float mint, float tmax) {
+//   float res = 2.;
+//   float t = mint;
+//
+//   for( float i=0.; i<16.; i++ ) {
+//     float h = map( ro + rd*t ).x;
+//     res = min( res, 8.*h/t );
+//     t += clamp( h, .02, .10 );
+//     if( h<.001 || t>tmax ) break;
+//   }
+//
+//   return clamp( res, .0, 1. );
+// }
 
 vec3 calcNormal(vec3 pos) {
   vec2 e = vec2(.001,-.001); // (1, -1) * .5773*.0005
@@ -235,20 +233,20 @@ vec3 calcNormal(vec3 pos) {
     e.xxx*map( pos + e.xxx ).x );
 }
 
-float calcAO(vec3 pos, vec3 nor) {
-  float occ = .0;
-  float sca = 1.;
-
-  for(float i=0.; i<5.; i++) {
-    float hr = .01 + .12*float(i)/4.;
-    vec3 aopos =  nor * hr + pos;
-    float dd = map( aopos ).x;
-    occ += -(dd-hr)*sca;
-    sca *= .95;
-  }
-
-  return clamp( 1. - 3.*occ, .0, 1. );
-}
+// float calcAO(vec3 pos, vec3 nor) {
+//   float occ = .0;
+//   float sca = 1.;
+//
+//   for(float i=0.; i<5.; i++) {
+//     float hr = .01 + .12*float(i)/4.;
+//     vec3 aopos =  nor * hr + pos;
+//     float dd = map( aopos ).x;
+//     occ += -(dd-hr)*sca;
+//     sca *= .95;
+//   }
+//
+//   return clamp( 1. - 3.*occ, .0, 1. );
+// }
 
 vec3 render(vec3 ro, vec3 rd) {
   vec3 col = vec3(0.);
@@ -271,29 +269,26 @@ vec3 render(vec3 ro, vec3 rd) {
     */
 
     // lighitng. Seems Lighit
-    float occ = calcAO( pos, nor );
-    vec3  lig = normalize( vec3(-.4, .7, -.6) );
-    float amb = clamp( .5+.5*nor.y, .0, 1. );
+    //float occ = calcAO( pos, nor );
+    vec3  lig = normalize( vec3(1.) );
+    //float amb = clamp( .5+.5*nor.y, .0, 1. );
     float dif = clamp( dot( nor, lig ), .0, 1. );
-    float bac = clamp( dot( nor, normalize(vec3(-lig.x,.0,-lig.z))), .0, 1. )*clamp( 1.-pos.y,.0,1.);
-    float dom = smoothstep( -.1, .1, ref.y );
-    float fre = pow( clamp(1.+dot(nor,rd),.0,1.), 2. );
-    float spe = pow(clamp( dot( ref, lig ), .0, 1. ),16.);
+    //float bac = clamp( dot( nor, normalize(vec3(-lig.x,.0,-lig.z))), .0, 1. )*clamp( 1.-pos.y,.0,1.);
+    float dom = ref.y;
+    //float fre = pow( clamp(1.+dot(nor,rd),.0,1.), 2. );
+    //float spe = pow(clamp( dot( ref, lig ), .0, 1. ),16.);
 
-    dif *= softshadow( pos, lig, .02, 2.5 );
-    dom *= softshadow( pos, ref, .02, 2.5 );
+    //dif *= softshadow( pos, lig, .02, 2.5 );
+    //dom *= softshadow( pos, ref, .02, 2.5 );
 
-    vec3 lin = vec3(.0);
-    lin += 1.3*dif*vec3(1.,.8,.55);
-    lin += 2.*spe*vec3(1.,.9,.7)*dif;
-    lin += .4*amb*vec3(.4,.6,1.)*occ;
-    lin += .5*dom*vec3(.4,.6,1.)*occ;
-    lin += .5*bac*vec3(.25,.25,.25)*occ;
-    lin += .25*fre*vec3(1.)*occ;
-    col = col*lin;
+    //lin += 2.*spe*vec3(1.,.9,.7)*dif;
+    //lin += .4*amb*vec3(.4,.6,1.);
+    //lin += .5*bac*vec3(.25,.25,.25);
+    //lin += .25*fre*vec3(1.);
+    col *= dif*vec3(1.)+dom*vec3(1.);
 
     // fog
-    col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
+    //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
 
     /*
     float fade = 1. - min(1., (a - 2.)  / 8.);
