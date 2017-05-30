@@ -138,7 +138,7 @@ vec2 opU(vec2 d1, vec2 d2) {
 
 vec2 map(vec3 p) {
   float plasma = calcPlasma(p);
-  plasma += 1.;
+  //plasma += 1.;
   // vec2 res = vec2(.0);
   //
   // float transitionTime = 10.;
@@ -213,13 +213,13 @@ vec2 map(vec3 p) {
 //   return clamp( res, .0, 1. );
 // }
 
-vec3 calcNormal(vec3 pos) {
-  vec2 e = vec2(.001,-.001); // (1, -1) * .5773*.0005
-  return normalize( e.xyy*map( pos + e.xyy ).x +
-    e.yyx*map( pos + e.yyx ).x +
-    e.yxy*map( pos + e.yxy ).x +
-    e.xxx*map( pos + e.xxx ).x );
-}
+// vec3 calcNormal(vec3 pos) {
+//   vec2 e = vec2(.001,-.001); // (1, -1) * .5773*.0005
+//   return normalize( e.xyy*map( pos + e.xyy ).x +
+//     e.yyx*map( pos + e.yyx ).x +
+//     e.yxy*map( pos + e.yxy ).x +
+//     e.xxx*map( pos + e.xxx ).x );
+// }
 
 // float calcAO(vec3 pos, vec3 nor) {
 //   float occ = .0;
@@ -315,20 +315,27 @@ void main() {
     float tmin = .2;
     float mat = -1.;
     for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
-      float precis = .000001*tmin;
       vec2 rayRes = map( ro+rd*tmin );
-      if( rayRes.x<precis || tmin>30. ) break; // 30. = tmax
+      //float precis = .000001*tmin;
+      //if( rayRes.x<precis) break; // TODO: nice optimisation, but eats space
       tmin += rayRes.x;
       mat = rayRes.y;
     }
 
-    if( tmin>30. ) mat=-1.; // 30. = tmax
-    vec2 res = vec2( tmin, mat );
+    //if( tmin>30. ) mat=-1.; // 30. = tmax
     // end
 
-    vec3 nor = calcNormal(ro + res.x*rd);
+    // vec3 nor = calcNormal(ro + tmin*rd);
+    // calcNormal(pos)
+    vec2 e = vec2(.001,-.001  ); // (1, -1) * .5773*.0005
+    vec3 nor = normalize( e.xyy*map( ro + tmin*rd + e.xyy ).x +
+      e.yyx*map( ro + tmin*rd + e.yyx ).x +
+      e.yxy*map( ro + tmin*rd + e.yxy ).x +
+      e.xxx*map( ro + tmin*rd + e.xxx ).x );
+    // end
+
     vec3 ref = reflect( rd, nor );
-    tot += 1. + sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
+    tot += 1. + sin( vec3(.05,.08,.1)*mat ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
 
   	// gamma
     //col = pow( col, vec3(.7) );
