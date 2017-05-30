@@ -2,8 +2,6 @@ precision highp float;
 
 // time variable (seconds)
 uniform float a;
-// resolution (1920.0, 1080.0)
-uniform vec2 b;
 
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
@@ -30,21 +28,21 @@ float calcPlasma(float x, float y, float z, float t) {
 
 // t = time to start transition
 // tt = transition length
-vec2 opMorph( vec2 d1, vec2 d2, float t, float tt ) {
-  float k = (a - t) / tt;
-
-  /*
-  k = min(1., k);
-  k = max(0., k);
-  */
-
-  k = clamp(0., k, 1.);
-
-  return vec2(
-    d1.x * (1. - k) + d2.x * k,
-    d1.y * (1. - k) + d2.y * k
-  );
-}
+// vec2 opMorph( vec2 d1, vec2 d2, float t, float tt ) {
+//   float k = (a - t) / tt;
+//
+//   /*
+//   k = min(1., k);
+//   k = max(0., k);
+//   */
+//
+//   k = clamp(0., k, 1.);
+//
+//   return vec2(
+//     d1.x * (1. - k) + d2.x * k,
+//     d1.y * (1. - k) + d2.y * k
+//   );
+// }
 
 vec2 opU(vec2 d1, vec2 d2) {
   return (d1.x<d2.x) ? d1 : d2;
@@ -75,28 +73,28 @@ vec2 plane(vec3 p) {
   return vec2(sdPlane(p), 0.);
 }
 
-float sdPlasma(vec3 p) {
-  float plasma = calcPlasma(p.x, p.y, p.z, a / 10.0);
-  return plasma;
-}
+// float sdPlasma(vec3 p) {
+//   float plasma = calcPlasma(p.x, p.y, p.z, a / 10.0);
+//   return plasma;
+// }
 
-float sdTunnelThingPlasma(vec3 p) {
-  return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(a / 10.0) + 2.0);
-}
+// float sdTunnelThingPlasma(vec3 p) {
+//   return (cos(p.x) + sin(p.y) + sin(p.z)) / 20.0 * (sin(a / 10.0) + 2.0);
+// }
 
-vec2 fullScreenPlasma(vec3 p) {
-  // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
-  // works best with tmin = 0.2?
-  float plasma3 = calcPlasma(p.x, p.y, p.z, a);
-  float hue = sin(plasma3) * 100.0 + a * 100.0;
-  vec2 res = vec2(
-    sdTunnelThingPlasma(p),
-    hue / 3.0
-  );
-  return opU(res,
-    vec2(sdPlasma(p), hue)
-  );
-}
+// vec2 fullScreenPlasma(vec3 p) {
+//   // Full screen cool plasma thing (works best with tunnel thing at hue 0.0)
+//   // works best with tmin = 0.2?
+//   float plasma3 = calcPlasma(p.x, p.y, p.z, a);
+//   float hue = sin(plasma3) * 100.0 + a * 100.0;
+//   vec2 res = vec2(
+//     sdTunnelThingPlasma(p),
+//     hue / 3.0
+//   );
+//   return opU(res,
+//     vec2(sdPlasma(p), hue)
+//   );
+// }
 
 // SCENES
 vec2 scene0(vec3 pos) {
@@ -106,18 +104,18 @@ vec2 scene0(vec3 pos) {
   );
 }
 
-vec2 scene1(vec3 pos) {
-  return fullScreenPlasma(pos);
-}
+// vec2 scene1(vec3 pos) {
+//   return fullScreenPlasma(pos);
+// }
 
-vec2 map(in vec3 pos, in vec3 origin) {
-  vec2 res = vec2(.0);
-
-  float transitionTime = 10.;
-  float end0 = 20.;
-  float end1 = 34.;
-  float end2 = 50.;
-  float end3 = 70.;
+vec2 map(vec3 pos) {
+  // vec2 res = vec2(.0);
+  //
+  // float transitionTime = 10.;
+  // float end0 = 20.;
+  // float end1 = 34.;
+  // float end2 = 50.;
+  // float end3 = 70.;
 
   /* ---------- DEBUGGING ---------- */
   // Uncomment when debugging single scene
@@ -126,9 +124,9 @@ vec2 map(in vec3 pos, in vec3 origin) {
   /* ---------- SCENES --------- */
 
   // first scene
-  if (a < end0 + transitionTime) {
-    res = scene0(pos);
-  }
+  // if (a < end0 + transitionTime) {
+  //   res = scene0(pos);
+  // }
 
   // start rendering after previous scene,
   // stop rendering after transitioning to next scene
@@ -145,45 +143,44 @@ vec2 map(in vec3 pos, in vec3 origin) {
   */
 
   // last scene
-  if (a >= end0) {
-    res = opMorph(res,
-      scene1(pos),
-
-      // Timing
-      end1,
-      transitionTime
-    );
-  }
-
-  return res;
+  // if (a >= end0) {
+  //   res = opMorph(res,
+  //     scene1(pos),
+  //
+  //     // Timing
+  //     end1,
+  //     transitionTime
+  //   );
+  // }
+  //
+  // return res;
 }
 
-vec2 castRay(in vec3 ro, in vec3 rd) {
+vec2 castRay(vec3 ro, vec3 rd) {
   const int maxIterations = 64;
   float tmin = .2;
   float tmax = 30.;
 
-  float t = tmin;
   float m = -1.;
   for( int i=0; i<maxIterations; i++ ) {
-    float precis = .000001*t;
-    vec2 res = map( ro+rd*t, ro );
-    if( res.x<precis || t>tmax ) break;
-    t += res.x;
+    float precis = .000001*tmin;
+    vec2 res = map( ro+rd*tmin );
+    if( res.x<precis || tmin>tmax ) break;
+    tmin += res.x;
     m = res.y;
   }
 
-  if( t>tmax ) m=-1.;
-  return vec2( t, m );
+  if( tmin>tmax ) m=-1.;
+  return vec2( tmin, m );
 }
 
 
-float softshadow(in vec3 ro, in vec3 rd, in float mint, in float tmax) {
+float softshadow(vec3 ro, vec3 rd, float mint, float tmax) {
   float res = 2.;
   float t = mint;
 
   for( int i=0; i<16; i++ ) {
-    float h = map( ro + rd*t, ro ).x;
+    float h = map( ro + rd*t ).x;
     res = min( res, 8.*h/t );
     t += clamp( h, .02, .10 );
     if( h<.001 || t>tmax ) break;
@@ -192,22 +189,22 @@ float softshadow(in vec3 ro, in vec3 rd, in float mint, in float tmax) {
   return clamp( res, .0, 1. );
 }
 
-vec3 calcNormal(in vec3 pos) {
-  vec2 e = vec2(1.,-1.)*.5773*.0005;
-  return normalize( e.xyy*map( pos + e.xyy, pos ).x +
-    e.yyx*map( pos + e.yyx, pos ).x +
-    e.yxy*map( pos + e.yxy, pos ).x +
-    e.xxx*map( pos + e.xxx, pos ).x );
+vec3 calcNormal(vec3 pos) {
+  vec2 e = vec2(.001,-.001); // (1, -1) * .5773*.0005
+  return normalize( e.xyy*map( pos + e.xyy ).x +
+    e.yyx*map( pos + e.yyx ).x +
+    e.yxy*map( pos + e.yxy ).x +
+    e.xxx*map( pos + e.xxx ).x );
 }
 
-float calcAO(in vec3 pos, in vec3 nor) {
+float calcAO(vec3 pos, vec3 nor) {
   float occ = .0;
   float sca = 1.;
 
   for(int i=0; i<5; i++) {
     float hr = .01 + .12*float(i)/4.;
     vec3 aopos =  nor * hr + pos;
-    float dd = map( aopos, pos ).x;
+    float dd = map( aopos ).x;
     occ += -(dd-hr)*sca;
     sca *= .95;
   }
@@ -215,7 +212,7 @@ float calcAO(in vec3 pos, in vec3 nor) {
   return clamp( 1. - 3.*occ, .0, 1. );
 }
 
-vec3 render(in vec3 ro, in vec3 rd) {
+vec3 render(vec3 ro, vec3 rd) {
   vec3 col = vec3(0.);
   //vec3 col = vec3(.05, .05, .05) +rd.y*.1;
   vec2 res = castRay(ro,rd);
@@ -269,22 +266,16 @@ vec3 render(in vec3 ro, in vec3 rd) {
   return vec3( clamp(col,.0,1.) );
 }
 
-mat3 setCamera(in vec3 ro) {
-	vec3 cw = normalize(-ro);
-	vec3 cp = vec3(.0, 1., .0);
-	vec3 cu = normalize( cross(cw,cp) );
-	vec3 cv = normalize( cross(cu,cw) );
-
-  return mat3( cu, cv, cw );
-}
-
 void main() {
   vec3 tot = vec3(.0);
+
+  // resolution
+  vec2 res = vec2(240, 135);
   for( int m=0; m<2; m++ )   // 2x AA
   for( int n=0; n<2; n++ ) { // 2x AA
     // pixel coordinates
     vec2 o = vec2(float(m),float(n)) / float(2) - .5;
-    vec2 p = (-b.xy + 3.*(gl_FragCoord.xy+o))/b.y;
+    vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
 
     // camera
     // ro = ray origin = where the camera is
@@ -293,7 +284,14 @@ void main() {
     //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
     vec3 ro = vec3( cos(a), 1., sin(a) );
     // camera-to-world transformation
-    mat3 ca = setCamera(ro);
+    //mat3 ca = setCamera(ro);
+
+  	vec3 cw = normalize(-ro);
+  	vec3 cp = vec3(.0, 1., .0);
+  	vec3 cu = normalize( cross(cw,cp) );
+  	vec3 cv = normalize( cross(cu,cw) );
+
+    mat3 ca = mat3( cu, cv, cw );
     // ray direction
     vec3 rd = ca * normalize( vec3(p.xy,2.) );
 

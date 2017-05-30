@@ -1,19 +1,15 @@
 // potato level for PC, higher = faster :-)
 // TODO: remove in production
-potato = 8;
-c.width = 1920 / potato;
-c.height = 1080 / potato;
+//c.width = 240;
+//c.height = 135;
 
 r = t => {
   requestAnimationFrame(r, c);
 
-  // set the "a" time variable
-  g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000);
-
-  // set the "b" resolution variable
-  g.uniform2f(g.getUniformLocation(P, 'b'), g.canvas.width, g.canvas.height);
-
-  g.drawArrays(6,0,3); // g.TRIANGLE_FAN = 6
+  g.drawArrays(6,
+    // set the "a" time variable
+    g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000), // happens to return undefined, used to be 0 here
+  3); // g.TRIANGLE_FAN = 6
 }
 
 // onload
@@ -31,9 +27,11 @@ g.compileShader(S);g.attachShader(P,S);
 
 // Check for any compilation error
 // TODO: remove in production
+/*
 if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
     alert(g.getShaderInfoLog(S));
 }
+*/
 
 g.linkProgram(P);
 g.useProgram(P);
