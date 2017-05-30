@@ -1,19 +1,18 @@
 // potato level for PC, higher = faster :-)
 // TODO: remove in production
-c.width = 1280;
-c.height = 720;
 
 r = t => {
   requestAnimationFrame(r, c);
-  g.uniform2f(g.getUniformLocation(P, 'b'), c.width, c.height)
+  g.uniform2f(g.getUniformLocation(P, 'b'), c.width = 1280, c.height = 720)
 
   g.drawArrays(6,
     // 2nd argument to g.drawArrays used to be 0, but undefined works
     // set the "a" time variable
-    g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000),
+    g.uniform1f(g.getUniformLocation(P, 'a'), t / 1e4),
     3
   ); // g.TRIANGLE_FAN = 6
 }
+c.width = 1280, c.height = 720;
 
 // onload
 g = c.getContext('webgl');

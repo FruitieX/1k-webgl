@@ -30,7 +30,7 @@ vec2 map(vec3 p) {
     // return vec2(sdPlasmaSphere(p, 0.5), hue);
     vec2(length(p)-.5 + plasma * sin(a / 1e1), 1e2 * sin(plasma) + a),
     // plane
-    vec2(1. + p.y, .0)
+    vec2(1e0 + p.y, .0)
   );
 }
 
@@ -47,12 +47,12 @@ void main() {
   // ta = camera direction (where the camera is looking)
   // cr = camera rotation
   //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
-  vec3 ro = vec3( cos(a), 1., sin(a) );
+  vec3 ro = vec3( cos(a), 1e0, sin(a) );
   // camera-to-world transformation
   //mat3 ca = setCamera(ro);
 
 	vec3 cw = normalize(-ro);
-	vec3 cu = cross(cw, vec3(.0, 1., .0));
+	vec3 cu = cross(cw, vec3(.0, 1e0, .0));
 
   // ray direction
   vec3 rd = mat3(
@@ -76,7 +76,7 @@ void main() {
   //vec3 col = render( ro, rd );
 
   // castRay(ro, rd)
-  float tmin = 1., mat = -1.;
+  float tmin = 1e0, mat = -1e0;
   for( float i=.0; i<1e2; i++ ) { // 64 = maxIterations
     cw = ro+rd*tmin;
     vec2 rayRes = map(cw);
@@ -97,9 +97,9 @@ void main() {
     e.xxx*map( cw + e.xxx ).x
   );
 
-  gl_FragColor = vec4(
-    .5 * sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
-    .5 * vec3(reflect( rd, cu ).y),
-  1.);
+  gl_FragColor = .5 * vec4(
+    sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
+    vec3(reflect( rd, cu ).y),
+  2.);
 
 }
