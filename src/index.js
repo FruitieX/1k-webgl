@@ -7,8 +7,9 @@ r = t => {
   requestAnimationFrame(r, c);
 
   g.drawArrays(6,
+    // 2nd argument to g.drawArrays used to be 0, but undefined works
     // set the "a" time variable
-    g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000), // happens to return undefined, used to be 0 here
+    g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000),
   3); // g.TRIANGLE_FAN = 6
 }
 
@@ -38,9 +39,13 @@ g.useProgram(P);
 
 // g.ARRAY_BUFFER = 34962
 g.bindBuffer(34962, g.createBuffer());
-g.bufferData(34962, new Int8Array([-3,1,1,-3,1,1]),35044); // 35044 = gl.STATIC_DRAW
-g.enableVertexAttribArray(0);
-g.vertexAttribPointer(0,2,5120,0,0,0); // g.BYTE = 5120
+// 1st argument to g.enableVertexAttribArray used to be 0, but undefined works
+// 1st argument to g.vertexAttribPointer used to be 0, but undefined works
+g.vertexAttribPointer(
+  g.enableVertexAttribArray(
+    g.bufferData(34962, new Int8Array([-3,1,1,-3,1,1]),35044) // 35044 = gl.STATIC_DRAW
+  ),
+2,5120,0,0,0); // g.BYTE = 5120
 
 // start rendering and music playback
 r(0);
