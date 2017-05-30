@@ -18,9 +18,9 @@ float calcPlasma(float x, float y, float z, float t) {
   float blend = sine1 + sine2 + sine3;
 
   //blend *= 1.0 + sin(t / 4.0) * 2.0;
-  blend *= 3.0;
+  //blend *= 3.0;
   //blend = sin(blend * 3.14 / 2.) / 2. + .5;
-  blend = sin(blend * 3.14 / 2.0) / 2.0;
+  blend = sin(3. * blend * 3.14 / 2.0) / 2.0;
   //blend = pow(blend, 2.0);
 
   return blend;
@@ -157,12 +157,11 @@ vec2 map(vec3 pos) {
 }
 
 vec2 castRay(vec3 ro, vec3 rd) {
-  const int maxIterations = 64;
   float tmin = .2;
   float tmax = 30.;
 
   float m = -1.;
-  for( int i=0; i<maxIterations; i++ ) {
+  for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
     float precis = .000001*tmin;
     vec2 res = map( ro+rd*tmin );
     if( res.x<precis || tmin>tmax ) break;
@@ -179,7 +178,7 @@ float softshadow(vec3 ro, vec3 rd, float mint, float tmax) {
   float res = 2.;
   float t = mint;
 
-  for( int i=0; i<16; i++ ) {
+  for( float i=0.; i<16.; i++ ) {
     float h = map( ro + rd*t ).x;
     res = min( res, 8.*h/t );
     t += clamp( h, .02, .10 );
@@ -201,7 +200,7 @@ float calcAO(vec3 pos, vec3 nor) {
   float occ = .0;
   float sca = 1.;
 
-  for(int i=0; i<5; i++) {
+  for(float i=0.; i<5.; i++) {
     float hr = .01 + .12*float(i)/4.;
     vec3 aopos =  nor * hr + pos;
     float dd = map( aopos ).x;
