@@ -31,6 +31,7 @@ float calcPlasma(float x, float y, float z, float t) {
 }
 */
 
+/*
 float calcPlasma(vec3 p) {
   return sin(5. *
     // horizontal sinusoid
@@ -46,6 +47,7 @@ float calcPlasma(vec3 p) {
     ) + 1.) + a)
   ) / 2.;
 }
+*/
 
 // t = time to start transition
 // tt = transition length
@@ -66,7 +68,7 @@ float calcPlasma(vec3 p) {
 // }
 
 vec2 opU(vec2 d1, vec2 d2) {
-  return (d1.x<d2.x) ? d1 : d2;
+  return d1.x<d2.x ? d1 : d2;
 }
 
 // float sdPlane(vec3 p) {
@@ -137,7 +139,19 @@ vec2 opU(vec2 d1, vec2 d2) {
 // }
 
 vec2 map(vec3 p) {
-  float plasma = calcPlasma(p);
+  float plasma = sin(5. *
+    // horizontal sinusoid
+    sin(p.x * 10. + a * 2.) +
+    // rotating sinusoid
+    sin(10. * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
+    // circular sinusoid
+    sin(sqrt(100. * (
+      // cx
+      pow(p.x + .5 * sin(a / 5.), 2.) +
+      // cy
+      pow(p.y + .5 * cos(a / 3.), 2.)
+    ) + 1.) + a)
+  ) / 2.;
   //plasma += 1.;
   // vec2 res = vec2(.0);
   //
@@ -153,7 +167,7 @@ vec2 map(vec3 p) {
     // return vec2(sdPlasmaSphere(p, 0.5), hue);
     vec2(length(p)-.5 + plasma * sin(a / 100.0), sin(plasma) * 100. + a),
     // plane
-    vec2(p.y + .5, 0.)
+    vec2(p.y + 1., 0.)
   );
 
   /* ---------- DEBUGGING ---------- */
@@ -320,7 +334,7 @@ void main() {
     // castRay(ro, rd)
     float tmin = .2;
     float mat = -1.;
-    for( float i=0.; i<64.; i++ ) { // 64 = maxIterations
+    for( float i=-32.; i<32.; i++ ) { // 64 = maxIterations
       vec2 rayRes = map( ro+rd*tmin );
       //float precis = .000001*tmin;
       //if( rayRes.x<precis) break; // TODO: nice optimisation, but eats space
