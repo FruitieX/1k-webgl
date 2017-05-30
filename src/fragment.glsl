@@ -284,10 +284,8 @@ void main() {
   //vec2 res = vec2(240, 135);
   for( float m=0.; m<2.; m++ )   // 2x AA
   for( float n=0.; n<2.; n++ ) { // 2x AA
-    // pixel coordinates
-    vec2 o = vec2(m,n) / 2. - .5;
     //vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
-    vec2 p = (-vec2(240., 135.) + 3.*(gl_FragCoord.xy+o))/135.;
+    //vec2 p = ;
 
     // camera
     // ro = ray origin = where the camera is
@@ -306,7 +304,15 @@ void main() {
       cu,
       normalize( cross(cu,cw) ),
       cw
-    ) * normalize( vec3(p.xy,2.) );
+    ) * normalize(
+      vec3(
+        (-vec2(240., 135.) + 3.*(gl_FragCoord.xy +
+          // pixel coordinates
+          vec2(m,n) / 2. - .5
+        ))/135.,
+        2.
+      )
+    );
 
     // render
     //vec3 col = render( ro, rd );
@@ -328,14 +334,19 @@ void main() {
     // vec3 nor = calcNormal(ro + tmin*rd);
     // calcNormal(pos)
     vec2 e = vec2(.001,-.001  ); // (1, -1) * .5773*.0005
-    vec3 nor = normalize( e.xyy*map( ro + tmin*rd + e.xyy ).x +
+    // normal
+    cu = normalize(
+      e.xyy*map( ro + tmin*rd + e.xyy ).x +
       e.yyx*map( ro + tmin*rd + e.yyx ).x +
       e.yxy*map( ro + tmin*rd + e.yxy ).x +
-      e.xxx*map( ro + tmin*rd + e.xxx ).x );
+      e.xxx*map( ro + tmin*rd + e.xxx ).x
+    );
     // end
 
-    vec3 ref = reflect( rd, nor );
-    tot += 1. + sin( vec3(.05,.08,.1)*mat ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
+    tot +=
+      1. +
+      sin(vec3(.05,.08,.1) * mat) * vec3(dot(cu, normalize(vec3(1.)))) +
+      vec3(reflect( rd, cu ).y);
 
   	// gamma
     //col = pow( col, vec3(.7) );
