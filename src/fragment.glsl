@@ -37,8 +37,8 @@ void main() {
 
   // resolution
   //vec2 res = vec2(240, 135);
-  for( float m=0.; m<2.; m++ )   // 2x AA
-  for( float n=0.; n<2.; n++ ) { // 2x AA
+  //for( float m=0.; m<2.; m++ )   // 2x AA
+  //for( float n=0.; n<2.; n++ ) { // 2x AA
     //vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
     //vec2 p = ;
 
@@ -52,19 +52,22 @@ void main() {
     //mat3 ca = setCamera(ro);
 
   	vec3 cw = normalize(-ro);
-  	vec3 cu = normalize( cross(cw,vec3(.0, 1., .0)) );
+  	vec3 cu = cross(cw,vec3(.0, 1., .0));
 
     // ray direction
     vec3 rd = mat3(
       cu,
-      normalize( cross(cu,cw) ),
+      cross(cu,cw),
       cw
     ) * normalize(
       vec3(
-        (-vec2(240., 135.) + 3.*(gl_FragCoord.xy +
-          // pixel coordinates
-          vec2(m,n) / 2. - .5
-        ))/135.,
+        (
+          -vec2(240., 135.) + 2. * (
+            gl_FragCoord.xy //+
+            // pixel coordinates when doing AA
+            //vec2(m,n) / 2. - .5
+          )
+        ) / 135.,
         2.
       )
     );
@@ -98,15 +101,14 @@ void main() {
     // end
 
     tot +=
-      1. +
-      sin(vec3(.05,.08,.1) * mat) * vec3(dot(cu, normalize(vec3(1.)))) +
-      vec3(reflect( rd, cu ).y);
+      .5 * sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
+      .5 * vec3(reflect( rd, cu ).y);
 
   	// gamma
     //col = pow( col, vec3(.7) );
 
-    tot /= 4.; // AA * AA
-  }
+    //tot /= 4.; // AA * AA
+  //}
 
   gl_FragColor = vec4( tot, 1. );
 }
