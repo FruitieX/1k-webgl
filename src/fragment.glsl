@@ -248,11 +248,11 @@ vec3 calcNormal(vec3 pos) {
 //   return clamp( 1. - 3.*occ, .0, 1. );
 // }
 
-vec3 render(vec3 ro, vec3 rd) {
+// vec3 render(vec3 ro, vec3 rd) {
   //vec3 col = vec3(.05, .05, .05) +rd.y*.1;
-  vec2 res = castRay(ro,rd);
-  vec3 nor = calcNormal(ro + res.x*rd);
-  vec3 ref = reflect( rd, nor );
+  // vec2 res = castRay(ro,rd);
+  // vec3 nor = calcNormal(ro + res.x*rd);
+  // vec3 ref = reflect( rd, nor );
 
   // material
   /*
@@ -276,7 +276,7 @@ vec3 render(vec3 ro, vec3 rd) {
   //lin += .4*amb*vec3(.4,.6,1.);
   //lin += .5*bac*vec3(.25,.25,.25);
   //lin += .25*fre*vec3(1.);
-  return .1 + .5*sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
+  // return .1 + .5*sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
 
   // fog
   //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
@@ -287,7 +287,7 @@ vec3 render(vec3 ro, vec3 rd) {
   */
 
   //return vec3( clamp(col,.0,1.) );
-}
+// }
 
 void main() {
   vec3 tot = vec3(.0);
@@ -311,21 +311,26 @@ void main() {
     //mat3 ca = setCamera(ro);
 
   	vec3 cw = normalize(-ro);
-  	vec3 cp = vec3(.0, 1., .0);
-  	vec3 cu = normalize( cross(cw,cp) );
-  	vec3 cv = normalize( cross(cu,cw) );
+  	vec3 cu = normalize( cross(cw,vec3(.0, 1., .0)) );
 
-    mat3 ca = mat3( cu, cv, cw );
     // ray direction
-    vec3 rd = ca * normalize( vec3(p.xy,2.) );
+    vec3 rd = mat3(
+      cu,
+      normalize( cross(cu,cw) ),
+      cw
+    ) * normalize( vec3(p.xy,2.) );
 
     // render
-    vec3 col = render( ro, rd );
+    //vec3 col = render( ro, rd );
+    vec2 res = castRay(ro,rd);
+    vec3 nor = calcNormal(ro + res.x*rd);
+    vec3 ref = reflect( rd, nor );
+    tot += 1. + sin( vec3(.05,.08,.1)*res.y ) * dot( nor, normalize( vec3(1.) ))*vec3(1.)+vec3(ref.y);
 
   	// gamma
     //col = pow( col, vec3(.7) );
 
-    tot += col / 4.; // AA * AA
+    tot /= 4.; // AA * AA
   }
 
   gl_FragColor = vec4( tot, 1. );
