@@ -18,9 +18,12 @@ float calcPlasma(float x, float y, float z, float t) {
   float blend = sine1 + sine2 + sine3;
 
   //blend *= 1.0 + sin(t / 4.0) * 2.0;
+
   //blend *= 3.0;
   //blend = sin(blend * 3.14 / 2.) / 2. + .5;
-  blend = sin(3. * blend * 3.14 / 2.0) / 2.0;
+  // =>
+  blend = sin(5. * blend) / 2.;
+
   //blend = pow(blend, 2.0);
 
   return blend;
