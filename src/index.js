@@ -11,6 +11,7 @@ r = t => {
     g.uniform1f(g.getUniformLocation(P, 'a'), t / 1e4),
     3
   ); // g.TRIANGLE_FAN = 6
+  //c.style = 'margin:-8';
 }
 c.width = 1280, c.height = 720;
 

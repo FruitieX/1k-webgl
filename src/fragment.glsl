@@ -10,17 +10,17 @@ vec2 opU(vec2 d1, vec2 d2) {
 }
 
 vec2 map(vec3 p) {
-  float plasma = sin(5. *
+  float plasma = sin(2. *
     // horizontal sinusoid
-    sin(1e1 * p.x + a * 2.) +
+    sin(1e1 * p.x + a) +
     // rotating sinusoid
-    sin(1e1 * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
+    sin(1e1 * (p.x * sin(a) + p.z * sin(2. - a)) + a) +
     // circular sinusoid
     sin(sqrt(1e1 * (
       // cx
-      pow(p.x * sin(a / 2.), 2.) +
+      pow(p.x * sin(a), 2.) +
       // cy
-      pow(p.y * cos(a / 3.), 2.)
+      pow(p.y * sin(2. - a), 2.)
     )) + a)
   ) / 2.;
 
@@ -46,8 +46,8 @@ void main() {
   // ro = ray origin = where the camera is
   // ta = camera direction (where the camera is looking)
   // cr = camera rotation
-  //vec3 ro = vec3( -.5+3.5*cos(.1*a), 1.0, .5 + 4.0*sin(.1*a) );
-  vec3 ro = vec3( cos(a), 1e0, sin(a) );
+  //vec3 ro = vec3( -.5+3.5*sin(2. - .1*a), 1.0, .5 + 4.0*sin(.1*a) );
+  vec3 ro = vec3( sin(2. - a), 1e0, sin(a) );
   // camera-to-world transformation
   //mat3 ca = setCamera(ro);
 
