@@ -260,7 +260,7 @@ vec3 render(vec3 ro, vec3 rd) {
     vec3 ref = reflect( rd, nor );
 
     // material
-    col = .45 + .35*sin( vec3(.05,.08,.10)*(m-1.0) );
+    col = .45 + .45*sin( vec3(.05,.08,.10)*m );
     /*
     if( m<1.5 ) {
       float f = mod( floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
@@ -270,11 +270,8 @@ vec3 render(vec3 ro, vec3 rd) {
 
     // lighitng. Seems Lighit
     //float occ = calcAO( pos, nor );
-    vec3  lig = normalize( vec3(1.) );
     //float amb = clamp( .5+.5*nor.y, .0, 1. );
-    float dif = clamp( dot( nor, lig ), .0, 1. );
     //float bac = clamp( dot( nor, normalize(vec3(-lig.x,.0,-lig.z))), .0, 1. )*clamp( 1.-pos.y,.0,1.);
-    float dom = ref.y;
     //float fre = pow( clamp(1.+dot(nor,rd),.0,1.), 2. );
     //float spe = pow(clamp( dot( ref, lig ), .0, 1. ),16.);
 
@@ -285,7 +282,7 @@ vec3 render(vec3 ro, vec3 rd) {
     //lin += .4*amb*vec3(.4,.6,1.);
     //lin += .5*bac*vec3(.25,.25,.25);
     //lin += .25*fre*vec3(1.);
-    col *= dif*vec3(1.)+dom*vec3(1.);
+    col *= dot( nor, normalize( vec3(1.) ))*vec3(1.)+ref.y*vec3(1.);
 
     // fog
     //col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
@@ -296,7 +293,8 @@ vec3 render(vec3 ro, vec3 rd) {
     */
   }
 
-  return vec3( clamp(col,.0,1.) );
+  //return vec3( clamp(col,.0,1.) );
+  return vec3(col);
 }
 
 void main() {
