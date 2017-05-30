@@ -270,12 +270,13 @@ void main() {
   vec3 tot = vec3(.0);
 
   // resolution
-  vec2 res = vec2(240, 135);
+  //vec2 res = vec2(240, 135);
   for( int m=0; m<2; m++ )   // 2x AA
   for( int n=0; n<2; n++ ) { // 2x AA
     // pixel coordinates
-    vec2 o = vec2(float(m),float(n)) / float(2) - .5;
-    vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
+    vec2 o = vec2(float(m),float(n)) / 2. - .5;
+    //vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
+    vec2 p = (-vec2(240., 135.) + 3.*(gl_FragCoord.xy+o))/135.;
 
     // camera
     // ro = ray origin = where the camera is
@@ -301,10 +302,8 @@ void main() {
   	// gamma
     col = pow( col, vec3(.7) );
 
-    tot += col;
+    tot += col / 4.; // AA * AA
   }
-
-  tot /= 4.; // AA * AA
 
   gl_FragColor = vec4( tot, 1. );
 }
