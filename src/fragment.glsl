@@ -3,6 +3,7 @@ precision highp float;
 // time variable (seconds)
 uniform float a;
 
+/*
 float calcPlasma(float x, float y, float z, float t) {
   // horizontal sinusoid
   float sine1 = sin(x * 10. + t * 2.);
@@ -27,6 +28,23 @@ float calcPlasma(float x, float y, float z, float t) {
   //blend = pow(blend, 2.0);
 
   return blend;
+}
+*/
+
+float calcPlasma(vec3 p) {
+  return sin(5. *
+    // horizontal sinusoid
+    sin(p.x * 10. + a * 2.) +
+    // rotating sinusoid
+    sin(10. * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
+    // circular sinusoid
+    sin(sqrt(100. * (
+      // cx
+      pow(p.x + .5 * sin(a / 5.), 2.) +
+      // cy
+      pow(p.y + .5 * cos(a / 3.), 2.)
+    ) + 1.) + a)
+  ) / 2.;
 }
 
 // t = time to start transition
@@ -60,13 +78,13 @@ float sdSphere(vec3 p, float s) {
 }
 
 float sdPlasmaSphere(vec3 p, float s) {
-  float plasma = calcPlasma(p.x, p.y, p.z, a);
+  float plasma = calcPlasma(p);
 
   return sdSphere(p, s) + plasma * sin(a / 100.0);
 }
 
 vec2 plasmaSphere(vec3 p) {
-  float plasma4 = calcPlasma(p.x, p.y, p.z, a);
+  float plasma4 = calcPlasma(p);
   plasma4 += 1.;
   float hue = sin(plasma4) * 100.0 + a;
   return vec2(sdPlasmaSphere(p, 0.5), hue);
