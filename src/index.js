@@ -30,11 +30,9 @@ g.compileShader(S);g.attachShader(P,S);
 
 // Check for any compilation error
 // TODO: remove in production
-/*
-if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
-    alert(g.getShaderInfoLog(S));
-}
-*/
+// if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
+//     alert(g.getShaderInfoLog(S));
+// }
 
 // g.ARRAY_BUFFER = 34962
 g.bindBuffer(34962, g.createBuffer());
