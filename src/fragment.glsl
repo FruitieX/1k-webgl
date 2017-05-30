@@ -255,7 +255,7 @@ vec3 render(vec3 ro, vec3 rd) {
     col = col*lin;
 
     // fog
-    col = mix( col, vec3(.0), 1.-exp( -.001*t*t*t ) );
+    col = mix( col, vec3(.0), 1.-exp( -.1*t ) );
 
     /*
     float fade = 1. - min(1., (a - 2.)  / 8.);
@@ -271,10 +271,10 @@ void main() {
 
   // resolution
   //vec2 res = vec2(240, 135);
-  for( int m=0; m<2; m++ )   // 2x AA
-  for( int n=0; n<2; n++ ) { // 2x AA
+  for( float m=0.; m<2.; m++ )   // 2x AA
+  for( float n=0.; n<2.; n++ ) { // 2x AA
     // pixel coordinates
-    vec2 o = vec2(float(m),float(n)) / 2. - .5;
+    vec2 o = vec2(m,n) / 2. - .5;
     //vec2 p = (-res.xy + 3.*(gl_FragCoord.xy+o))/res.y;
     vec2 p = (-vec2(240., 135.) + 3.*(gl_FragCoord.xy+o))/135.;
 
@@ -300,7 +300,7 @@ void main() {
     vec3 col = render( ro, rd );
 
   	// gamma
-    col = pow( col, vec3(.7) );
+    //col = pow( col, vec3(.7) );
 
     tot += col / 4.; // AA * AA
   }
