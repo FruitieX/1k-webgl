@@ -54,6 +54,10 @@ void main() {
     //if( e.x<-1e-1) break; // TODO: nice optimisation, but eats space
   }
 
+  // background
+  gl_FragColor = vec4(vec3(.1), 1.);
+
+  // are we under epsilon to a surface?
   if( e.x<1e-4) {
     e = vec2(.1,-.1); // epsilon
     cu = normalize(
@@ -63,11 +67,10 @@ void main() {
       e.xxx*map( cw + e.xxx ).x
     );
 
+    // color of surface
     gl_FragColor = .5 * vec4(
       sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
       vec3(reflect( rd, cu ).y),
     2.);
-  } else {
-    gl_FragColor = vec4(vec3(.1), 1.);
   }
 }

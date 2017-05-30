@@ -1,6 +1,3 @@
-// potato level for PC, higher = faster :-)
-// TODO: remove in production
-
 r = t => {
   requestAnimationFrame(r, c);
   g.uniform2f(g.getUniformLocation(P, 'b'), c.width = 1280, c.height = 720)
@@ -34,8 +31,7 @@ g.compileShader(S);g.attachShader(P,S);
 //     alert(g.getShaderInfoLog(S));
 // }
 
-// g.ARRAY_BUFFER = 34962
-g.bindBuffer(34962, g.createBuffer());
+g.bindBuffer(34962, g.createBuffer()); // g.ARRAY_BUFFER = 34962
 // 1st argument to g.enableVertexAttribArray used to be 0, but undefined works
 // 1st argument to g.vertexAttribPointer used to be 0, but undefined works
 g.vertexAttribPointer(
