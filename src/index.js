@@ -34,9 +34,6 @@ if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
 }
 */
 
-g.linkProgram(P);
-g.useProgram(P);
-
 // g.ARRAY_BUFFER = 34962
 g.bindBuffer(34962, g.createBuffer());
 // 1st argument to g.enableVertexAttribArray used to be 0, but undefined works
@@ -45,7 +42,7 @@ g.vertexAttribPointer(
   g.enableVertexAttribArray(
     g.bufferData(34962, new Int8Array([-3,1,1,-3,1,1]),35044) // 35044 = gl.STATIC_DRAW
   ),
-2,5120,r(),0,0); // g.BYTE = 5120
+2,5120,r(),g.linkProgram(P),g.useProgram(P)); // g.BYTE = 5120
 
 // used to call r(0) here, but we do it above to save a byte or two
 // NOTE: first frame is going to be borken as a result

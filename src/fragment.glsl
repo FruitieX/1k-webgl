@@ -10,7 +10,7 @@ vec2 opU(vec2 d1, vec2 d2) {
 vec2 map(vec3 p) {
   float plasma = sin(5. *
     // horizontal sinusoid
-    sin(p.x * 10. + a * 2.) +
+    sin(10. * p.x + a * 2.) +
     // rotating sinusoid
     sin(10. * (p.x * sin(a / 2.) + p.z * cos(a / 3.)) + a) +
     // circular sinusoid
@@ -20,7 +20,7 @@ vec2 map(vec3 p) {
       // cy
       pow(p.y + .5 * cos(a / 3.), 2.)
     ) + 1.) + a)
-  ) / 2.;
+  ) * .5;
 
   return opU(
     // plasma sphere
@@ -28,7 +28,7 @@ vec2 map(vec3 p) {
     // return vec2(sdPlasmaSphere(p, 0.5), hue);
     vec2(length(p)-.5 + plasma * sin(a / 10.0), 100. * sin(plasma) + a),
     // plane
-    vec2(p.y + 1., 0.)
+    vec2(1. + p.y, 0.)
   );
 }
 
@@ -52,7 +52,7 @@ void main() {
     //mat3 ca = setCamera(ro);
 
   	vec3 cw = normalize(-ro);
-  	vec3 cu = cross(cw,vec3(.0, 1., .0));
+  	vec3 cu = cross(cw, vec3(.0, 1., .0));
 
     // ray direction
     vec3 rd = mat3(
@@ -76,9 +76,10 @@ void main() {
     //vec3 col = render( ro, rd );
 
     // castRay(ro, rd)
-    float tmin = .2, mat = -1.;
+    float tmin = 1., mat = -1.;
     for( float i=-32.; i<32.; i++ ) { // 64 = maxIterations
-      vec2 rayRes = map( ro+rd*tmin );
+      cw = ro+rd*tmin;
+      vec2 rayRes = map(cw);
       //float precis = .000001*tmin;
       //if( rayRes.x<precis) break; // TODO: nice optimisation, but eats space
       tmin += rayRes.x;
@@ -90,13 +91,13 @@ void main() {
 
     // vec3 nor = calcNormal(ro + tmin*rd);
     // calcNormal(pos)
-    vec2 e = vec2(.001,-.001  ); // (1, -1) * .5773*.0005
+    vec2 e = vec2(.01,-.01); // (1, -1) * .5773*.0005
     // normal
     cu = normalize(
-      e.xyy*map( ro + tmin*rd + e.xyy ).x +
-      e.yyx*map( ro + tmin*rd + e.yyx ).x +
-      e.yxy*map( ro + tmin*rd + e.yxy ).x +
-      e.xxx*map( ro + tmin*rd + e.xxx ).x
+      e.xyy*map( cw+ e.xyy ).x +
+      e.yyx*map( cw+ e.yyx ).x +
+      e.yxy*map( cw+ e.yxy ).x +
+      e.xxx*map( cw+ e.xxx ).x
     );
     // end
 
