@@ -2,6 +2,8 @@ precision highp float;
 
 // time variable (seconds)
 uniform float a;
+// res
+uniform vec2 b;
 
 vec2 opU(vec2 d1, vec2 d2) {
   return d1.x<d2.x ? d1 : d2;
@@ -16,10 +18,10 @@ vec2 map(vec3 p) {
     // circular sinusoid
     sin(sqrt(10. * (
       // cx
-      pow(p.x + .5 * sin(a / 2.), 2.) +
+      pow(p.x * sin(a / 2.), 2.) +
       // cy
-      pow(p.y + .5 * cos(a / 3.), 2.)
-    ) + 1.) + a)
+      pow(p.y * cos(a / 3.), 2.)
+    )) + a)
   ) / 2.;
 
   return opU(
@@ -33,8 +35,6 @@ vec2 map(vec3 p) {
 }
 
 void main() {
-  vec3 tot = vec3(.0);
-
   // resolution
   //vec2 res = vec2(240, 135);
   //for( float m=0.; m<2.; m++ )   // 2x AA
@@ -62,12 +62,12 @@ void main() {
   ) * normalize(
     vec3(
       (
-        -vec2(240., 135.) + 2. * (
+        -b + 2. * (
           gl_FragCoord.xy //+
           // pixel coordinates when doing AA
           //vec2(m,n) / 2. - .5
         )
-      ) / 135.,
+      ) / b.y,
       2.
     )
   );
@@ -77,7 +77,7 @@ void main() {
 
   // castRay(ro, rd)
   float tmin = 1., mat = -1.;
-  for( float i=.0; i<64.; i++ ) { // 64 = maxIterations
+  for( float i=.0; i<100.; i++ ) { // 64 = maxIterations
     cw = ro+rd*tmin;
     vec2 rayRes = map(cw);
     //float precis = .000001*tmin;
@@ -97,9 +97,9 @@ void main() {
     e.xxx*map( cw + e.xxx ).x
   );
 
-  tot +=
+  gl_FragColor = vec4(
     .5 * sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
-    .5 * vec3(reflect( rd, cu ).y);
+    .5 * vec3(reflect( rd, cu ).y),
+  1.);
 
-  gl_FragColor = vec4( tot, 1. );
 }

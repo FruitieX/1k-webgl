@@ -18,7 +18,7 @@ cd dist
 echo "uglifying..."
 uglifyjs ../src/index.js \
   -c \
-    unsafe,unsafe_comps,unused,dead_code,drop_console,unsafe_math \
+    unsafe,unsafe_comps,unsafe_math,unsafe_proto,unused,dead_code,drop_console \
   -m \
     toplevel,eval \
 > temp/temp1.js
@@ -32,7 +32,10 @@ echo "minifying fragment shader..."
 glslmin -m ../src/fragment.glsl | node ../utils/findandreplace.js --template temp/temp2.js --find 'require("./fragment.glsl")' --surround '`' > temp/temp3.js
 
 echo "running regpack..."
-node ../node_modules/.bin/regpack temp/temp3.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
+node ../node_modules/.bin/regpack temp/temp3.js \
+  --crushGainFactor 2 \
+  --crushLengthFactor 1 \
+  --crushCopiesFactor 1 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
 

@@ -1,16 +1,18 @@
 // potato level for PC, higher = faster :-)
 // TODO: remove in production
-//c.width = 240;
-//c.height = 135;
+c.width = 1280;
+c.height = 720;
 
 r = t => {
   requestAnimationFrame(r, c);
+  g.uniform2f(g.getUniformLocation(P, 'b'), c.width, c.height)
 
   g.drawArrays(6,
     // 2nd argument to g.drawArrays used to be 0, but undefined works
     // set the "a" time variable
     g.uniform1f(g.getUniformLocation(P, 'a'), t / 10000),
-  3); // g.TRIANGLE_FAN = 6
+    3
+  ); // g.TRIANGLE_FAN = 6
 }
 
 // onload
