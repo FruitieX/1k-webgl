@@ -63,7 +63,7 @@ void main() {
     e = map(cw = ro+rd*t);
     t += e.x;
     mat = e.y;
-    if( e.x<-1e-4) break; // TODO: nice optimisation, but eats space
+    if( e.x<-1e-4) break; // fixes "holes" in weird shapes
     //if( e.x>1e0) break;  // TODO: nice optimisation, but eats space
   }
 
