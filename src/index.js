@@ -1,6 +1,6 @@
 r = t => {
   requestAnimationFrame(r, c);
-  g.uniform2f(g.getUniformLocation(P, 'b'), c.width = 1280, c.height = 720)
+  g.uniform2f(g.getUniformLocation(P, 'b'), c.width = 320, c.height = 180)
 
   g.drawArrays(6,
     // 2nd argument to g.drawArrays used to be 0, but undefined works
@@ -10,7 +10,7 @@ r = t => {
   ); // g.TRIANGLE_FAN = 6
   //c.style = 'margin:-8';
 }
-c.width = 1280, c.height = 720;
+c.width = 320, c.height = 180;
 
 // onload
 g = c.getContext('webgl');
