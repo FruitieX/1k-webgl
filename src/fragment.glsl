@@ -11,7 +11,7 @@ vec2 map(vec3 p) {
     sin(1e1 * p.x + a) +
 
     // rotating sinusoid
-    sin(1e1 * p.x * sin(a / 12.) + 1e1 * p.z * cos(a / 13.) + a) +
+    sin(1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1) + a) +
 
     // circular sinusoid
     sin(sqrt(1e2 * (
