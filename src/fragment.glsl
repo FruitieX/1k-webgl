@@ -14,12 +14,12 @@ vec2 map(vec3 p) {
     sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
 
     // circular sinusoid
-    sin(a + sqrt(1e2 * (
+    sin(a + sqrt(
       // cx
-      pow(p.x + sin(a / 1e1), 2.) +
+      1e2 * pow(p.x + sin(a / 1e1), 2.) +
       // cy
-      pow(p.y + cos(a / 1e1), 2.)
-    ) + 1.))
+      1e2 * pow(p.y + cos(a / 1e1), 2.)
+    ))
   ) * sin(a) * 4.); // / 2. + .5; // smaller plasma, always positive
 
   /*
@@ -31,12 +31,12 @@ vec2 map(vec3 p) {
   // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  return vec2(length(p)-.5 + plasma - plasma * cos(a), 1e2 * sin(plasma) + a * 10.);
+  return vec2(length(p)-.5 + plasma - plasma * cos(a), 1e2 * sin(plasma) + 1e1 * a);
 }
 
 void main() {
   // camera
-  vec3 ro = vec3( sin(2. - a), 1e0, sin(a) ), // rotating
+  vec3 ro = vec3( sin(1. - a), 1e0, sin(a) ), // rotating
   // vec3 ro = vec3(1e0), // static
 	cw = normalize(-ro),
 	cu = cross(cw, vec3(.0, 1e0, .0));
@@ -46,14 +46,9 @@ void main() {
     cu,
     cross(cu,cw),
     cw
-  ) * normalize(
-    vec3(
-      (
-        -b + 2. * gl_FragCoord.xy
-      ) / b.y,
-      1.
-    )
-  );
+  ) * //normalize(
+    vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y
+  /*)*/;
 
   float t = .2, // ray step amount
         mat; // material
