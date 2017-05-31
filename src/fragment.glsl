@@ -64,6 +64,7 @@ void main() {
     t += e.x;
     mat = e.y;
     if( e.x<-1e-4) break; // TODO: nice optimisation, but eats space
+    //if( e.x>1e0) break;  // TODO: nice optimisation, but eats space
   }
 
   // background
