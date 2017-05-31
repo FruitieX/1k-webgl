@@ -6,12 +6,12 @@ uniform float a;
 uniform vec2 b;
 
 vec2 map(vec3 p) {
-  float plasma = sin(((
+  float plasma = sin((
     // horizontal sinusoid
-    sin(1e1 * p.x + a) +
+    sin(a + 1e1 * p.x) +
 
     // rotating sinusoid
-    sin(1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1) + a) +
+    sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
 
     // circular sinusoid
     sin(sqrt(1e2 * (
@@ -20,7 +20,7 @@ vec2 map(vec3 p) {
       // cy
       pow(p.y + cos(a / 1e2), 2.)
     ) + 1.) + a)
-  ) * (1. + sin(a / 1e1) * 3.)) * 1.5) / 2. + .5;
+  ) * sin(a) * 4.) / 2. + .5;
 
   /*
   ^
