@@ -6,21 +6,24 @@ uniform float a;
 uniform vec2 b;
 
 vec2 map(vec3 p) {
-  float plasma = sin((
+  float plasma = sin(
     // horizontal sinusoid
+    sin(a) * 4. *
     sin(a + 1e1 * p.x) +
 
     // rotating sinusoid
+    sin(a) * 4. *
     sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
 
     // circular sinusoid
+    sin(a) * 4. *
     sin(a + sqrt(
       // cx
       1e2 * pow(p.x + sin(a / 1e1), 2.) +
       // cy
       1e2 * pow(p.y + cos(a / 1e1), 2.)
     ))
-  ) * sin(a) * 4.); // / 2. + .5; // smaller plasma, always positive
+  ); // / 2. + .5; // smaller plasma, always positive
 
   /*
   ^
@@ -31,7 +34,7 @@ vec2 map(vec3 p) {
   // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  return vec2(length(p)-.5 + plasma - plasma * cos(a), 1e2 * sin(plasma) + 1e1 * a);
+  return vec2(length(p)-.5 + plasma - plasma * cos(a /4.), 1e2 * sin(plasma) + 1e1 * a);
 }
 
 void main() {
@@ -63,10 +66,10 @@ void main() {
   }
 
   // background
-  gl_FragColor = vec4(vec3(.5), 1.);
+  //gl_FragColor = vec4(vec3(.5), 1.);
 
   // are we under epsilon to a surface?
-  if( e.x<1e-4) {
+  //if( e.x<1e-4) {
     e = vec2(.1,-.1); // epsilon
     cu = normalize(
       e.xyy*map( cw + e.xyy ).x +
@@ -80,5 +83,5 @@ void main() {
       .5 + .5*sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
       vec3(reflect( rd, cu ).y),
     2.);
-  }
+  //}
 }
