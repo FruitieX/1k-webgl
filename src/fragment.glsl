@@ -34,7 +34,7 @@ vec2 map(vec3 p) {
   // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  return vec2(length(p)-.5 + plasma - plasma * cos(a /4.), 1e2 * sin(plasma) + 1e1 * a);
+  return vec2(length(p)-.5 + plasma - plasma * cos(a /4.), sin(plasma) + a);
 }
 
 void main() {
@@ -57,12 +57,12 @@ void main() {
         mat; // material
 
   vec2 e;
-  for( float i=.0; i<4e2; i++ ) { // 64 = maxIterations
+  for( float i=.0; i<1e2; i++ ) { // 64 = maxIterations
     e = map(cw = ro+rd*t);
     t += e.x;
     mat = e.y;
     if( e.x<-1e-4) break; // fixes "holes" in weird shapes
-    //if( e.x>1e0) break;  // TODO: nice optimisation, but eats space
+    if( e.x>1e0) break;  // results in trippy background
   }
 
   // background
@@ -80,7 +80,7 @@ void main() {
 
     // color of surface
     gl_FragColor = .5 * vec4(
-      .5 + .5*sin(vec3(.05,.08,.1) * mat) + //* vec3(dot(cu, vec3(1.))) +
+      .5 + sin(mat * vec3(3., 2., 1.)) + //* vec3(dot(cu, vec3(1.))) +
       vec3(reflect( rd, cu ).y),
     2.);
   //}

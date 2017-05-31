@@ -1,4 +1,4 @@
-w = 320, h = 180;
+w = 1920, h = 1080;
 
 r = t => {
   requestAnimationFrame(r, c);
