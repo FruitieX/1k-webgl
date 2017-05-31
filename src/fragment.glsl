@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 // time variable (seconds)
 uniform float a;
@@ -6,7 +6,7 @@ uniform float a;
 uniform vec2 b;
 
 vec2 map(vec3 p) {
-  float plasma = //sin(1e1 *
+  float plasma = sin(((
     // horizontal sinusoid
     sin(p.x * 1e1 + a / 2.) +
 
@@ -19,12 +19,18 @@ vec2 map(vec3 p) {
       pow(p.x + .5 * sin(a / 15.), 2.) +
       // cy
       pow(p.y + .5 * cos(a / 13.), 2.)
-    ) + 1.) + a);
-  //);
+    ) + 1.) + a)
+  ) * (1. + sin(a / 1e1) * 3.)) * 1.5) / 2. + .5;
 
+  /*
+  ^
   plasma *= 1. + sin(a / 1e1) * 3.;
   plasma = sin(plasma * 3.14 / 2.) / 2. + 0.5;
+  */
 
+  // cool alternative
+  //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
+  //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   return vec2(length(p)-1. + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
 }
 
