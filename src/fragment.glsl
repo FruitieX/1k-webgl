@@ -14,13 +14,13 @@ vec2 map(vec3 p) {
     sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
 
     // circular sinusoid
-    sin(sqrt(1e2 * (
+    sin(a + sqrt(1e2 * (
       // cx
-      pow(p.x + sin(a / 1e2), 2.) +
+      pow(p.x + sin(a / 1e1), 2.) +
       // cy
-      pow(p.y + cos(a / 1e2), 2.)
-    ) + 1.) + a)
-  ) * sin(a) * 4.) / 2. + .5;
+      pow(p.y + cos(a / 1e1), 2.)
+    ) + 1.))
+  ) * sin(a) * 4.); // / 2. + .5; // smaller plasma, always positive
 
   /*
   ^
@@ -28,10 +28,10 @@ vec2 map(vec3 p) {
   plasma = sin(plasma * 3.14 / 2.) / 2. + 0.5;
   */
 
-  // cool alternative
+  // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  return vec2(length(p)-1. + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
+  return vec2(length(p)-.5 + plasma - plasma * cos(a), 1e2 * sin(plasma) + a * 10.);
 }
 
 void main() {
