@@ -38,7 +38,7 @@ g.bindBuffer(34962, g.createBuffer()); // g.ARRAY_BUFFER = 34962
 // 1st argument to g.vertexAttribPointer used to be 0, but undefined works
 g.vertexAttribPointer(
   g.enableVertexAttribArray(
-    g.bufferData(34962, new Int8Array([-3,1,1,-3,1,1]),35044) // 35044 = gl.STATIC_DRAW
+    g.bufferData(34962, Int8Array.of(-3,1,1,-3,1,1),35044) // 35044 = gl.STATIC_DRAW
   ),
 2,5120,r(),g.linkProgram(P),g.useProgram(P)); // g.BYTE = 5120
 
