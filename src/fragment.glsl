@@ -12,8 +12,10 @@ vec2 map(vec3 p) {
     sin(a + 1e1 * p.x) +
 
     // rotating sinusoid
+    /*
     sin(a) * 4. *
     sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
+    */
 
     // circular sinusoid
     sin(a) * 4. *
@@ -30,7 +32,8 @@ vec2 map(vec3 p) {
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
-  return vec2(length(p)-.5 + plasma - plasma * cos(a / 4.), sin(plasma) + a);
+  // ideas: sin^2(x) between [-1, 1]
+  return vec2(length(p)-.5 + plasma * sin(a / 1e2), sin(plasma) + a);
 }
 
 void main() {
