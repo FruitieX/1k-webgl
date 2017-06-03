@@ -1,8 +1,7 @@
-w = 1920, h = 1080;
+w = 640, h = 480;
 
 r = t => {
-  requestAnimationFrame(r, c);
-  g.uniform2f(g.getUniformLocation(P, 'b'), w, h)
+  g.uniform2f(g.getUniformLocation(P, 'b'), w, h);
 
   g.drawArrays(6,
     // 2nd argument to g.drawArrays used to be 0, but undefined works
@@ -11,6 +10,7 @@ r = t => {
     3
   ); // g.TRIANGLE_FAN = 6
   //c.style = 'margin:-8';
+  requestAnimationFrame(r);
 }
 c.width = w, c.height = h;
 
@@ -30,7 +30,7 @@ g.compileShader(S);g.attachShader(P,S);
 // Check for any compilation error
 // TODO: remove in production
 // if (!g.getShaderParameter(S, 35713)) { // g.COMPILE_STATUS = 35713
-//     alert(g.getShaderInfoLog(S));
+//   throw g.getShaderInfoLog(S);
 // }
 
 g.bindBuffer(34962, g.createBuffer()); // g.ARRAY_BUFFER = 34962
@@ -38,9 +38,6 @@ g.bindBuffer(34962, g.createBuffer()); // g.ARRAY_BUFFER = 34962
 // 1st argument to g.vertexAttribPointer used to be 0, but undefined works
 g.vertexAttribPointer(
   g.enableVertexAttribArray(
-    g.bufferData(34962, Int8Array.of(-3,1,1,-3,1,1),35044) // 35044 = gl.STATIC_DRAW
+    g.bufferData(34962, Int8Array.of(-3,1,1,-3,1,1), 35044) // 35044 = gl.STATIC_DRAW
   ),
 2,5120,r(),g.linkProgram(P),g.useProgram(P)); // g.BYTE = 5120
-
-// used to call r(0) here, but we do it above to save a byte or two
-// NOTE: first frame is going to be borken as a result
