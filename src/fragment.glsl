@@ -34,7 +34,9 @@ vec2 map(vec3 p) {
   // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  return vec2(length(p)-.5 + plasma - plasma * cos(a /4.), sin(plasma) + a);
+
+  // TODO: cos varies between [-1, 1] and causes plasma to grow too high
+  return vec2(length(p)-.5 + plasma - plasma * cos(a / 4.), sin(plasma) + a);
 }
 
 void main() {
@@ -53,11 +55,11 @@ void main() {
     vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y
   /*)*/;
 
-  float t = .2, // ray step amount
+  float t = .5, // initial ray step amount
         mat; // material
 
   vec2 e;
-  for( float i=.0; i<1e2; i++ ) { // 64 = maxIterations
+  for( float i=.0; i<1e1; i++ ) { // maxIterations
     e = map(cw = ro+rd*t);
     t += e.x;
     mat = e.y;
