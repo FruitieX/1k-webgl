@@ -44,9 +44,7 @@ void main() {
     cu,
     cross(cu, cw),
     cw
-  ) * //normalize(
-    vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y
-  /*)*/;
+  ) * vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y;
 
   float t = .5, // initial ray step amount
         mat; // material
@@ -60,23 +58,17 @@ void main() {
     if(e.x > 1e0) break;  // results in trippy background
   }
 
-  // background
-  //gl_FragColor = vec4(vec3(.5), 1.);
+  e = vec2(.1, -.1); // epsilon
+  cu = normalize(
+    e.xyy * map(cw + e.xyy).x +
+    e.yyx * map(cw + e.yyx).x +
+    e.yxy * map(cw + e.yxy).x +
+    e.xxx * map(cw + e.xxx).x
+  );
 
-  // are we under epsilon to a surface?
-  //if( e.x<1e-4) {
-    e = vec2(.1,-.1); // epsilon
-    cu = normalize(
-      e.xyy*map( cw + e.xyy ).x +
-      e.yyx*map( cw + e.yyx ).x +
-      e.yxy*map( cw + e.yxy ).x +
-      e.xxx*map( cw + e.xxx ).x
-    );
-
-    // color of surface
-    gl_FragColor = .5 * vec4(
-      .5 + sin(mat * vec3(3., 2., 1.)) + //* vec3(dot(cu, vec3(1.))) +
-      vec3(reflect( rd, cu ).y),
-    2.);
-  //}
+  // color of surface
+  gl_FragColor = .5 * vec4(
+    .5 + sin(mat * vec3(3., 2., 1.)) + //* vec3(dot(cu, vec3(1.))) +
+    vec3(reflect(rd, cu).y),
+  2.);
 }
