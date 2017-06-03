@@ -25,12 +25,6 @@ vec2 map(vec3 p) {
     ))
   ); // / 2. + .5; // smaller plasma, always positive
 
-  /*
-  ^
-  plasma *= 1. + sin(a / 1e1) * 3.;
-  plasma = sin(plasma * 3.14 / 2.) / 2. + 0.5;
-  */
-
   // cool alternatives
   //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
   //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
@@ -42,14 +36,13 @@ vec2 map(vec3 p) {
 void main() {
   // camera
   vec3 ro = vec3( sin(1. - a), 1e0, sin(a) ), // rotating
-  // vec3 ro = vec3(1e0), // static
 	cw = normalize(-ro),
 	cu = cross(cw, vec3(.0, 1e0, .0));
 
   // ray direction
   vec3 rd = mat3(
     cu,
-    cross(cu,cw),
+    cross(cu, cw),
     cw
   ) * //normalize(
     vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y
@@ -63,8 +56,8 @@ void main() {
     e = map(cw = ro+rd*t);
     t += e.x;
     mat = e.y;
-    if( e.x<-1e-4) break; // fixes "holes" in weird shapes
-    if( e.x>1e0) break;  // results in trippy background
+    if(e.x < -1e-4) break; // fixes "holes" in weird shapes
+    if(e.x > 1e0) break;  // results in trippy background
   }
 
   // background
