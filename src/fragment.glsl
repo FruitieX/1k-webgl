@@ -27,22 +27,25 @@ vec3 map(vec3 p) {
       // cy
       // used to be:
       // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
-      1e2 * pow(p.y + sin(1. - a.z / 1e1), 2.)
+      1e2 * pow(p.y + sin(1e0 - a.z / 1e1), 2.)
     ))
   ); // / 2. + .5; // smaller plasma, always positive
 
   // cool alternatives
-  //return vec2(plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  //return vec2(sin(a) * (length(p)-1.) + plasma * (1. - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
+  //return vec2(plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
+  //return vec2(sin(a) * (length(p)-1e0) + plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
   return vec3(length(p)-.5 + plasma * sin(a.z / 1e2), plasma + a.z, 2.);
+
+  // shorter, worth investigating?
+  //return vec3(length(p)-.5 + plasma * sin(a.z / 1e2));
 }
 
 void main() {
   // ray origin
-  vec3 ro = vec3( sin(1. - a.z), 1e0, sin(a.z) ), // rotating
+  vec3 ro = vec3( sin(1e0 - a.z), 1e0, sin(a.z) ), // rotating
 	cw = normalize(-ro),
 	cu = cross(cw, vec3(.0, 1e0, .0));
 
@@ -88,7 +91,7 @@ void main() {
     // cheap vignette
     * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
-    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1.)
+    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1e0)
     ,
-  1.);
+  1e0);
 }
