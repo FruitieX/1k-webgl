@@ -33,7 +33,7 @@ glslmin -m ../src/fragment.glsl | node ../utils/findandreplace.js --template tem
 
 echo "running regpack..."
 node ../node_modules/.bin/regpack temp/temp3.js \
-  --crushGainFactor 4 \
+  --crushGainFactor 5 \
   --crushLengthFactor 4 \
   --crushCopiesFactor 1 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 

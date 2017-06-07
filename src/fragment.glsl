@@ -54,12 +54,12 @@ void main() {
     cu,
     cross(cu, cw),
     cw
-  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
+  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y,
+  e; // ray marcher temp result
 
   cu.x = .5; // initial ray step amount
 
   // ray marcher
-  vec3 e; // result
   for( float i=.0; i<1e1; i++ ) { // maxIterations
     cu += (e = map(cw = ro+rd*cu.x));
     if(e.x < -1e-4) break; // fixes "holes" in weird shapes
@@ -67,7 +67,7 @@ void main() {
   }
 
   // calculate normal from surface
-  cu = vec3(.1, -.1, .5); // epsilon, z is unused
+  cu = vec3(.1, -.1, .3); // epsilon, z is unused
   cw = normalize(
     cu.xyy * map(cw + cu.xyy).x +
     cu.yyx * map(cw + cu.yyx).x +
@@ -75,9 +75,8 @@ void main() {
     cu.xxx * map(cw + cu.xxx).x
   );
 
-  // TODO: color vector (cu) should have high common denominator components
-  // but normal calculations need equal but opposite xy components
-  //cu.y = .3;
+  // Color vector (cu) should have high common denominator components
+  cu.x = .5;
 
   // color of surface
   gl_FragColor = vec4(
@@ -91,7 +90,7 @@ void main() {
     // cheap vignette
     * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
-    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1e0)
+    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1e0) // demo length = 1e1 * 10
     ,
   1e0);
 }
