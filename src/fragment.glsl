@@ -4,6 +4,9 @@ precision highp float;
 // a.z = time variable (seconds / 10)
 uniform vec3 a;
 
+// x = distance to sdf
+// y = material color
+// z = unused
 vec3 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
@@ -22,7 +25,9 @@ vec3 map(vec3 p) {
       // cx
       1e2 * pow(p.x + sin(a.z / 1e1), 2.) +
       // cy
-      1e2 * pow(p.y + cos(a.z / 1e1), 2.)
+      // used to be:
+      // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
+      1e2 * pow(p.y + sin(1. - a.z / 1e1), 2.)
     ))
   ); // / 2. + .5; // smaller plasma, always positive
 
@@ -32,7 +37,7 @@ vec3 map(vec3 p) {
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
-  return vec3(length(p)-.5 + plasma * sin(a.z / 1e2), sin(plasma) + a.z, 0.);
+  return vec3(length(p)-.5 + plasma * sin(a.z / 1e2), plasma + a.z, 2.);
 }
 
 void main() {
@@ -62,7 +67,7 @@ void main() {
   }
 
   // calculate normal from surface
-  cu = vec3(.1, -.1, 2.); // epsilon, z is unused
+  cu = vec3(.1, -.1, .2); // epsilon, z is unused
   cw = normalize(
     cu.xyy * map(cw + cu.xyy).x +
     cu.yyx * map(cw + cu.yyx).x +
@@ -74,15 +79,15 @@ void main() {
   gl_FragColor = vec4(
     (
       // material color
-      sin(e.y * vec3(3., 2., 1.)) +
+      sin(a.z * e.y * cu) +
 
       // diffuse lighting
-      vec3(reflect(rd, cw).y)
+      reflect(rd, cw).y
     )
     // cheap vignette
     * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
-    //* clamp(0., (-abs(a - 1e1) + 1e1), 1.)
+    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1.)
     ,
   1.);
 }
