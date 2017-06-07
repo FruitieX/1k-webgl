@@ -37,7 +37,7 @@ vec2 map(vec3 p) {
 }
 
 void main() {
-  // camera
+  // ray origin
   vec3 ro = vec3( sin(1. - a), 1e0, sin(a) ), // rotating
 	cw = normalize(-ro),
 	cu = cross(cw, vec3(.0, 1e0, .0));
@@ -49,34 +49,36 @@ void main() {
     cw
   ) * vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y;
 
-  float t = .5, // initial ray step amount
-        mat; // material
+  float t = .5; // initial ray step amount
+        //mat; // material
 
-  vec2 e;
+  // ray marcher
+  vec2 e; // result
   for( float i=.0; i<1e1; i++ ) { // maxIterations
     e = map(cw = ro+rd*t);
     t += e.x;
-    mat = e.y;
+    //mat = e.y;
     if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     if(e.x > 1e0) break;  // results in trippy background
   }
 
-  e = vec2(.1, -.1); // epsilon
-  cu = normalize(
-    e.xyy * map(cw + e.xyy).x +
-    e.yyx * map(cw + e.yyx).x +
-    e.yxy * map(cw + e.yxy).x +
-    e.xxx * map(cw + e.xxx).x
+  // calculate normal from surface
+  cu = vec3(.1, -.1, 2.); // epsilon, z is unused
+  cw = normalize(
+    cu.xyy * map(cw + cu.xyy).x +
+    cu.yyx * map(cw + cu.yyx).x +
+    cu.yxy * map(cw + cu.yxy).x +
+    cu.xxx * map(cw + cu.xxx).x
   );
 
   // color of surface
   gl_FragColor = vec4(
     (
       // material color
-      sin(mat * vec3(3., 2., 1.)) +
+      sin(e.y * vec3(3., 2., 1.)) +
 
       // diffuse lighting
-      vec3(reflect(rd, cu).y)
+      vec3(reflect(rd, cw).y)
     )
     // cheap vignette
     * (2. - length(vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y))
