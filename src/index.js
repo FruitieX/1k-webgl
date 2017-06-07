@@ -1,12 +1,10 @@
 w = 640, h = 480;
 
 r = t => {
-  g.uniform2f(g.getUniformLocation(P, 'b'), w, h);
-
   g.drawArrays(6,
     // 2nd argument to g.drawArrays used to be 0, but undefined works
     // set the "a" time variable
-    g.uniform1f(g.getUniformLocation(P, 'a'), t / 1e4),
+    g.uniform3f(g.getUniformLocation(P, 'a'), w, h, t / 1e4),
     3
   ); // g.TRIANGLE_FAN = 6
   //c.style = 'margin:-8';

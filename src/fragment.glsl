@@ -1,15 +1,14 @@
 precision highp float;
 
-// time variable (seconds)
-uniform float a;
-// res
-uniform vec2 b;
+// a.xy = resolution
+// a.z = time variable (seconds / 10)
+uniform vec3 a;
 
 vec2 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
-    sin(a) * 4. *
-    sin(a + 1e1 * p.x) +
+    sin(a.z) * 4. *
+    sin(a.z + 1e1 * p.x) +
 
     // rotating sinusoid
     /*
@@ -18,12 +17,12 @@ vec2 map(vec3 p) {
     */
 
     // circular sinusoid
-    sin(a) * 4. *
-    sin(a + sqrt(
+    sin(a.z) * 4. *
+    sin(a.z + sqrt(
       // cx
-      1e2 * pow(p.x + sin(a / 1e1), 2.) +
+      1e2 * pow(p.x + sin(a.z / 1e1), 2.) +
       // cy
-      1e2 * pow(p.y + cos(a / 1e1), 2.)
+      1e2 * pow(p.y + cos(a.z / 1e1), 2.)
     ))
   ); // / 2. + .5; // smaller plasma, always positive
 
@@ -33,12 +32,12 @@ vec2 map(vec3 p) {
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
-  return vec2(length(p)-.5 + plasma * sin(a / 1e2), sin(plasma) + a);
+  return vec2(length(p)-.5 + plasma * sin(a.z / 1e2), sin(plasma) + a.z);
 }
 
 void main() {
   // ray origin
-  vec3 ro = vec3( sin(1. - a), 1e0, sin(a) ), // rotating
+  vec3 ro = vec3( sin(1. - a.z), 1e0, sin(a.z) ), // rotating
 	cw = normalize(-ro),
 	cu = cross(cw, vec3(.0, 1e0, .0));
 
@@ -47,7 +46,7 @@ void main() {
     cu,
     cross(cu, cw),
     cw
-  ) * vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y;
+  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
 
   float t = .5; // initial ray step amount
         //mat; // material
@@ -81,7 +80,7 @@ void main() {
       vec3(reflect(rd, cw).y)
     )
     // cheap vignette
-    * (2. - length(vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y))
+    * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
     //* clamp(0., (-abs(a - 1e1) + 1e1), 1.)
     ,
