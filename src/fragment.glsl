@@ -4,7 +4,7 @@ precision highp float;
 // a.z = time variable (seconds / 10)
 uniform vec3 a;
 
-vec2 map(vec3 p) {
+vec3 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
     sin(a.z) * 4. *
@@ -32,7 +32,7 @@ vec2 map(vec3 p) {
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
-  return vec2(length(p)-.5 + plasma * sin(a.z / 1e2), sin(plasma) + a.z);
+  return vec3(length(p)-.5 + plasma * sin(a.z / 1e2), sin(plasma) + a.z, 0.);
 }
 
 void main() {
@@ -52,7 +52,7 @@ void main() {
         //mat; // material
 
   // ray marcher
-  vec2 e; // result
+  vec3 e; // result
   for( float i=.0; i<1e1; i++ ) { // maxIterations
     e = map(cw = ro+rd*t);
     t += e.x;
