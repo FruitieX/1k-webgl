@@ -70,8 +70,18 @@ void main() {
   );
 
   // color of surface
-  gl_FragColor = .5 * vec4(
-    .5 + sin(mat * vec3(3., 2., 1.)) + //* vec3(dot(cu, vec3(1.))) +
-    vec3(reflect(rd, cu).y),
-  2.);
+  gl_FragColor = vec4(
+    (
+      // material color
+      sin(mat * vec3(3., 2., 1.)) +
+
+      // diffuse lighting
+      vec3(reflect(rd, cu).y)
+    )
+    // cheap vignette
+    * (2. - length(vec3(-b + 2. * gl_FragCoord.xy, b.y) / b.y))
+    // fade in/out
+    //* clamp(0., (-abs(a - 1e1) + 1e1), 1.)
+    ,
+  1.);
 }
