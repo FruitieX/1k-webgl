@@ -53,27 +53,28 @@ void main() {
     cw
   ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
 
-  float t = .5; // initial ray step amount
-        //mat; // material
+  cu.x = .5; // initial ray step amount
 
   // ray marcher
   vec3 e; // result
   for( float i=.0; i<1e1; i++ ) { // maxIterations
-    e = map(cw = ro+rd*t);
-    t += e.x;
-    //mat = e.y;
+    cu += (e = map(cw = ro+rd*cu.x));
     if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     if(e.x > 1e0) break;  // results in trippy background
   }
 
   // calculate normal from surface
-  cu = vec3(.1, -.1, .2); // epsilon, z is unused
+  cu = vec3(.1, -.1, .5); // epsilon, z is unused
   cw = normalize(
     cu.xyy * map(cw + cu.xyy).x +
     cu.yyx * map(cw + cu.yyx).x +
     cu.yxy * map(cw + cu.yxy).x +
     cu.xxx * map(cw + cu.xxx).x
   );
+
+  // TODO: color vector (cu) should have high common denominator components
+  // but normal calculations need equal but opposite xy components
+  //cu.y = .3;
 
   // color of surface
   gl_FragColor = vec4(
