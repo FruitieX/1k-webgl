@@ -34,3 +34,36 @@ with(c.getContext('webgl')) {
     ),
   2, 5120, r(c.style.height = '100vh'), linkProgram(P), useProgram(P)); // BYTE = 5120
 }
+
+// music
+//with(Math) {
+var softSynth = function(f){for(var t=0,S='RIFF_oO_WAVEfmt '+atob('EAAAAAEAAQAcRwAAHEcAAAEACABkYXRh')+'data';++t<1e5;)S+=String.fromCharCode(eval(f));return S};
+new Audio( 'data:audio/wav;base64,'+btoa( softSynth(
+'((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128)' + '&255'
+) ) ).play();
+//}
+/*
+a = new AudioContext();
+
+dly = a.createDelay();
+osc1env = a.createGain();
+osc1 = a.createOscillator();
+lfo = a.createOscillator();
+
+osc1.type = 'sawtooth';
+osc1.frequency.value = 40;
+
+lfo.type = 'sawtooth';
+lfo.frequency.value = 2;
+lfo.connect(osc1env.gain);
+
+dly.delayTime.value = 2 / 3;
+
+osc1.connect(osc1env);
+osc1env.connect(a.destination);
+osc1env.connect(dly);
+dly.connect(a.destination);
+
+lfo.start();
+osc1.start();
+*/
