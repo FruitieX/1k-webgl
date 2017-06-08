@@ -35,13 +35,18 @@ with(c.getContext('webgl')) {
   2, 5120, r(c.style.height = '100vh'), linkProgram(P), useProgram(P)); // BYTE = 5120
 }
 
-// music
-//with(Math) {
-var softSynth = function(f){for(var t=0,S='RIFF_oO_WAVEfmt '+atob('EAAAAAEAAQAcRwAAHEcAAAEACABkYXRh')+'data';++t<1e5;)S+=String.fromCharCode(eval(f));return S};
-new Audio( 'data:audio/wav;base64,'+btoa( softSynth(
-'((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128)' + '&255'
-) ) ).play();
-//}
+// generate music
+for(var t=0,S='RIFF_oO_WAVEfmt '+atob('EAAAAAEAAQAcRwAAHEcAAAEACABkYXRh')+'data';++t<1e5;)S+=String.fromCharCode(eval(
+
+// formula
+'((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128)'
+
+// failsafe thing
++ '&255'
+));
+
+// play music
+new Audio( 'data:audio/wav;base64,'+btoa(S) ).play();
 /*
 a = new AudioContext();
 
