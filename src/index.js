@@ -2,8 +2,10 @@
 c.width = 800, c.height = 480; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor(0,1,1);
+a = f.createScriptProcessor(4096*4,1,1);
 a.connect(f.destination);
+
+numSample = 0;
 
 // onload
 with(c.getContext('webgl')) {
@@ -22,8 +24,11 @@ with(c.getContext('webgl')) {
 
       for(i=q.length;i--;)
       {
-        t = f.sampleRate * e.playbackTime + i;
-        //if (!i) console.log(t);
+        //t = Math.floor(f.sampleRate * e.playbackTime + i);
+        t = numSample + i;
+
+        if (!i) console.log(e.playbackTime, 'start', t);
+        if (i===16383) console.log(e.playbackTime, 'end', t);
         //q[i] = Math.sin(t / 23) * 128;
 
         // drum beat thing
@@ -33,11 +38,9 @@ with(c.getContext('webgl')) {
         //q[i] += ((t*("36364689"[t>>13&7]&15))/12&128)+(((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127)
 
         // melody thing 2
-        /*
         q[i] = (((3e3/(y=t&16383))&1)*35) +
                (x=t*("3346"[t>>16&3]&15)/24&127)*y/4e4 +
                ((t>>8^t>>10|t>>14|x)&63)
-               */
 
         // kick
         //q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
@@ -50,11 +53,19 @@ with(c.getContext('webgl')) {
 
         //q[i] += ((t>>8^t>>10|t>>14|x)&63)
 
+        /*
+        with(Math) {
+          q[i] += ((a=(1-((t&0xfff)/0xfff)))&0)+Math.max(Math.min( (( (sin((y=([0.25,0.30,0.17,0.20][(t>>12)&3]))*  (z=0.313)*t)+sin(y*z*t*1.001)+sin(y*z*t*1.003)+sin(y*z*t*1.005))) )*(sin(t*0.0001)+1.1)*44*a,63),-64)*Math.min(t/0x1ffff,1)+Math.max(Math.min( ((((sin((t&0xfff)*0.07*a*a*a)*64))))*  ((0x55355535>>(t>>12&31))&1)*a*2.2 +((d=(sin((t^0x1ffff)*0.1*t*a)*64)*a))*((0xb4446444>>((t>>12)  &31))&1)*a*0.9 +((a*d*((t>>10&3)==0)&0xff))*a*0.04 ,63),-64)*(t>0x3ffff)
+        }
+        */
+
         q[i] /= 1000;
 
         // limit volume while testing
         q[i] = Math.max(-0.125, Math.min(0.125, q[i]));
       }
+
+      numSample += q.length;
     }
   );
 
