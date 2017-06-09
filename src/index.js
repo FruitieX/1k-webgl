@@ -1,8 +1,8 @@
 // cheap way of doing AA
-c.width = 800, c.height = 480; // 16:9 aspect ratio
+c.width = 200, c.height = 120; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor(4096*4,1,1);
+a = f.createScriptProcessor(2048,1,1);
 a.connect(f.destination);
 
 numSample = 0;
@@ -26,24 +26,28 @@ with(c.getContext('webgl')) {
       {
         //t = Math.floor(f.sampleRate * e.playbackTime + i);
         t = numSample + i;
+        //t /= 4;
 
-        if (!i) console.log(e.playbackTime, 'start', t);
-        if (i===16383) console.log(e.playbackTime, 'end', t);
+        //if (!i) console.log(e.playbackTime, 'start', t);
+        //if (i===16383) console.log(e.playbackTime, 'end', t);
         //q[i] = Math.sin(t / 23) * 128;
-
-        // drum beat thing
-        //q[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
+        //q[i] = Math.sin(t / 4);
 
         // melody thing
         //q[i] += ((t*("36364689"[t>>13&7]&15))/12&128)+(((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127)
 
         // melody thing 2
+        /*
         q[i] = (((3e3/(y=t&16383))&1)*35) +
                (x=t*("3346"[t>>16&3]&15)/24&127)*y/4e4 +
                ((t>>8^t>>10|t>>14|x)&63)
+               */
 
         // kick
-        //q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
+        q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
+
+        // drum beat thing
+        q[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
 
         // beep thing
         //q[i] += (((1e4/(t&16383*2+8000))&2)*10)
@@ -55,11 +59,76 @@ with(c.getContext('webgl')) {
 
         /*
         with(Math) {
-          q[i] += ((a=(1-((t&0xfff)/0xfff)))&0)+Math.max(Math.min( (( (sin((y=([0.25,0.30,0.17,0.20][(t>>12)&3]))*  (z=0.313)*t)+sin(y*z*t*1.001)+sin(y*z*t*1.003)+sin(y*z*t*1.005))) )*(sin(t*0.0001)+1.1)*44*a,63),-64)*Math.min(t/0x1ffff,1)+Math.max(Math.min( ((((sin((t&0xfff)*0.07*a*a*a)*64))))*  ((0x55355535>>(t>>12&31))&1)*a*2.2 +((d=(sin((t^0x1ffff)*0.1*t*a)*64)*a))*((0xb4446444>>((t>>12)  &31))&1)*a*0.9 +((a*d*((t>>10&3)==0)&0xff))*a*0.04 ,63),-64)*(t>0x3ffff)
+          q[i] += (((j=Math.round(t/1500)%16))%8==1|(j==3)|(j==6)) * sin(200-200*Math.sqrt((t%6000)/6000))*50 + Math.random()*40*(j%8==5) + (((t|(t>>9|t>>7))*t&(t>>11|t>>9) )&63)*(j%3==0);
+        }
+        */
+
+/*
+        with(Math) {
+          q[i] += (a=(1-((t&0xfff)/0xfff)))&0;
+          q[i] += Math.max(
+            Math.min(
+              (
+                sin(
+                  (y=([0.25,0.30,0.17,0.20][(t>>12)&3]))
+                  * (z=0.313)*t
+                )
+                + sin(y*z*t*1.001)
+                + sin(y*z*t*1.003)
+                + sin(y*z*t*1.005)
+              )
+              *
+              (
+                sin(t*0.0001) + 1.1
+              ) * 44 * a,
+              63
+            ),
+            -64
+          ) * Math.min(t/0x1ffff,1)
+
+          q[i] += Math.max(
+            Math.min(
+              (
+                sin((t&0xfff)*0.07*a*a*a)
+                *64
+              )
+              *
+              ((0x55355535>>(t>>12&31))&1)*a*2.2 +((d=(sin((t^0x1ffff)*0.1*t*a)*64)*a))*((0xb4446444>>((t>>12)  &31))&1)*a*0.9 +((a*d*((t>>10&3)==0)&0xff))*a*0.04 ,63),-64)*(t>0x3ffff)
+        }
+        */
+
+        //q[i] += ([1.122,1.259,1.498,1.681,1.887][((t >> 12) ^ ((t >> 10)+ 3561)) %5]) * t & 128 | (([1.122,1.259,1.498,1.681,1.887][((t >> 11) ^ ((t >> 9) +2137)) %5]) * t) & ((t>>14)%120+8) | (t>>4);
+
+        // square wave
+        //q[i] = t & 512;
+        p="30304598"[t>>13&7]&15;
+
+        // envelope
+        e=Math.min(1, (1e3/(y=t&16383/2)));
+        q[i] += ((t*p)/4&128)*e;
+        //q[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
+
+        // debugging
+        if(!i) {
+        }
+        // sierpinski
+        //q[i] += t*9&t>>4|t*5&t>>7|t*3&t/1024;
+        //q[i] += t*2&(t>>7)|t*4&(t*4>>10);
+        //q[i] += (t*9&t>>4|t*5&t>>7|t*3&t/1024)-1;
+
+        //q[i] += t>>6&1?t>>5:-t>>4;
+
+        //q[i] = (t&255)^(-t*0.75);
+        //q[i] = (t*0.01)^(t*0.001)^(-t*0.75);
+        /*
+        with(Math) {
+          q[i] += (f=0x3fffff/t)*0+(y=((((((t>>1)^(t)^(t>>2))>>(10+((t<65535) <<2))&0x3)+1)*(((t-65535)>>(16-(t>>17&1))&0x3^1)+1) )*t))*0+(((y*1.33)&255)>sin(t*0.00004+f)*110+128)+127;
         }
         */
 
         q[i] /= 1000;
+
+        //q[i] = (((t*((((((t>>13)&16)?0x64646464:0x98769875)>>((((t>>13)&15)*4))&15))/4)*(((((t>>13)&16)?0x59999999:0x19999999)>>((t>>11)&63))&1))&64)|(t>>4))|((((t>>13)&16)?((t*((42&t>>10)))&32):((t&t>>8)&32)));
 
         // limit volume while testing
         q[i] = Math.max(-0.125, Math.min(0.125, q[i]));
