@@ -2,10 +2,10 @@
 c.width = 200, c.height = 120; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor(2048,1,1);
+a = f.createScriptProcessor();
 a.connect(f.destination);
 
-numSample = 0;
+t = 0;
 
 // onload
 with(c.getContext('webgl')) {
@@ -20,12 +20,13 @@ with(c.getContext('webgl')) {
     // music
     a.onaudioprocess = e =>
     {
-      q = e.outputBuffer.getChannelData(0);
+      left = e.outputBuffer.getChannelData(0);
+      right = e.outputBuffer.getChannelData(1);
 
-      for(i=q.length;i--;)
+      for(i=0;i<left.length;i++)
       {
         //t = Math.floor(f.sampleRate * e.playbackTime + i);
-        t = numSample + i;
+        t++;
         //t /= 4;
 
         //if (!i) console.log(e.playbackTime, 'start', t);
@@ -44,10 +45,10 @@ with(c.getContext('webgl')) {
                */
 
         // kick
-        q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
+        //q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
 
         // drum beat thing
-        q[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
+        //q[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
 
         // beep thing
         //q[i] += (((1e4/(t&16383*2+8000))&2)*10)
@@ -101,16 +102,16 @@ with(c.getContext('webgl')) {
 
         // square wave
         //q[i] = t & 512;
-        p="30304598"[t>>13&7]&15;
+        p="12345898"[t>>13&7]&15;
 
         // envelope
-        e=Math.min(1, (1e3/(y=t&16383/2)));
-        q[i] += ((t*p)/4&128)*e;
+        e=Math.min(1, (1e3/(y=t&8191)));
+
+        left[i] += ((t*p)/4&128)*e;
+        //right[i] += ((t*p+350)/4&128)*e;
         //q[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
 
         // debugging
-        if(!i) {
-        }
         // sierpinski
         //q[i] += t*9&t>>4|t*5&t>>7|t*3&t/1024;
         //q[i] += t*2&(t>>7)|t*4&(t*4>>10);
@@ -126,15 +127,15 @@ with(c.getContext('webgl')) {
         }
         */
 
-        q[i] /= 1000;
+        left[i] /= 1e3;
+
+        right[i] = left[i];
 
         //q[i] = (((t*((((((t>>13)&16)?0x64646464:0x98769875)>>((((t>>13)&15)*4))&15))/4)*(((((t>>13)&16)?0x59999999:0x19999999)>>((t>>11)&63))&1))&64)|(t>>4))|((((t>>13)&16)?((t*((42&t>>10)))&32):((t&t>>8)&32)));
 
         // limit volume while testing
-        q[i] = Math.max(-0.125, Math.min(0.125, q[i]));
+        //q[i] = Math.max(-0.125, Math.min(0.125, q[i]));
       }
-
-      numSample += q.length;
     }
   );
 
