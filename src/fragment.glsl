@@ -2,7 +2,7 @@ precision highp float;
 
 // a.xy = resolution
 // a.z = time variable (seconds / 10)
-uniform vec3 a;
+uniform vec4 a;
 
 // x = distance to sdf
 // y = material color

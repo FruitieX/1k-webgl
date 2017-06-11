@@ -14,7 +14,7 @@ with(c.getContext('webgl')) {
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => drawArrays(6,  // TRIANGLE_FAN = 6
     // Send resolution and time to shader
-    uniform3f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, requestAnimationFrame(r)),
+    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, requestAnimationFrame(r)),
     3,
 
     // music
@@ -23,7 +23,7 @@ with(c.getContext('webgl')) {
       left = e.outputBuffer.getChannelData(0);
       right = e.outputBuffer.getChannelData(1);
 
-      for(i=0;i<left.length;i++)
+      left.map((e, i) =>
       {
         //t = Math.floor(f.sampleRate * e.playbackTime + i);
         t++;
@@ -31,43 +31,44 @@ with(c.getContext('webgl')) {
 
         //if (!i) console.log(e.playbackTime, 'start', t);
         //if (i===16383) console.log(e.playbackTime, 'end', t);
-        //q[i] = Math.sin(t / 23) * 128;
-        //q[i] = Math.sin(t / 4);
+        //left[i] = Math.sin(t / 23) * 128;
+        //left[i] = Math.sin(t / 4);
 
         // melody thing
-        //q[i] += ((t*("36364689"[t>>13&7]&15))/12&128)+(((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127)
+        //left[i] += ((t*("36364689"[t>>13&7]&15))/12&128)
 
         // melody thing 2
         /*
-        q[i] = (((3e3/(y=t&16383))&1)*35) +
+        left[i] = (((3e3/(y=t&16383))&1)*35) +
                (x=t*("3346"[t>>16&3]&15)/24&127)*y/4e4 +
                ((t>>8^t>>10|t>>14|x)&63)
                */
 
         // kick
-        //q[i] += (((1e4/(y=t&16383*1.5))&1)*35)
+        //left[i] += (((1e4/(y=t&16383*1.5))&1)*35)
 
         // drum beat thing
-        //q[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
+        //left[i] += ((((u=t&0x3fff)&0+((u+1<<(18+(t>>12&1*6)))/u)&255)/(u>>8))&240-128);
 
         // beep thing
-        //q[i] += (((1e4/(t&16383*2+8000))&2)*10)
+        //left[i] += (((1e4/(t&16383*2+8000))&2)*10)
 
         // bass
-        //q[i] += (x=t*('9754'[t>>16&3]&15)/24&100)*y/5e4
+        //left[i] += (x=t*('9754'[t>>16&3]&15)/24&100)*y/5e4
 
-        //q[i] += ((t>>8^t>>10|t>>14|x)&63)
+        //left[i] += ((t>>8^t>>10|t>>14|x)&63)
 
         /*
         with(Math) {
-          q[i] += (((j=Math.round(t/1500)%16))%8==1|(j==3)|(j==6)) * sin(200-200*Math.sqrt((t%6000)/6000))*50 + Math.random()*40*(j%8==5) + (((t|(t>>9|t>>7))*t&(t>>11|t>>9) )&63)*(j%3==0);
+          left[i] += (((j=Math.round(t/1500)%16))%8==1|(j==3)|(j==6)) * sin(200-200*Math.sqrt((t%6000)/6000))*50 + Math.random()*40*(j%8==5) + (((t|(t>>9|t>>7))*t&(t>>11|t>>9) )&63)*(j%3==0);
         }
         */
 
-/*
+        // white noise
+        /*
         with(Math) {
-          q[i] += (a=(1-((t&0xfff)/0xfff)))&0;
-          q[i] += Math.max(
+          left[i] += (a=(1-((t&0xfff)/0xfff)));
+          left[i] += Math.max(
             Math.min(
               (
                 sin(
@@ -87,7 +88,7 @@ with(c.getContext('webgl')) {
             -64
           ) * Math.min(t/0x1ffff,1)
 
-          q[i] += Math.max(
+          left[i] += Math.max(
             Math.min(
               (
                 sin((t&0xfff)*0.07*a*a*a)
@@ -98,44 +99,72 @@ with(c.getContext('webgl')) {
         }
         */
 
-        //q[i] += ([1.122,1.259,1.498,1.681,1.887][((t >> 12) ^ ((t >> 10)+ 3561)) %5]) * t & 128 | (([1.122,1.259,1.498,1.681,1.887][((t >> 11) ^ ((t >> 9) +2137)) %5]) * t) & ((t>>14)%120+8) | (t>>4);
+        //left[i] += ([1.122,1.259,1.498,1.681,1.887][((t >> 12) ^ ((t >> 10)+ 3561)) %5]) * t & 128 | (([1.122,1.259,1.498,1.681,1.887][((t >> 11) ^ ((t >> 9) +2137)) %5]) * t) & ((t>>14)%120+8) | (t>>4);
 
         // square wave
-        //q[i] = t & 512;
-        p="12345898"[t>>13&7]&15;
-
-        // envelope
-        e=Math.min(1, (1e3/(y=t&8191)));
-
-        left[i] += ((t*p)/4&128)*e;
-        //right[i] += ((t*p+350)/4&128)*e;
-        //q[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
-
+        //left[i] = t & 512;
         // debugging
         // sierpinski
-        //q[i] += t*9&t>>4|t*5&t>>7|t*3&t/1024;
-        //q[i] += t*2&(t>>7)|t*4&(t*4>>10);
-        //q[i] += (t*9&t>>4|t*5&t>>7|t*3&t/1024)-1;
+        //left[i] += t*9&t>>4|t*5&t>>7|t*3&t/1024;
+        //left[i] += Math.sin(t>>(t/18500)%10) * 500;
+        //left[i] += (t*9&t>>4|t*5&t>>7|t*3&t/1024)-1;
 
-        //q[i] += t>>6&1?t>>5:-t>>4;
+        //left[i] += t>>6&1?t>>5:-t>>4;
 
-        //q[i] = (t&255)^(-t*0.75);
-        //q[i] = (t*0.01)^(t*0.001)^(-t*0.75);
+        //left[i] = (t&255)^(-t*0.75);
+        //left[i] = (t*0.01)^(t*0.001)^(-t*0.75);
         /*
         with(Math) {
-          q[i] += (f=0x3fffff/t)*0+(y=((((((t>>1)^(t)^(t>>2))>>(10+((t<65535) <<2))&0x3)+1)*(((t-65535)>>(16-(t>>17&1))&0x3^1)+1) )*t))*0+(((y*1.33)&255)>sin(t*0.00004+f)*110+128)+127;
+          left[i] += (f=0x3fffff/t)*0+(y=((((((t>>1)^(t)^(t>>2))>>(10+((t<65535) <<2))&0x3)+1)*(((t-65535)>>(16-(t>>17&1))&0x3^1)+1) )*t))*0+(((y*1.33)&255)>sin(t*0.00004+f)*110+128)+127;
         }
         */
 
-        left[i] /= 1e3;
+        SS=(notes,octave,rate,len) =>
+          notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
+            ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+            : 0
+        // synth thing
+        left[i] += SS("7050",8,17,4)&255;
+        right[i] += SS("7050",8,17,4)&253;
 
+        //p="4444"[t>>15&3]&7;
+
+        // envelope
+        //e=Math.min(1, (5e3/(y=t&8191*3)));
+
+        left[i] += (((1e4/(y=t&16383))&1)*35)
         right[i] = left[i];
+        //right[i] += (((1e4/(y=t&16383))&1)*35)
 
-        //q[i] = (((t*((((((t>>13)&16)?0x64646464:0x98769875)>>((((t>>13)&15)*4))&15))/4)*(((((t>>13)&16)?0x59999999:0x19999999)>>((t>>11)&63))&1))&64)|(t>>4))|((((t>>13)&16)?((t*((42&t>>10)))&32):((t&t>>8)&32)));
+        // cool noise percussion stuff
+        e=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
+
+        left[i] += ((t*(t>>5)*t)&128)*e;
+        right[i] += ((t*(t>>4)*t)&128)*e;
+
+        // sierpinski thing
+        left[i] += ((t*(t>>11))&128)*e;
+        right[i] += ((t*(t>>12))&128)*e;
+
+        //left[i] += (t*p/6&128)*e;
+        //right[i] += ((t*p+350)/4&128)*e;
+        //left[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
+
+        // arpeggio
+        //left[i] += t/4&4096?SS((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0;
+        //right[i] += t/4&4096?SS((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0;
+        //right[i] += t/4&4096?SS('037',5,11,3)*(4096-(t&4095))>>11 : 0;
+        //left[i] += t/4&4096?SS('027',5,11,3)*(4096-(t&4095))>>11 : 0;
+        //left[i] += t/4&4096?SS('-23',5,11,3)*(4096-(t&4095))>>11 : 0;
+        //left[i] += (t/4&4096?SS('237',5,11,3)*(4096-(t&4095))>>11 : 0);
+        //right[i] = left[i];
 
         // limit volume while testing
-        //q[i] = Math.max(-0.125, Math.min(0.125, q[i]));
-      }
+        left[i] /= 512;
+        left[i] = Math.max(-0.125, Math.min(0.125, left[i]));
+        right[i] /= 512;
+        right[i] = Math.max(-0.125, Math.min(0.125, right[i]));
+      })
     }
   );
 
