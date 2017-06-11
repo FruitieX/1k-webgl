@@ -93,7 +93,7 @@ void main() {
       reflect(rd, cw).y
     )
     // cheap vignette
-    * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
+    //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
     * a.w
     ,
