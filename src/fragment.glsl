@@ -4,6 +4,9 @@ precision highp float;
 // a.z = time variable (seconds / 10)
 uniform vec4 a;
 
+// b.z = kick drum volume
+uniform vec4 b;
+
 // x = distance to sdf
 // y = material color
 // z = unused
@@ -29,6 +32,8 @@ vec3 map(vec3 p) {
       // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
       1e2 * pow(p.y + sin(1e0 - a.z / 1e1), 2.)
     ))
+
+    + b.z / 4.
   ); // / 2. + .5; // smaller plasma, always positive
 
   // cool alternatives
@@ -37,7 +42,7 @@ vec3 map(vec3 p) {
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
-  return vec3(length(p)-.5 + plasma * sin(a.z / 1e2), plasma + a.z, 2.);
+  return vec3(length(p)-.5 + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
 
   // shorter, worth investigating?
   //return vec3(length(p)-.5 + plasma * sin(a.z / 1e2));
@@ -82,7 +87,7 @@ void main() {
   gl_FragColor = vec4(
     (
       // material color
-      sin(a.z * e.y * cu) +
+      sin(a.z * e.y * cu + b.z / 4.) +
 
       // diffuse lighting
       reflect(rd, cw).y

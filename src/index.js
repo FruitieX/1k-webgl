@@ -1,12 +1,13 @@
 // cheap way of doing AA
-c.width = 200, c.height = 120; // 16:9 aspect ratio
+c.width = 800, c.height = 480; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor();
+a = f.createScriptProcessor(512, 2, 2);
 a.connect(f.destination);
 
 t = 0;
 fade = 0;
+y = 0;
 
 // music
 a.onaudioprocess = e =>
@@ -40,15 +41,15 @@ a.onaudioprocess = e =>
     right[i] += (S("7050",8,17,4)&255) / y * !(t>>22);
 
     // envelope
-    e=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
+    envelope=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
 
     // hihat
-    left[i] += (((t%100)*(t%100)*(t>>5))&128)*e * !!(t>>19);
-    right[i] += (((t%100)*(t%100)*(t>>4))&128)*e * !!(t>>19);
+    left[i] += (((t%100)*(t%100)*(t>>5))&128)*envelope * !!(t>>19);
+    right[i] += (((t%100)*(t%100)*(t>>4))&128)*envelope * !!(t>>19);
 
     // sierpinski thing
-    left[i] += ((t*(t>>11))&128)*e * !!(t>>20);
-    right[i] += ((t*(t>>12))&128)*e * !!(t>>20);
+    left[i] += ((t*(t>>11))&128)*envelope * !!(t>>20);
+    right[i] += ((t*(t>>12))&128)*envelope * !!(t>>20);
 
     // arpeggio
     left[i] += (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
@@ -72,8 +73,9 @@ with(c.getContext('webgl')) {
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => drawArrays(6,  // TRIANGLE_FAN = 6
     // Send resolution and time to shader
-    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade, requestAnimationFrame(r)),
-    3
+    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade),
+    3,
+    uniform4f(getUniformLocation(P, 'b'), c.width, c.height, 1/y, requestAnimationFrame(r))
   );
 
   // vertex shader
