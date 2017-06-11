@@ -90,8 +90,7 @@ void main() {
     // cheap vignette
     * (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
-    // TODO: do this in javascript?
-    //* clamp(0., (-abs(a.z - 1e1) + 1e1), 1e0) // demo length = 1e1 * 10
+    * a.w
     ,
   1e0);
 }

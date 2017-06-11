@@ -6,6 +6,7 @@ a = f.createScriptProcessor();
 a.connect(f.destination);
 
 t = 0;
+fade = 0;
 
 // onload
 with(c.getContext('webgl')) {
@@ -14,7 +15,7 @@ with(c.getContext('webgl')) {
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => drawArrays(6,  // TRIANGLE_FAN = 6
     // Send resolution and time to shader
-    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, requestAnimationFrame(r)),
+    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade, requestAnimationFrame(r)),
     3,
 
     // music
@@ -28,6 +29,10 @@ with(c.getContext('webgl')) {
         //t = Math.floor(f.sampleRate * e.playbackTime + i);
         t++;
         //t /= 4;
+        fade = Math.max(0., Math.min(
+          -Math.abs(t/5e5 - 2e1) + 2e1,
+        1e0)) // demo length = 1e1 * 10
+        if (!i) console.log(t/1e5 - 2e1);
 
         //if (!i) console.log(e.playbackTime, 'start', t);
         //if (i===16383) console.log(e.playbackTime, 'end', t);
@@ -140,36 +145,37 @@ with(c.getContext('webgl')) {
         left[i] += (SS("7050",8,17,4)&255) / y;
         right[i] += (SS("7050",8,17,4)&255) / y;
 
-        if(!i) console.log(y);
-
         // cool noise percussion stuff
         e=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
 
-        left[i] += ((t*(t>>5)*t)&128)*e;
-        right[i] += ((t*(t>>4)*t)&128)*e;
+        left[i] += ((t*(t>>5)*t)&128)*e * !!(t>>19);
+        right[i] += ((t*(t>>4)*t)&128)*e * !!(t>>19);
 
         // sierpinski thing
-        left[i] += ((t*(t>>11))&128)*e;
-        right[i] += ((t*(t>>12))&128)*e;
+        left[i] += ((t*(t>>11))&128)*e * !!(t>>20);
+        right[i] += ((t*(t>>12))&128)*e * !!(t>>20);
 
         //left[i] += (t*p/6&128)*e;
         //right[i] += ((t*p+350)/4&128)*e;
         //left[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
 
         // arpeggio
-        left[i] += (t/4&4096?SS((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y;
-        right[i] += (t/4&4096?SS((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y;
+        left[i] += (t/4&4096?SS((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
+        right[i] += (t/4&4096?SS((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
         //right[i] += t/4&4096?SS('037',5,11,3)*(4096-(t&4095))>>11 : 0;
         //left[i] += t/4&4096?SS('027',5,11,3)*(4096-(t&4095))>>11 : 0;
         //left[i] += t/4&4096?SS('-23',5,11,3)*(4096-(t&4095))>>11 : 0;
         //left[i] += (t/4&4096?SS('237',5,11,3)*(4096-(t&4095))>>11 : 0);
         //right[i] = left[i];
 
+        left[i] *= fade * fade;
+        right[i] *= fade * fade;
+
         // limit volume while testing
-        left[i] /= 512;
-        //left[i] = Math.max(-0.125, Math.min(0.125, left[i]));
-        right[i] /= 512;
-        //right[i] = Math.max(-0.125, Math.min(0.125, right[i]));
+        left[i] /= 255;
+        right[i] /= 255;
+        left[i] = Math.max(-0.5, Math.min(0.5, left[i]));
+        right[i] = Math.max(-0.5, Math.min(0.5, right[i]));
       })
     }
   );
