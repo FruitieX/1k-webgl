@@ -2,22 +2,20 @@
 c.width = 800, c.height = 480; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor(512, t = 2, y = 2);
+a = f.createScriptProcessor(512, t = 2, kickEnvelope = 2);
 a.connect(f.destination);
 
 // music
-fade = a.onaudioprocess = e =>
-{
-  left = e.outputBuffer.getChannelData(0);
-  right = e.outputBuffer.getChannelData(1);
+fade = a.onaudioprocess = audioEvent => {
+  left = audioEvent.outputBuffer.getChannelData(0);
+  right = audioEvent.outputBuffer.getChannelData(1);
 
-  left.map((e, i) =>
-  {
-    t++;
+  left.map((sample, i) => {
     fade = Math.max(0., Math.min(
-      -Math.abs(t/5e5 - 5) + 5,
+      -Math.abs(++t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
-    //if(!i) console.log(t/5e5 - 5);
+    //fade = t/1e5
+    //if(!i) console.log(fade);
     fade = 1 // debug
 
     // sequencer thing
@@ -29,12 +27,12 @@ fade = a.onaudioprocess = e =>
       //   : 0
 
     // kick drum with variation
-    left[i] += (((y=1e4/(t&16383*(
+    left[i] += (((kickEnvelope=1e4/(t&16383*(
       (t>>15)%16 - 15 ? 1 : 0.75
     )))&1)*35) * !(t>>22)
 
     // bass
-    + (S('7050',4,17,4)&255) / y * !(t>>22);
+    + (S('7050',4,17,4)&255) / kickEnvelope * !(t>>22);
 
     right[i] = left[i];
 
@@ -47,8 +45,8 @@ fade = a.onaudioprocess = e =>
     // sierpinski thing
     + ((t*(t>>11))&128)*envelope * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',1,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
-    //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
+    + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',1,11,3)*(4096-(t&4095))>>11) / kickEnvelope * !!(t>>21);
+    //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / kickEnvelope * !!(t>>21);
 
     // LEFT CHANNEL
     // hihat
@@ -56,8 +54,8 @@ fade = a.onaudioprocess = e =>
     // sierpinski thing
     + ((t*(t>>12))&128)*envelope * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
-    //+ (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
+    + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / kickEnvelope * !!(t>>21);
+    //+ (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / kickEnvelope * !!(t>>21);
 
     left[i] *= fade / 200;
     right[i] *= fade / 200;
@@ -78,7 +76,7 @@ with(c.getContext('webgl')) {
     // Send resolution and time to shader
     uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade),
     3,
-    uniform4f(getUniformLocation(P, 'b'), c.width, c.height, .2/y, requestAnimationFrame(r))
+    uniform4f(getUniformLocation(P, 'b'), c.width, c.height, .2/kickEnvelope, requestAnimationFrame(r))
   );
 
   // vertex shader
