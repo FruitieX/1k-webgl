@@ -31,27 +31,31 @@ fade = a.onaudioprocess = e =>
     // kick drum with variation
     left[i] += (((y=1e4/(t&16383*(
       (t>>15)%16 - 15 ? 1 : 0.75
-    )))&1)*35) * !(t>>22);
+    )))&1)*35) * !(t>>22)
 
     // bass
-    left[i] += (S('7050',8,17,4)&255) / y * !(t>>22);
+    + (S('7050',8,17,4)&255) / y * !(t>>22);
 
     right[i] = left[i];
 
     // envelope
     envelope=Math.min(1, (1e1/((t>>5)%128))) * 0.2;
 
+    // LEFT CHANNEL
     // hihat
-    left[i] += (((t%100)*(t%100)*(t>>5))&128)*envelope * !!(t>>19);
-    right[i] += (((t%100)*(t%100)*(t>>4))&128)*envelope * !!(t>>19);
-
+    left[i] += (((t%100)*(t%100)*(t>>5))&128)*envelope * !!(t>>19)
     // sierpinski thing
-    left[i] += ((t*(t>>11))&128)*envelope * !!(t>>20);
-    right[i] += ((t*(t>>12))&128)*envelope * !!(t>>20);
-
+    + ((t*(t>>11))&128)*envelope * !!(t>>20)
     // arpeggio
-    left[i] += (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
-    right[i] += (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
+    + (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
+
+    // LEFT CHANNEL
+    // hihat
+    right[i] += (((t%100)*(t%100)*(t>>4))&128)*envelope * !!(t>>19)
+    // sierpinski thing
+    + ((t*(t>>12))&128)*envelope * !!(t>>20)
+    // arpeggio
+    + (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
 
     left[i] *= fade / 200;
     right[i] *= fade / 200;
