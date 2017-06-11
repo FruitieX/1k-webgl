@@ -39,7 +39,7 @@ fade = a.onaudioprocess = e =>
     right[i] = left[i];
 
     // envelope
-    envelope=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
+    envelope=Math.min(1, (1e1/((t>>5)%128))) * 0.2;
 
     // hihat
     left[i] += (((t%100)*(t%100)*(t>>5))&128)*envelope * !!(t>>19);
@@ -70,7 +70,7 @@ with(c.getContext('webgl')) {
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => drawArrays(6,  // TRIANGLE_FAN = 6
     // Send resolution and time to shader
-    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e3, fade),
+    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade),
     3,
     uniform4f(getUniformLocation(P, 'b'), c.width, c.height, .2/y, requestAnimationFrame(r))
   );
