@@ -2,15 +2,11 @@
 c.width = 800, c.height = 480; // 16:9 aspect ratio
 
 f = new AudioContext();
-a = f.createScriptProcessor(512, 2, 2);
+a = f.createScriptProcessor(512, t = 2, y = 2);
 a.connect(f.destination);
 
-t = 0;
-fade = 0;
-y = 0;
-
 // music
-a.onaudioprocess = e =>
+fade = a.onaudioprocess = e =>
 {
   left = e.outputBuffer.getChannelData(0);
   right = e.outputBuffer.getChannelData(1);
@@ -22,23 +18,25 @@ a.onaudioprocess = e =>
       -Math.abs(t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
     //if(!i) console.log(t/5e5 - 5);
-    //fade = 1 // debug
+    fade = 1 // debug
 
-    // synth thing
+    // sequencer thing
     S=(notes,octave,rate,len) =>
-      notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
-        ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
-        : 0
+      31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+    // version which supports whitespace for silence
+      // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
+      //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+      //   : 0
 
     // kick drum with variation
     left[i] += (((y=1e4/(t&16383*(
       (t>>15)%16 - 15 ? 1 : 0.75
     )))&1)*35) * !(t>>22);
-    right[i] = left[i];
 
     // bass
-    left[i] += (S("7050",8,17,4)&255) / y * !(t>>22);
-    right[i] += (S("7050",8,17,4)&255) / y * !(t>>22);
+    left[i] += (S('7050',8,17,4)&255) / y * !(t>>22);
+
+    right[i] = left[i];
 
     // envelope
     envelope=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
@@ -55,12 +53,11 @@ a.onaudioprocess = e =>
     left[i] += (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
     right[i] += (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
 
-    left[i] *= fade;
-    right[i] *= fade;
+    left[i] *= fade / 200;
+    right[i] *= fade / 200;
+    //if (left[i] > 1 || right[i] > 1) console.log('clipping');
 
     // limit volume while testing
-    left[i] /= 255;
-    right[i] /= 255;
     //left[i] = Math.max(-0.5, Math.min(0.5, left[i]));
     //right[i] = Math.max(-0.5, Math.min(0.5, right[i]));
   })
@@ -73,9 +70,9 @@ with(c.getContext('webgl')) {
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => drawArrays(6,  // TRIANGLE_FAN = 6
     // Send resolution and time to shader
-    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, fade),
+    uniform4f(getUniformLocation(P, 'a'), c.width, c.height, time / 1e3, fade),
     3,
-    uniform4f(getUniformLocation(P, 'b'), c.width, c.height, 1/y, requestAnimationFrame(r))
+    uniform4f(getUniformLocation(P, 'b'), c.width, c.height, .2/y, requestAnimationFrame(r))
   );
 
   // vertex shader

@@ -33,7 +33,7 @@ vec3 map(vec3 p) {
       1e2 * pow(p.y + sin(1e0 - a.z / 1e1), 2.)
     ))
 
-    + b.z / 4.
+    + b.z
   ); // / 2. + .5; // smaller plasma, always positive
 
   // cool alternatives
@@ -45,7 +45,7 @@ vec3 map(vec3 p) {
   return vec3(length(p)-.5 + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
 
   // shorter, worth investigating?
-  //return vec3(length(p)-.5 + plasma * sin(a.z / 1e2));
+  //return vec3(length(p)-.5 + plasma * sin(a.z / 5e1));
 }
 
 void main() {
@@ -87,7 +87,7 @@ void main() {
   gl_FragColor = vec4(
     (
       // material color
-      sin(a.z * e.y * cu + b.z / 4.) +
+      sin(a.z * e.y * cu + b.z) +
 
       // diffuse lighting
       reflect(rd, cw).y
