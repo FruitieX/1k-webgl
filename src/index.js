@@ -124,17 +124,23 @@ with(c.getContext('webgl')) {
             ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
             : 0
         // synth thing
-        left[i] += SS("7050",8,17,4)&255;
-        right[i] += SS("7050",8,17,4)&253;
 
         //p="4444"[t>>15&3]&7;
 
         // envelope
         //e=Math.min(1, (5e3/(y=t&8191*3)));
 
-        left[i] += (((1e4/(y=t&16383))&1)*35)
+        // kick drum with variation
+        left[i] += (((y=1e4/(t&16383*(
+          (t>>15)%16 - 15 ? 1 : 0.75
+        )))&1)*35)
         right[i] = left[i];
         //right[i] += (((1e4/(y=t&16383))&1)*35)
+
+        left[i] += (SS("7050",8,17,4)&255) / y;
+        right[i] += (SS("7050",8,17,4)&255) / y;
+
+        if(!i) console.log(y);
 
         // cool noise percussion stuff
         e=Math.min(1, (2e1/((t>>4)%256))) * 0.2;
@@ -151,8 +157,8 @@ with(c.getContext('webgl')) {
         //left[i] += (((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127);
 
         // arpeggio
-        //left[i] += t/4&4096?SS((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0;
-        //right[i] += t/4&4096?SS((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0;
+        left[i] += (t/4&4096?SS((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y;
+        right[i] += (t/4&4096?SS((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y;
         //right[i] += t/4&4096?SS('037',5,11,3)*(4096-(t&4095))>>11 : 0;
         //left[i] += t/4&4096?SS('027',5,11,3)*(4096-(t&4095))>>11 : 0;
         //left[i] += t/4&4096?SS('-23',5,11,3)*(4096-(t&4095))>>11 : 0;
@@ -161,9 +167,9 @@ with(c.getContext('webgl')) {
 
         // limit volume while testing
         left[i] /= 512;
-        left[i] = Math.max(-0.125, Math.min(0.125, left[i]));
+        //left[i] = Math.max(-0.125, Math.min(0.125, left[i]));
         right[i] /= 512;
-        right[i] = Math.max(-0.125, Math.min(0.125, right[i]));
+        //right[i] = Math.max(-0.125, Math.min(0.125, right[i]));
       })
     }
   );
