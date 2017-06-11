@@ -22,7 +22,7 @@ fade = a.onaudioprocess = e =>
 
     // sequencer thing
     S=(notes,octave,rate,len) =>
-      31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+      31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
     // version which supports whitespace for silence
       // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
       //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
@@ -34,7 +34,7 @@ fade = a.onaudioprocess = e =>
     )))&1)*35) * !(t>>22)
 
     // bass
-    + (S('7050',8,17,4)&255) / y * !(t>>22);
+    + (S('7050',4,17,4)&255) / y * !(t>>22);
 
     right[i] = left[i];
 
@@ -47,7 +47,7 @@ fade = a.onaudioprocess = e =>
     // sierpinski thing
     + ((t*(t>>11))&128)*envelope * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
+    + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',1,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
     //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
 
     // LEFT CHANNEL
@@ -56,7 +56,7 @@ fade = a.onaudioprocess = e =>
     // sierpinski thing
     + ((t*(t>>12))&128)*envelope * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
+    + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / y * !!(t>>21);
     //+ (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / y * !!(t>>21);
 
     left[i] *= fade / 200;
