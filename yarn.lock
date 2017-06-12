@@ -2955,21 +2955,19 @@ type-is@~1.6.14:
     media-typer "0.3.0"
     mime-types "~2.1.15"
 
+uglify-es@^3.0.15:
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.0.15.tgz#4a23d0e9cb5f25f7bb3f1f0bbe0bb364e600d047"
+  dependencies:
+    commander "~2.9.0"
+    source-map "~0.5.1"
+
 uglify-js@2.8.x, uglify-js@^2.8.5:
   version "2.8.21"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.21.tgz#1733f669ae6f82fc90c7b25ec0f5c783ee375314"
   dependencies:
     source-map "~0.5.1"
     yargs "~3.10.0"
-  optionalDependencies:
-    uglify-to-browserify "~1.0.0"
-
-uglify-js@mishoo/UglifyJS2#harmony:
-  version "3.0.1"
-  resolved "https://codeload.github.com/mishoo/UglifyJS2/tar.gz/e0ae8da0892fa92ff6c471bfdaf1e8e725fd9035"
-  dependencies:
-    commander "~2.9.0"
-    source-map "~0.5.1"
   optionalDependencies:
     uglify-to-browserify "~1.0.0"
 

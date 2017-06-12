@@ -16,12 +16,18 @@ cd dist
 #uglifyjs ../src/song.js ../src/player.js ../src/index.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp2.html
 # crunch with regpack
 echo "uglifying..."
-uglifyjs ../src/index.js \
-  -c \
-    unsafe,unsafe_comps,unsafe_math,unsafe_proto,unused,dead_code,drop_console \
-  -m \
-    toplevel,eval \
+#../node_modules/.bin/uglifyjs -V
+#../node_modules/.bin/uglifyjs ../src/index.js \
+  #-m \
+    #toplevel,eval \
+  #-c \
+    #toplevel,unsafe,unsafe_comps,unsafe_math,unsafe_proto,unused,dead_code,drop_console \
+#> temp/temp1.js
+
+../node_modules/.bin/uglifyjs ../src/index.js \
 > temp/temp1.js
+
+#cp ../src/index.js temp/temp1.js
 
 # vertex shader
 echo "minifying vertex shader..."
@@ -33,9 +39,15 @@ glslmin -m ../src/fragment.glsl | node ../utils/findandreplace.js --template tem
 
 echo "running regpack..."
 node ../node_modules/.bin/regpack temp/temp3.js \
-  --crushGainFactor 8 \
-  --crushLengthFactor 1 \
-  --crushCopiesFactor 1 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
+  --useES6 \
+  --hashWebGLContext \
+  --hashAudioContext \
+  --reassignVars \
+  --varsNotReassigned false \
+  --crushTiebreakerFactor 1 \
+  --crushGainFactor 1 \
+  --crushLengthFactor 0 \
+  --crushCopiesFactor 0 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
 
