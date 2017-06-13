@@ -56,7 +56,8 @@ X = a.onaudioprocess = audioEvent => {
 
     // LEFT CHANNEL
     // hihat TODO improve/golf envelope
-    L[i] += ((t%100*t%100*(t>>5))&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
+    //L[i] += (((t%100)*(t%100)*(t>>5))&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) //* !!(t>>19)
+    L[i] += ((t%150*t%130*t)&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
     // sierpinski thing
     //+ ((t*(t>>11))&0x80)*E * !!(t>>20)
     //+ ((t*(t>>11))&128)*E * !!(t>>20)
