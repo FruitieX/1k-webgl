@@ -77,7 +77,7 @@ g=c.getContext('webgl');
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
   r = time => g.drawArrays(g.TRIANGLE_FAN,
     // Send resolution and time to shader
-    g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, X),
+    g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e3, X),
     3,
     g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
   );

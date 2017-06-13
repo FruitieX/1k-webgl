@@ -16,7 +16,8 @@ vec3 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
     sin(a.z) * 4. *
-    sin(a.z + 1e1 * p.x) +
+    sin(a.z + sqrt(
+      1e2 * pow(p.x + sin(a.z / 1e1), 2.))) +
 
     // rotating sinusoid
     /*
