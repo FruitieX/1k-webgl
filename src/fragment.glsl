@@ -15,7 +15,7 @@ uniform vec4 b;
 vec3 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
-    sin(a.z) * 4. *
+    //sin(a.z) * 4. *
     sin(a.z + 1e1 * sqrt(
       pow(p.x + sin(a.z / 1e1), 2.))) +
 
@@ -26,26 +26,26 @@ vec3 map(vec3 p) {
     */
 
     // circular sinusoid
-    sin(a.z) * 4. *
+    //sin(a.z) * 4. *
     sin(a.z + 1e1 * sqrt(
       // cx
-      pow(p.x + sin(a.z / 1e1), 2.) +
+      //pow(p.x + sin(a.z / 1e1), 2.) +
       // cy
       // used to be:
       // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
-      pow(p.y + sin(1e0 - a.z / 1e1), 2.)
+      pow(p.y + sin(b.x - a.z / 1e1), 2.)
     ))
 
     + b.z
   ); // / 2. + .5; // smaller plasma, always positive
 
   // cool alternatives
-  //return vec3(plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
-  //return vec3(sin(a) * (length(p)-1e0) + plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
+  //return vec3(plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
+  //return vec3(sin(a) * (length(p)-b.x) + plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
-  return vec3(length(p)-.5 + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
+  return vec3(length(p)-b.x + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
 
   // shorter, worth investigating?
   //return vec3(length(p)-.5 + plasma * sin(a.z / 5e1));
@@ -53,37 +53,42 @@ vec3 map(vec3 p) {
 
 void main() {
   // ray origin
-  vec3 ro = vec3( sin(a.z), 1e0, sin(1e0 - a.z) ), // rotating
-	cw = ro/length(ro),
-	cu = cross(cw, b.yxy);
+  //vec3 ro = vec3( sin(a.z), b.x, sin(b.x - a.z) ), // rotating
+  //vec3 ro = b.xxy,
+	vec3 cw, e, // e = ray marcher temp result
+	//cu = cross(cw, b.yxy);
+  cu = b.xxx,
 
   // ray direction
-  vec3 rd = mat3(
-    cu,
-    cross(cu, cw),
-    -cw
-  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y,
-  e; // ray marcher temp result
+  rd = mat3(
+    b.yyx,
+    //b.yxy,
+    b.yxy,
+    //cross(cu, cw),
+    -b.xxy
+  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
 
   //cu.x = .5; // initial ray step amount
 
   // ray marcher
-  for( float i=.0; i<1e1; i++ ) { // maxIterations
-    cu += (e = map(cw = ro+rd*cu.x));
+  for( float i=1e0; i<1e1; i++ ) { // maxIterations
+    cu += (e = map(cw = b.xxy+rd*cu.x));
     //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
-    if(2e0 < e.x) break;  // results in trippy background
+    //if(2e0 < e.x) break;  // results in trippy background
   }
 
   // calculate normal from surface
-  cu = vec3(.1, -.1, .3); // epsilon, z is unused
+  //cu = vec3(.1, -.1, .3); // epsilon, z is unused
   // TODO: very crappy estimation of surface normals
-  cw =
+  //cw =
     //cu.xyy * map(cw + cu.xyy).x +
     //cu.yyx * map(cw + cu.yyx).x +
-    cu.yxy * map(cw + cu.yxy).x +
-    cu.xxx * map(cw + cu.xxx).x;
+    //cu.yxy * map(cw + cu.yxy).x +
+    //cu.yyx * map(cw + cu.yyx).x;
+    //cu.xxx * map(cw + cu.xxx).x;
 
   // Color vector (cu) should have high common denominator components
+  cu = vec3(.1, .3, .5); // epsilon, z is unused
   //cu.x = .5;
   //cu.y++;
 
@@ -98,5 +103,5 @@ void main() {
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
     ,
-  1e0/a.w);
+  b.x/a.w);
 }

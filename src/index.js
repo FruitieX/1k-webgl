@@ -15,12 +15,15 @@ X = a.onaudioprocess = audioEvent => {
   //for(;i++<L.length;) {
     // TODO: golf
     // debug: set Math.max(x <- to 0 when done
-    X = Math.max(1., Math.min(
+    /*
+    X = Math.max(0., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
+    */
     //X = t/1e5
     //if(!i) console.log(X);
-    //X = 1 // debug
+    ++t;
+    X = 1 // debug
 
     // sequencer thing
     S=(notes,octave,rate,len) =>
@@ -43,6 +46,7 @@ X = a.onaudioprocess = audioEvent => {
 
     // hihat envelope TODO: golf
     E=Math.min(1, (1e1/((t>>5)%0x80))) * 0.2;
+    //if (i<2) console.log(t>>1);
 
     // LEFT CHANNEL
     // hihat
