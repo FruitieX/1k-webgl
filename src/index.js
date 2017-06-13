@@ -52,7 +52,7 @@ X = a.onaudioprocess = audioEvent => {
     // hihat envelope TODO: golf
     //E=Math.min(1, (1e1/((t>>5)%0x80))) * 0.2;
     E=Math.min(0.2, (1e1/((t>>3)%512)));
-    if (i<2) console.log(t>>15);
+    //if (i<2) console.log(t>>15);
 
     // LEFT CHANNEL
     // hihat
