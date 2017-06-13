@@ -28,7 +28,6 @@ echo "uglifying..."
 ../node_modules/.bin/uglifyjs ../src/index.js \
   -m \
     toplevel,eval \
-  -c \
 > temp/temp1.js
 
 #cp ../src/index.js temp/temp1.js
