@@ -10,7 +10,9 @@ X = a.onaudioprocess = audioEvent => {
   L = audioEvent.outputBuffer.getChannelData(0);
   R = audioEvent.outputBuffer.getChannelData(1);
 
-  L.map((sample, i) => {
+  //L.map((sample, i) => {
+  for(i=0;i++<512;) {
+  //for(;i++<L.length;) {
     X = Math.max(0., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
@@ -62,12 +64,12 @@ X = a.onaudioprocess = audioEvent => {
     R[i] *= X / 200;
     //if (L[i] > 1 || R[i] > 1) console.log('clipping');
 
-    i; // *something* in the prod build removes i without this line: WTF TODO
+    //i; // *something* in the prod build removes i without this line: WTF TODO
 
     // limit volume while testing
     //L[i] = Math.max(-0.5, Math.min(0.5, L[i]));
     //R[i] = Math.max(-0.5, Math.min(0.5, R[i]));
-  })
+  }
 }
 
 // gfx
