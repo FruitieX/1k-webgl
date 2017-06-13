@@ -37,8 +37,8 @@ vec3 map(vec3 p) {
   ); // / 2. + .5; // smaller plasma, always positive
 
   // cool alternatives
-  //return vec2(plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
-  //return vec2(sin(a) * (length(p)-1e0) + plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10.);
+  //return vec3(plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
+  //return vec3(sin(a) * (length(p)-1e0) + plasma * (1e0 - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
 
   // TODO: cos varies between [-1, 1] and causes plasma to grow too high
   // ideas: sin^2(x) between [-1, 1]
