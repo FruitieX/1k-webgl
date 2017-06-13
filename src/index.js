@@ -1,36 +1,26 @@
 // cheap way of doing AA
 //c.width = 3200, c.height = 1800; // 16:9 aspect ratio
-c.width = 192, c.height = 108; // 16:9 aspect ratio
+c.width = 192, c.height = 108; // battery saving
 
 f = new AudioContext;
 a = f.createScriptProcessor(0x200, t = 1, K = 1);
 a.connect(f.destination);
+
+// sequencer thing
+s=(notes,octave,rate,len) =>
+  31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
 
 // music debug
 //t= 1744100
 //t= 3744100
 //t= 4744100
 
-// sequencer thing
-s=(notes,octave,rate,len) =>
-  31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
-
-// version which supports whitespace for silence
-  // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
-  //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
-  //   : 0
-
-
 // music
 X = a.onaudioprocess = audioEvent => {
   L = audioEvent.outputBuffer.getChannelData(i=0);
-  //R = audioEvent.outputBuffer.getChannelData(1);
 
-  //L.map((sample, i) => {
   for(;i++<0x200;t++) {
-  //for(;i++<L.length;) {
     // TODO: golf
-    // debug: set Math.max(x <- to 0 when done
     /*
     X = Math.max(0., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
@@ -49,46 +39,18 @@ X = a.onaudioprocess = audioEvent => {
     + (s('7050',4,17,4)&0xff) / K;
 
     L[i] *= !(t>>22); // turn off above instruments after a while
-    //R[i] = L[i];
-
-    // hihat envelope TODO: golf
-    //E=Math.min(1, (1e1/((t>>5)%0x80))) * 0.2;
-    //E=Math.min(0.2, (1e1/((t>>3)%512)));
-    //if (i<2) console.log(t>>15);
 
     // LEFT CHANNEL
     // hihat TODO improve/golf envelope
-    //L[i] += (((t%100)*(t%100)*(t>>5))&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) //* !!(t>>19)
     L[i] += ((t%150*t%130*t)&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
-    // sierpinski thing
-    //+ ((t*(t>>11))&0x80)*E * !!(t>>20)
-    //+ ((t*(t>>11))&128)*E * !!(t>>20)
     // arpeggio
-    //+ (!!(t/4&0x1000)*s((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K// * !!(t>>21);
-    //+ (!!(t&300)*s((t>>17)%2 ? '027' : '037',1,12,4)) / K// * !!(t>>21);
     + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
-    //+ (t/4&4096?s((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
-
-    // RIGHT CHANNEL
-    // hihat
-    /*
-    R[i] += (((t%100)*(t%100)*(t>>4))&128)*E * !!(t>>19)
-    // sierpinski thing
-    + ((t*(t>>12))&128)*E * !!(t>>20)
-    // arpeggio
-    + (!!(t/4&4096)*s((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
-    //+ (t/4&4096?s((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
-    */
 
     L[i] *= X / 200;
-    //R[i] *= X / 200;
-    //if (L[i] > 1 || R[i] > 1) console.log('clipping');
-
-    //i; // *something* in the prod build removes i without this line: WTF TODO
+    //if (L[i] > 1) console.log('clipping');
 
     // limit volume while testing
     //L[i] = Math.max(-0.5, Math.min(0.5, L[i]));
-    //R[i] = Math.max(-0.5, Math.min(0.5, R[i]));
   }
 }
 
