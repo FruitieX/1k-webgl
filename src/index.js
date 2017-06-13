@@ -2,7 +2,7 @@
 c.width = 192, c.height = 108; // 16:9 aspect ratio
 
 f = new AudioContext;
-a = f.createScriptProcessor(512, t = 1, K = 1);
+a = f.createScriptProcessor(0x200, t = 1, K = 1);
 a.connect(f.destination);
 
 // music
@@ -11,8 +11,9 @@ X = a.onaudioprocess = audioEvent => {
   //R = audioEvent.outputBuffer.getChannelData(1);
 
   //L.map((sample, i) => {
-  for(;i++<512;) {
+  for(;i++<0x200;) {
   //for(;i++<L.length;) {
+    // TODO: golf
     X = Math.max(0., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
@@ -29,27 +30,27 @@ X = a.onaudioprocess = audioEvent => {
       //   : 0
 
     // kick drum with variation
-    L[i] = (((K=1e4/(t&16383*(
+    L[i] = (((K=1e4/(t&0x3fff*(
       (t>>15)%16 - 15 ? 1 : 0.75
     )))&1)*35)
 
     // bass
-    + (S('7050',4,17,4)&255) / K;
+    + (S('7050',4,17,4)&0xff) / K;
 
     L[i] *= !(t>>22);
     //R[i] = L[i];
 
-    // hihat envelope
-    E=Math.min(1, (1e1/((t>>5)%128))) * 0.2;
+    // hihat envelope TODO: golf
+    E=Math.min(1, (1e1/((t>>5)%0x80))) * 0.2;
 
     // LEFT CHANNEL
     // hihat
-    L[i] += (((t%100)*(t%100)*(t>>5))&128)*E * !!(t>>19)
+    L[i] += (((t%100)*(t%100)*(t>>5))&0x80)*E * !!(t>>19)
     // sierpinski thing
-    + ((t*(t>>11))&128)*E * !!(t>>20)
+    + ((t*(t>>11))&0x80)*E * !!(t>>20)
     //+ ((t*(t>>11))&128)*E * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
+    + (!!(t/4&0x1000)*S((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K * !!(t>>21);
     //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
 
     // RIGHT CHANNEL
@@ -77,35 +78,34 @@ X = a.onaudioprocess = audioEvent => {
 
 // gfx
 g=c.getContext`webgl`;
+P = g.createProgram();
 
-  P = g.createProgram();
+// NOTE: 2nd argument to drawArrays used to be 0, but undefined works
+r = time => g.drawArrays(g.TRIANGLE_FAN,
+  // Send resolution and time to shader
+  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e3, X),
+  3,
+  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
+);
 
-  // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
-  r = time => g.drawArrays(g.TRIANGLE_FAN,
-    // Send resolution and time to shader
-    g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e3, X),
-    3,
-    g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
-  );
+// vertex shader
+g.shaderSource(S=g.createShader(g.VERTEX_SHADER), require('./vertex.glsl'));
+g.compileShader(S);g.attachShader(P,S);
 
-  // vertex shader
-  g.shaderSource(S=g.createShader(g.VERTEX_SHADER), require('./vertex.glsl'));
-  g.compileShader(S);g.attachShader(P,S);
+// fragment shader
+g.shaderSource(S=g.createShader(g.FRAGMENT_SHADER), require('./fragment.glsl'));
+g.compileShader(S);g.attachShader(P,S);
 
-  // fragment shader
-  g.shaderSource(S=g.createShader(g.FRAGMENT_SHADER), require('./fragment.glsl'));
-  g.compileShader(S);g.attachShader(P,S);
+// Log compilation errors
+// if (!getShaderParameter(S, 35713)) { // COMPILE_STATUS = 35713
+//   throw getShaderInfoLog(S);
+// }
 
-  // Log compilation errors
-  // if (!getShaderParameter(S, 35713)) { // COMPILE_STATUS = 35713
-  //   throw getShaderInfoLog(S);
-  // }
-
-  g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer(c.parentElement.style.margin = 0));
-  // 1st argument to enableVertexAttribArray used to be 0, but undefined works
-  // 1st argument to vertexAttribPointer used to be 0, but undefined works
-  g.vertexAttribPointer(
-    g.enableVertexAttribArray(
-      g.bufferData(g.ARRAY_BUFFER, Int8Array.of(-3, 1, 1, -3, 1, 1), g.STATIC_DRAW)
-    ),
-  2, g.BYTE, r(c.style.height = '100vh'), g.linkProgram(P), g.useProgram(P));
+g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer(c.parentElement.style.margin = 0));
+// 1st argument to enableVertexAttribArray used to be 0, but undefined works
+// 1st argument to vertexAttribPointer used to be 0, but undefined works
+g.vertexAttribPointer(
+  g.enableVertexAttribArray(
+    g.bufferData(g.ARRAY_BUFFER, Int8Array.of(-3, 1, 1, -3, 1, 1), g.STATIC_DRAW)
+  ),
+2, g.BYTE, r(c.style.height = '100vh'), g.linkProgram(P), g.useProgram(P));

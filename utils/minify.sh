@@ -24,9 +24,11 @@ echo "uglifying..."
     #toplevel,unsafe,unsafe_comps,unsafe_math,unsafe_proto,unused,dead_code,drop_console \
 #> temp/temp1.js
 
+../node_modules/.bin/uglifyjs -V
 ../node_modules/.bin/uglifyjs ../src/index.js \
   -m \
     toplevel,eval \
+  -c \
 > temp/temp1.js
 
 #cp ../src/index.js temp/temp1.js
