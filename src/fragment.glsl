@@ -53,7 +53,7 @@ vec3 map(vec3 p) {
 void main() {
   // ray origin
   vec3 ro = vec3( sin(a.z), 1e0, sin(1e0 - a.z) ), // rotating
-	cw = normalize(ro),
+	cw = ro/length(ro),
 	cu = cross(cw, b.yxy);
 
   // ray direction
@@ -75,12 +75,11 @@ void main() {
 
   // calculate normal from surface
   cu = vec3(.1, -.1, .3); // epsilon, z is unused
-  cw = normalize(
+  cw =
     cu.xyy * map(cw + cu.xyy).x +
     cu.yyx * map(cw + cu.yyx).x +
     cu.yxy * map(cw + cu.yxy).x +
-    cu.xxx * map(cw + cu.xxx).x
-  );
+    cu.xxx * map(cw + cu.xxx).x;
 
   // Color vector (cu) should have high common denominator components
   //cu.x = .5;
@@ -92,7 +91,7 @@ void main() {
       sin(a.z * e.y * cu + b.z) +
 
       // diffuse lighting
-      reflect(rd, cw).y
+      reflect(rd, cw / length(cw)).y
     // cheap vignette
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
