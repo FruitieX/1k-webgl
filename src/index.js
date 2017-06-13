@@ -16,7 +16,7 @@ X = a.onaudioprocess = audioEvent => {
     1e0)) // 5 = demo length
     //X = t/1e5
     //if(!i) console.log(X);
-    X = 1 // debug
+    //X = 1 // debug
 
     // sequencer thing
     S=(notes,octave,rate,len) =>
@@ -27,16 +27,17 @@ X = a.onaudioprocess = audioEvent => {
       //   : 0
 
     // kick drum with variation
-    L[i] += (((K=1e4/(t&16383*(
+    L[i] = (((K=1e4/(t&16383*(
       (t>>15)%16 - 15 ? 1 : 0.75
-    )))&1)*35) * !(t>>22)
+    )))&1)*35)
 
     // bass
-    + (S('7050',4,17,4)&255) / K * !(t>>22);
+    + (S('7050',4,17,4)&255) / K;
 
+    L[i] *= !(t>>22);
     R[i] = L[i];
 
-    // envelope
+    // hihat envelope
     E=Math.min(1, (1e1/((t>>5)%128))) * 0.2;
 
     // LEFT CHANNEL
