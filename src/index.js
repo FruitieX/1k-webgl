@@ -5,6 +5,11 @@ f = new AudioContext;
 a = f.createScriptProcessor(0x200, t = 1, K = 1);
 a.connect(f.destination);
 
+// music debug
+//t= 1744100
+//t= 3744100
+//t= 4744100
+
 // music
 X = a.onaudioprocess = audioEvent => {
   L = audioEvent.outputBuffer.getChannelData(i=0);
@@ -47,7 +52,7 @@ X = a.onaudioprocess = audioEvent => {
     // hihat envelope TODO: golf
     //E=Math.min(1, (1e1/((t>>5)%0x80))) * 0.2;
     E=Math.min(0.2, (1e1/((t>>3)%512)));
-    //if (i<2) console.log(t>>1);
+    if (i<2) console.log(t>>15);
 
     // LEFT CHANNEL
     // hihat
@@ -56,8 +61,9 @@ X = a.onaudioprocess = audioEvent => {
     //+ ((t*(t>>11))&0x80)*E * !!(t>>20)
     //+ ((t*(t>>11))&128)*E * !!(t>>20)
     // arpeggio
-    //+ (!!(t/4&0x1000)*S((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K * !!(t>>21);
-    + (!!(t/4&0x1000)*S((t>>17)%2 ? '027' : '037',1,10,4)) / K * !!(t>>21);
+    //+ (!!(t/4&0x1000)*S((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K// * !!(t>>21);
+    //+ (!!(t&300)*S((t>>17)%2 ? '027' : '037',1,12,4)) / K// * !!(t>>21);
+    + (S((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
     //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
 
     // RIGHT CHANNEL
