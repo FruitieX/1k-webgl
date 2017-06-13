@@ -70,15 +70,16 @@ void main() {
   // ray marcher
   for( float i=.0; i<1e1; i++ ) { // maxIterations
     cu += (e = map(cw = ro+rd*cu.x));
-    if(e.x < -1e-4) break; // fixes "holes" in weird shapes
-    if(e.x > 2e0) break;  // results in trippy background
+    //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
+    if(2e0 < e.x) break;  // results in trippy background
   }
 
   // calculate normal from surface
   cu = vec3(.1, -.1, .3); // epsilon, z is unused
+  // TODO: very crappy estimation of surface normals
   cw =
-    cu.xyy * map(cw + cu.xyy).x +
-    cu.yyx * map(cw + cu.yyx).x +
+    //cu.xyy * map(cw + cu.xyy).x +
+    //cu.yyx * map(cw + cu.yyx).x +
     cu.yxy * map(cw + cu.yxy).x +
     cu.xxx * map(cw + cu.xxx).x;
 

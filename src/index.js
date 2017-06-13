@@ -14,7 +14,8 @@ X = a.onaudioprocess = audioEvent => {
   for(;i++<0x200;) {
   //for(;i++<L.length;) {
     // TODO: golf
-    X = Math.max(0., Math.min(
+    // debug: set Math.max(x <- to 0 when done
+    X = Math.max(1., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
     1e0)) // 5 = demo length
     //X = t/1e5
