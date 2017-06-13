@@ -75,7 +75,7 @@ g=c.getContext('webgl');
   P = g.createProgram();
 
   // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
-  r = time => g.drawArrays(6,  // TRIANGLE_FAN = 6
+  r = time => g.drawArrays(g.TRIANGLE_FAN,
     // Send resolution and time to shader
     g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, X),
     3,
@@ -83,11 +83,11 @@ g=c.getContext('webgl');
   );
 
   // vertex shader
-  g.shaderSource(S=g.createShader(35633), require('./vertex.glsl')); // VERTEX_SHADER = 35633
+  g.shaderSource(S=g.createShader(g.VERTEX_SHADER), require('./vertex.glsl'));
   g.compileShader(S);g.attachShader(P,S);
 
   // fragment shader
-  g.shaderSource(S=g.createShader(35632), require('./fragment.glsl')); // FRAGMENT_SHADER = 35632
+  g.shaderSource(S=g.createShader(g.FRAGMENT_SHADER), require('./fragment.glsl'));
   g.compileShader(S);g.attachShader(P,S);
 
   // Log compilation errors
@@ -95,11 +95,11 @@ g=c.getContext('webgl');
   //   throw getShaderInfoLog(S);
   // }
 
-  g.bindBuffer(34962, g.createBuffer(c.parentElement.style.margin = 0)); // ARRAY_BUFFER = 34962
+  g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer(c.parentElement.style.margin = 0));
   // 1st argument to enableVertexAttribArray used to be 0, but undefined works
   // 1st argument to vertexAttribPointer used to be 0, but undefined works
   g.vertexAttribPointer(
     g.enableVertexAttribArray(
-      g.bufferData(34962, Int8Array.of(-3, 1, 1, -3, 1, 1), 35044) // 35044 = gl.STATIC_DRAW
+      g.bufferData(g.ARRAY_BUFFER, Int8Array.of(-3, 1, 1, -3, 1, 1), g.STATIC_DRAW)
     ),
-  2, 5120, r(c.style.height = '100vh'), g.linkProgram(P), g.useProgram(P)); // BYTE = 5120
+  2, g.BYTE, r(c.style.height = '100vh'), g.linkProgram(P), g.useProgram(P));
