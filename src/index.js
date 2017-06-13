@@ -1,7 +1,7 @@
 // cheap way of doing AA
 c.width = 200, c.height = 120; // 16:9 aspect ratio
 
-f = new AudioContext();
+f = new AudioContext;
 a = f.createScriptProcessor(512, t = 2, K = 2);
 a.connect(f.destination);
 
@@ -70,7 +70,7 @@ X = a.onaudioprocess = audioEvent => {
 }
 
 // gfx
-g=c.getContext('webgl');
+g=c.getContext`webgl`;
 
   P = g.createProgram();
 
