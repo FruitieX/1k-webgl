@@ -13,11 +13,49 @@ uniform vec4 b;
 // y = material color
 // z = unused
 vec3 map(vec3 p) {
+  /*
   float plasma = sin(
     // horizontal sinusoid
     //sin(a.z) * 4. *
+    sin(a.z + 1e1 * p.x) + // * sqrt(
+      //pow(p.x + sin(a.z / 1e1), 2.))) +
+
+    // rotating sinusoid
+    //sin(a) * 4. *
+    //sin(a + 1e1 * p.x * sin(a / 1e1) + 1e1 * p.z * cos(a / 1e1)) +
+
+    // circular sinusoid
+    //sin(a.z) * 4. *
     sin(a.z + 1e1 * sqrt(
-      pow(p.x + sin(a.z / 1e1), 2.))) +
+      // cx
+      //pow(p.x + sin(a.z / 1e1), 2.) +
+      // cy
+      // used to be:
+      // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
+      pow(p.y + sin(b.x - a.z / 1e1), 2.)
+    ))
+
+    + b.z
+  ); // / 2. + .5; // smaller plasma, always positive
+  */
+
+  // cool alternatives
+  //return vec3(plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
+  //return vec3(sin(a) * (length(p)-b.x) + plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
+
+  // TODO: cos varies between [-1, 1] and causes plasma to grow too high
+  // ideas: sin^2(x) between [-1, 1]
+  //return vec3(length(p)-b.x + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
+
+  // shorter, worth investigating?
+  return vec3(length(p)-1. +
+
+  // This used to be the plasma variable
+  sin(
+    // horizontal sinusoid
+    //sin(a.z) * 4. *
+    sin(a.z + 1e1 * p.x) + // * sqrt(
+      //pow(p.x + sin(a.z / 1e1), 2.))) +
 
     // rotating sinusoid
     /*
@@ -36,19 +74,10 @@ vec3 map(vec3 p) {
       pow(p.y + sin(b.x - a.z / 1e1), 2.)
     ))
 
-    + b.z
-  ); // / 2. + .5; // smaller plasma, always positive
+    + b.z + a.z
+  )
 
-  // cool alternatives
-  //return vec3(plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
-  //return vec3(sin(a) * (length(p)-b.x) + plasma * (b.x - cos(a / 2.)), 1e2 * sin(plasma) + a * 10., 2.);
-
-  // TODO: cos varies between [-1, 1] and causes plasma to grow too high
-  // ideas: sin^2(x) between [-1, 1]
-  return vec3(length(p)-b.x + plasma * sin(a.z / 5e1), plasma + a.z, 2.);
-
-  // shorter, worth investigating?
-  //return vec3(length(p)-.5 + plasma * sin(a.z / 5e1));
+  * 0.1);
 }
 
 void main() {
@@ -61,7 +90,7 @@ void main() {
 
   // ray direction
   rd = mat3(
-    b.yyx,
+    b.xyx,
     //b.yxy,
     b.yxy,
     //cross(cu, cw),
@@ -72,7 +101,7 @@ void main() {
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) { // maxIterations
-    cu += (e = map(cw = b.xxy+rd*cu.x));
+    if(e.x < 1e0) cu += (e = map(cw = b.xxy+rd*cu.x));
     //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     //if(2e0 < e.x) break;  // results in trippy background
   }
@@ -88,17 +117,17 @@ void main() {
     //cu.xxx * map(cw + cu.xxx).x;
 
   // Color vector (cu) should have high common denominator components
-  cu = vec3(.1, .3, .5); // epsilon, z is unused
+  cu = vec3(.5, .3, .2); // epsilon, z is unused
   //cu.x = .5;
   //cu.y++;
 
   // color of surface
   gl_FragColor = a.w * vec4(
       // material color
-      sin(a.z * e.y * cu + b.z) +
+      sin(e.y * cu + b.z) +
 
       // diffuse lighting
-      reflect(rd, cw / length(cw)).y
+      0.5 * reflect(rd, cw / length(cw)).y
     // cheap vignette
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out

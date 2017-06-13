@@ -1,5 +1,5 @@
 // cheap way of doing AA
-c.width = 192, c.height = 108; // 16:9 aspect ratio
+c.width = 3200, c.height = 1800; // 16:9 aspect ratio
 
 f = new AudioContext;
 a = f.createScriptProcessor(0x200, t = 1, K = 1);
@@ -15,6 +15,14 @@ X = a.onaudioprocess = audioEvent => {
   L = audioEvent.outputBuffer.getChannelData(i=0);
   //R = audioEvent.outputBuffer.getChannelData(1);
 
+  // sequencer thing
+  S=(notes,octave,rate,len) =>
+    31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
+  // version which supports whitespace for silence
+    // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
+    //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+    //   : 0
+
   //L.map((sample, i) => {
   for(;i++<0x200;) {
   //for(;i++<L.length;) {
@@ -29,14 +37,6 @@ X = a.onaudioprocess = audioEvent => {
     //if(!i) console.log(X);
     ++t;
     X = 1 // debug
-
-    // sequencer thing
-    S=(notes,octave,rate,len) =>
-      31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
-    // version which supports whitespace for silence
-      // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
-      //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
-      //   : 0
 
     // kick drum with variation
     L[i] = (((K=1e4/(t&0x3fff*(
