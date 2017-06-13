@@ -105,7 +105,6 @@ void main() {
     //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     //if(2e0 < e.x) break;  // results in trippy background
   }
-  rd /= length(rd);
 
   // calculate normal from surface
   //cu = vec3(.1, -.1, .3); // epsilon, z is unused
