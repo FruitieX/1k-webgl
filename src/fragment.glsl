@@ -52,7 +52,7 @@ vec3 map(vec3 p) {
 
 void main() {
   // ray origin
-  vec3 ro = vec3( sin(a.z), 1e0, sin(1e0 - a.z / 1e1) ), // rotating
+  vec3 ro = vec3( sin(a.z), 1e0, sin(1e0 - a.z) ), // rotating
 	cw = normalize(ro),
 	cu = cross(cw, b.yxy);
 
