@@ -61,6 +61,8 @@ X = a.onaudioprocess = audioEvent => {
     R[i] *= X / 200;
     //if (L[i] > 1 || R[i] > 1) console.log('clipping');
 
+    i; // *something* in the prod build removes i without this line: WTF TODO
+
     // limit volume while testing
     //L[i] = Math.max(-0.5, Math.min(0.5, L[i]));
     //R[i] = Math.max(-0.5, Math.min(0.5, R[i]));
