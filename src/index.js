@@ -11,21 +11,23 @@ a.connect(f.destination);
 //t= 3744100
 //t= 4744100
 
+// sequencer thing
+s=(notes,octave,rate,len) =>
+  31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
+
+// version which supports whitespace for silence
+  // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
+  //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
+  //   : 0
+
+
 // music
 X = a.onaudioprocess = audioEvent => {
   L = audioEvent.outputBuffer.getChannelData(i=0);
   //R = audioEvent.outputBuffer.getChannelData(1);
 
-  // sequencer thing
-  S=(notes,octave,rate,len) =>
-    31 & t * Math.pow(2, notes[(t>>rate)%len] / 12 - octave)
-  // version which supports whitespace for silence
-    // notes.charCodeAt((t>>rate)%len) - 32 // Is the note a whitespace?
-    //   ? 31 & t * Math.pow(2, notes.charCodeAt((t>>rate)%len) / 12 - octave)
-    //   : 0
-
   //L.map((sample, i) => {
-  for(;i++<0x200;) {
+  for(;i++<0x200;t++) {
   //for(;i++<L.length;) {
     // TODO: golf
     // debug: set Math.max(x <- to 0 when done
@@ -36,7 +38,6 @@ X = a.onaudioprocess = audioEvent => {
     */
     //X = t/1e5
     //if(!i) console.log(X);
-    ++t;
     X = 1 // debug
 
     // kick drum with variation
@@ -45,7 +46,7 @@ X = a.onaudioprocess = audioEvent => {
     )))&1)*35)
 
     // bass
-    + (S('7050',4,17,4)&0xff) / K;
+    + (s('7050',4,17,4)&0xff) / K;
 
     L[i] *= !(t>>22); // turn off above instruments after a while
     //R[i] = L[i];
@@ -63,10 +64,10 @@ X = a.onaudioprocess = audioEvent => {
     //+ ((t*(t>>11))&0x80)*E * !!(t>>20)
     //+ ((t*(t>>11))&128)*E * !!(t>>20)
     // arpeggio
-    //+ (!!(t/4&0x1000)*S((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K// * !!(t>>21);
-    //+ (!!(t&300)*S((t>>17)%2 ? '027' : '037',1,12,4)) / K// * !!(t>>21);
-    + (S((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
-    //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
+    //+ (!!(t/4&0x1000)*s((t>>17)%2 ? '027' : '037',1,11,3)*(0x1000-(t&0xfff))>>11) / K// * !!(t>>21);
+    //+ (!!(t&300)*s((t>>17)%2 ? '027' : '037',1,12,4)) / K// * !!(t>>21);
+    + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
+    //+ (t/4&4096?s((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
 
     // RIGHT CHANNEL
     // hihat
@@ -75,8 +76,8 @@ X = a.onaudioprocess = audioEvent => {
     // sierpinski thing
     + ((t*(t>>12))&128)*E * !!(t>>20)
     // arpeggio
-    + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
-    //+ (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
+    + (!!(t/4&4096)*s((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
+    //+ (t/4&4096?s((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
     */
 
     L[i] *= X / 200;
