@@ -105,6 +105,7 @@ void main() {
     //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     //if(2e0 < e.x) break;  // results in trippy background
   }
+  rd /= length(rd);
 
   // calculate normal from surface
   //cu = vec3(.1, -.1, .3); // epsilon, z is unused
@@ -117,17 +118,17 @@ void main() {
     //cu.xxx * map(cw + cu.xxx).x;
 
   // Color vector (cu) should have high common denominator components
-  cu = vec3(.5, .3, .2); // epsilon, z is unused
+  //cu = vec3(.5, .3, .2); // epsilon, z is unused
   //cu.x = .5;
   //cu.y++;
 
   // color of surface
   gl_FragColor = a.w * vec4(
       // material color
-      sin(e.y * cu + b.z) +
+      sin(e.y + sin(b.zyz))
 
       // diffuse lighting
-      0.5 * reflect(rd, cw / length(cw)).y
+      //0.01 * reflect(rd, cw / length(cw)).y
     // cheap vignette
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
