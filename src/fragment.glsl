@@ -102,7 +102,7 @@ void main() {
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) { // maxIterations
-    if(e.x < 1e0) cu += (e = map(b.xxy+rd*cu.x));
+    if(e.x < 1e0) cu += (e = map(b.xxy+rd*cu));
     //if(e.x < -1e-4) break; // fixes "holes" in weird shapes
     //if(2e0 < e.x) break;  // results in trippy background
   }
