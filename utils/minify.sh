@@ -53,4 +53,4 @@ node ../node_modules/.bin/regpack temp/temp3.js \
 
 cp temp/temp.html index.html
 
-echo "wrote index.html ($(cat index.html | wc -c) bytes)"
+echo "wrote index.html ($(cat index.html | wc -c)b , $(($(cat index.html | wc -c)-1024))b over budget)"
