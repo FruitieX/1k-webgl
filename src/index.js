@@ -16,7 +16,7 @@ X = a.onaudioprocess = audioEvent => {
     1e0)) // 5 = demo length
     //X = t/1e5
     //if(!i) console.log(X);
-    //X = 1 // debug
+    X = 1 // debug
 
     // sequencer thing
     S=(notes,octave,rate,len) =>
@@ -79,7 +79,7 @@ g=c.getContext('webgl');
     // Send resolution and time to shader
     g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, time / 1e4, X),
     3,
-    g.uniform4f(g.getUniformLocation(P, 'b'), c.width, c.height, .2/K, requestAnimationFrame(r))
+    g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
   );
 
   // vertex shader

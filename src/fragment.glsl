@@ -4,6 +4,8 @@ precision highp float;
 // a.z = time variable (seconds / 10)
 uniform vec4 a;
 
+// b.x = 1
+// b.y = 0
 // b.z = kick drum volume
 uniform vec4 b;
 
@@ -50,25 +52,25 @@ vec3 map(vec3 p) {
 
 void main() {
   // ray origin
-  vec3 ro = vec3( sin(1e0 - a.z), 1e0, sin(a.z) ), // rotating
-	cw = normalize(-ro),
-	cu = cross(cw, vec3(.0, 1e0, .0));
+  vec3 ro = vec3( sin(a.z), 1e0, sin(1e0 - a.z / 1e1) ), // rotating
+	cw = normalize(ro),
+	cu = cross(cw, b.yxy);
 
   // ray direction
   vec3 rd = mat3(
     cu,
     cross(cu, cw),
-    cw
+    -cw
   ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y,
   e; // ray marcher temp result
 
-  cu.x = .5; // initial ray step amount
+  //cu.x = .5; // initial ray step amount
 
   // ray marcher
   for( float i=.0; i<1e1; i++ ) { // maxIterations
     cu += (e = map(cw = ro+rd*cu.x));
     if(e.x < -1e-4) break; // fixes "holes" in weird shapes
-    if(e.x > 1e0) break;  // results in trippy background
+    if(e.x > 2e0) break;  // results in trippy background
   }
 
   // calculate normal from surface
@@ -81,21 +83,19 @@ void main() {
   );
 
   // Color vector (cu) should have high common denominator components
-  cu.x = .5;
+  //cu.x = .5;
+  //cu.y++;
 
   // color of surface
-  gl_FragColor = vec4(
-    (
+  gl_FragColor = a.w * vec4(
       // material color
       sin(a.z * e.y * cu + b.z) +
 
       // diffuse lighting
       reflect(rd, cw).y
-    )
     // cheap vignette
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
-    * a.w
     ,
-  1e0);
+  1./a.w);
 }

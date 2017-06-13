@@ -47,8 +47,8 @@ node ../node_modules/.bin/regpack temp/temp3.js \
   --reassignVars \
   --varsNotReassigned false \
   --crushTiebreakerFactor 1 \
-  --crushGainFactor 1 \
-  --crushLengthFactor 0 \
+  --crushGainFactor 8 \
+  --crushLengthFactor 1 \
   --crushCopiesFactor 0 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
