@@ -55,7 +55,7 @@ vec3 map(vec3 p) {
   sin(
     // horizontal sinusoid
     //sin(a.z) * 4. *
-    sin(a.z + 1e1 * p.x) + // * sqrt(
+    sin(1e1 * p.x) + // * sqrt(
       //pow(p.x + sin(a.z / 1e1), 2.))) +
 
     // rotating sinusoid
@@ -66,7 +66,7 @@ vec3 map(vec3 p) {
 
     // circular sinusoid
     //sin(a.z) * 4. *
-    sin(a.z + 1e1 * sqrt(
+    sin(1e1 * sqrt(
       // cx
       //pow(p.x + sin(a.z / 1e1), 2.) +
       // cy

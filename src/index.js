@@ -1,5 +1,6 @@
 // cheap way of doing AA
-c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+//c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+c.width = 192, c.height = 108; // 16:9 aspect ratio
 
 f = new AudioContext;
 a = f.createScriptProcessor(0x200, t = 1, K = 1);
