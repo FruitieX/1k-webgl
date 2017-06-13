@@ -1,5 +1,5 @@
-attribute vec2 p;
+attribute vec4 p;
 
 void main() {
-  gl_Position = vec4(p, 0, 1);
+  gl_Position = p;
 }
