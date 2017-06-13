@@ -2,6 +2,7 @@ precision highp float;
 
 // a.xy = resolution
 // a.z = time variable (seconds / 10)
+// a.w = fade variable
 uniform vec4 a;
 
 // b.x = 1
@@ -84,7 +85,7 @@ void main() {
   // ray origin
   //vec3 ro = vec3( sin(a.z), b.x, sin(b.x - a.z) ), // rotating
   //vec3 ro = b.xxy,
-	vec3 e, // e = ray marcher temp result
+	vec3 e = b.yyy, // e = ray marcher temp result
 	//cu = cross(cw, b.yxy);
   cu = b.xxx,
 
