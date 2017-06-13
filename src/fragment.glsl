@@ -16,8 +16,8 @@ vec3 map(vec3 p) {
   float plasma = sin(
     // horizontal sinusoid
     sin(a.z) * 4. *
-    sin(a.z + sqrt(
-      1e2 * pow(p.x + sin(a.z / 1e1), 2.))) +
+    sin(a.z + 1e1 * sqrt(
+      pow(p.x + sin(a.z / 1e1), 2.))) +
 
     // rotating sinusoid
     /*
@@ -27,13 +27,13 @@ vec3 map(vec3 p) {
 
     // circular sinusoid
     sin(a.z) * 4. *
-    sin(a.z + sqrt(
+    sin(a.z + 1e1 * sqrt(
       // cx
-      1e2 * pow(p.x + sin(a.z / 1e1), 2.) +
+      pow(p.x + sin(a.z / 1e1), 2.) +
       // cy
       // used to be:
       // 1e2 * pow(p.y + cos(a.z / 1e1), 2.)
-      1e2 * pow(p.y + sin(1e0 - a.z / 1e1), 2.)
+      pow(p.y + sin(1e0 - a.z / 1e1), 2.)
     ))
 
     + b.z
@@ -98,5 +98,5 @@ void main() {
     //* (2. - length(vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y))
     // fade in/out
     ,
-  1./a.w);
+  1e0/a.w);
 }
