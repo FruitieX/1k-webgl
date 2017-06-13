@@ -1,17 +1,17 @@
 // cheap way of doing AA
-c.width = 200, c.height = 120; // 16:9 aspect ratio
+c.width = 192, c.height = 108; // 16:9 aspect ratio
 
 f = new AudioContext;
-a = f.createScriptProcessor(512, t = 2, K = 2);
+a = f.createScriptProcessor(512, t = 1, K = 1);
 a.connect(f.destination);
 
 // music
 X = a.onaudioprocess = audioEvent => {
-  L = audioEvent.outputBuffer.getChannelData(0);
-  R = audioEvent.outputBuffer.getChannelData(1);
+  L = audioEvent.outputBuffer.getChannelData(i=0);
+  //R = audioEvent.outputBuffer.getChannelData(1);
 
   //L.map((sample, i) => {
-  for(i=0;i++<512;) {
+  for(;i++<512;) {
   //for(;i++<L.length;) {
     X = Math.max(0., Math.min(
       -Math.abs(++t/5e5 - 5) + 5,
@@ -37,7 +37,7 @@ X = a.onaudioprocess = audioEvent => {
     + (S('7050',4,17,4)&255) / K;
 
     L[i] *= !(t>>22);
-    R[i] = L[i];
+    //R[i] = L[i];
 
     // hihat envelope
     E=Math.min(1, (1e1/((t>>5)%128))) * 0.2;
@@ -47,21 +47,24 @@ X = a.onaudioprocess = audioEvent => {
     L[i] += (((t%100)*(t%100)*(t>>5))&128)*E * !!(t>>19)
     // sierpinski thing
     + ((t*(t>>11))&128)*E * !!(t>>20)
+    //+ ((t*(t>>11))&128)*E * !!(t>>20)
     // arpeggio
     + (!!(t/4&4096)*S((t>>17)%2 ? '027' : '037',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
     //+ (t/4&4096?S((t>>17)%2 ? '027' : '037',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
 
     // RIGHT CHANNEL
     // hihat
+    /*
     R[i] += (((t%100)*(t%100)*(t>>4))&128)*E * !!(t>>19)
     // sierpinski thing
     + ((t*(t>>12))&128)*E * !!(t>>20)
     // arpeggio
     + (!!(t/4&4096)*S((t>>17)%2 ? '072' : '073',1,11,3)*(4096-(t&4095))>>11) / K * !!(t>>21);
     //+ (t/4&4096?S((t>>17)%2 ? '072' : '073',5,11,3)*(4096-(t&4095))>>11 : 0) / K * !!(t>>21);
+    */
 
     L[i] *= X / 200;
-    R[i] *= X / 200;
+    //R[i] *= X / 200;
     //if (L[i] > 1 || R[i] > 1) console.log('clipping');
 
     //i; // *something* in the prod build removes i without this line: WTF TODO
