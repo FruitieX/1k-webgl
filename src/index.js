@@ -1,6 +1,6 @@
 // cheap way of doing AA
-c.width = 3200, c.height = 1800; // 16:9 aspect ratio
-//c.width = 192, c.height = 108; // battery saving
+//c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+c.width = 192, c.height = 108; // battery saving
 
 f = new AudioContext;
 a = f.createScriptProcessor(512, t = 1, K = 1);
@@ -17,8 +17,10 @@ s=(notes,octave,rate,len) =>
 
 // music
 X = a.onaudioprocess = e => {
-  for(L = e.outputBuffer.getChannelData(i=0);i++<512;t++) {
-    L[i] =
+  //for(L = e.outputBuffer.getChannelData(i=0);i++<512;t++) {
+  //e.outputBuffer.getChannelData(i=0);i++<512;t++) {
+  e.outputBuffer.getChannelData(i=0).map(_ =>
+    e.outputBuffer.getChannelData(0)[i++] =
     (
       (
         // kick drum
@@ -47,15 +49,16 @@ X = a.onaudioprocess = e => {
 
     ) * (
       // fade out
-      X = Math.min(1, Math.max(1e-9, 1e1-t/5e5))
-    ) / 200;
+      X = Math.min(1, Math.max(1e-9, 1e1-t++/5e5))
+    ) / 200
+  );
 
     //L[i] *= X / 200;
     //if (L[i] > 1) console.log('clipping');
 
     // limit volume while testing
     //L[i] = Math.max(-0.5, Math.min(0.5, L[i]));
-  }
+  //}
 }
 
 // gfx
