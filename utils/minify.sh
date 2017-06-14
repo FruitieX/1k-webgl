@@ -42,7 +42,7 @@ node ../node_modules/.bin/regpack temp/temp4.js \
   --reassignVars \
   --varsNotReassigned false \
   --crushTiebreakerFactor 1 \
-  --crushGainFactor 1 \
+  --crushGainFactor 2 \
   --crushLengthFactor 2 \
   --crushCopiesFactor 0 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
