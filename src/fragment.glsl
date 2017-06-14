@@ -13,6 +13,7 @@ uniform vec4 b;
 // x = distance to sdf
 // y = material color
 // z = unused
+/*
 vec3 map(vec3 p) {
   return vec3(
     // sphere
@@ -30,6 +31,7 @@ vec3 map(vec3 p) {
     )
   );
 }
+*/
 
 void main() {
   // ray origin
@@ -51,7 +53,26 @@ void main() {
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
     if(e.x < 1e0) // results in trippy background
-      cu += (e = map(b.xxy+rd*cu));
+      cu += (e =
+
+        // Used to be:
+        // map(b.xxy+rd*cu)
+        vec3(
+          // sphere
+          length(b.xxy+rd*cu) - 1. +
+
+          // plasma
+          .1 * sin(
+            // horizontal-ish sinusoid
+            sin(1e1 * rd.x) +
+
+            // circular-ish sinusoid
+            //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
+
+            b.z + a.z
+          )
+        )
+      );
   }
 
   // color of surface
