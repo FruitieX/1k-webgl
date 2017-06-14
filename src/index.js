@@ -1,9 +1,9 @@
 // cheap way of doing AA
-//c.width = 3200, c.height = 1800; // 16:9 aspect ratio
-c.width = 192, c.height = 108; // battery saving
+c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+//c.width = 192, c.height = 108; // battery saving
 
 f = new AudioContext;
-a = f.createScriptProcessor(0x200, t = 1, K = 1);
+a = f.createScriptProcessor(512, t = 1, K = 1);
 a.connect(f.destination);
 
 // sequencer thing
@@ -16,10 +16,10 @@ s=(notes,octave,rate,len) =>
 //t= 4744100
 
 // music
-X = a.onaudioprocess = audioEvent => {
-  L = audioEvent.outputBuffer.getChannelData(i=0);
+X = a.onaudioprocess = e => {
+  L = e.outputBuffer.getChannelData(i=0);
 
-  for(;i++<0x200;t++) {
+  for(;i++<512;t++) {
     // TODO: golf
     /*
     X = Math.max(0., Math.min(
@@ -31,18 +31,18 @@ X = a.onaudioprocess = audioEvent => {
     X = 1 // debug
 
     // kick drum with variation
-    L[i] = (((K=1e4/(t&0x3fff*(
+    L[i] = (((K=1e4/(t&16383*(
       (t>>15)%16 - 15 ? 1 : 0.75
     )))&1)*35)
 
     // bass
-    + (s('7050',4,17,4)&0xff) / K;
+    + (s('7050',4,17,4)&255) / K;
 
     L[i] *= !(t>>22); // turn off above instruments after a while
 
     // LEFT CHANNEL
     // hihat TODO improve/golf envelope
-    L[i] += ((t%150*t%130*t)&0x80)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
+    L[i] += ((t%150*t%130*t)&128)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
     // arpeggio
     + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
 
