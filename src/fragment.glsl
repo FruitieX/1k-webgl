@@ -24,11 +24,9 @@ vec3 map(vec3 p) {
       sin(1e1 * p.x) +
 
       // circular-ish sinusoid
-      sin(1e1 * sqrt(
-        pow(p.y + sin(b.x - a.z / 1e1), 2.)
-      ))
+      //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
 
-      + b.z + a.z
+      b.z + a.z
     )
   );
 }
