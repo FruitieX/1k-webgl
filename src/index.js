@@ -1,6 +1,6 @@
 // cheap way of doing AA
-//c.width = 3200, c.height = 1800; // 16:9 aspect ratio
-c.width = 192, c.height = 108; // battery saving
+c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+//c.width = 192, c.height = 108; // battery saving
 
 f = new AudioContext;
 a = f.createScriptProcessor(512, t = 1, K = 1);
@@ -18,41 +18,39 @@ s=(notes,octave,rate,len) =>
 // music
 X = a.onaudioprocess = e => {
   for(L = e.outputBuffer.getChannelData(i=0);i++<512;t++) {
-    // TODO: golf
-    /*
-    X = Math.max(0., Math.min(
-      -Math.abs(++t/5e5 - 5) + 5,
-    1e0)) // 5 = demo length
-    */
-    //X = t/1e5
-    //if(!i) console.log(X);
-    //X = 1 // debug
-    X = Math.min(1, Math.max(1e-9, 1e1-t/5e5));
-    //if (i===1) console.log(1e1-t/5e5);
-
-    // kick drum with variation
-    L[i] = (
+    L[i] =
+    (
       (
-        K = 1e4 / (
-          t & 16383 * (
-            (t>>15) % 16 - 15 ? 1 : .75
-          )
-        )
-      ) & 1
-    ) * 30
+        // kick drum
+        (
+          (
+            K = 1e4 / (
+              t & 16383 * (
+                (t>>15) % 16 - 15 ? 1 : .75
+              )
+            )
+          ) & 1
+        ) * 30
 
-    // bass
-    + (s('7050',4,17,4)&255) / K;
+        // bass
+        + (s('7050',4,17,4)&255) / K
+      )
 
-    L[i] *= !(t>>22); // turn off above instruments after a while
+      // turn off above instruments after a while
+      * !(t>>22)
 
-    // LEFT CHANNEL
-    // hihat TODO improve/golf envelope
-    L[i] += ((t%150*t%130*t)&128)*Math.min(.2, (1e1/((t>>3)%512))) * !!(t>>19)
-    // arpeggio
-    + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
+      // hihat TODO improve/golf envelope
+      + ((t%150*t%130*t)&128)*Math.min(.2, (1e1/((t>>3)%512))) * !!(t>>19)
 
-    L[i] *= X / 200;
+      // arpeggio
+      + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20)
+
+    ) * (
+      // fade out
+      X = Math.min(1, Math.max(1e-9, 1e1-t/5e5))
+    ) / 200;
+
+    //L[i] *= X / 200;
     //if (L[i] > 1) console.log('clipping');
 
     // limit volume while testing
