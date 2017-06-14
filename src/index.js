@@ -16,7 +16,7 @@ s=(notes,octave,rate,len) =>
 //t= 4744100
 
 // music
-X = a.onaudioprocess = e => {
+X = a.onaudioprocess = e =>
   //for(L = e.outputBuffer.getChannelData(i=0);i++<512;t++) {
   //e.outputBuffer.getChannelData(i=0);i++<512;t++) {
   e.outputBuffer.getChannelData(i=0).map(_ =>
@@ -60,7 +60,7 @@ X = a.onaudioprocess = e => {
     // limit volume while testing
     //L[i] = Math.max(-0.5, Math.min(0.5, L[i]));
   //}
-}
+
 
 // gfx
 g = c.getContext`webgl`;
