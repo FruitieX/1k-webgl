@@ -42,7 +42,7 @@ X = a.onaudioprocess = e => {
       * !(t>>22)
 
       // hihat TODO improve/golf envelope
-      + ((t%150*t%130*t)&128)*Math.min(.2, (1e1/((t>>3)%512))) * !!(t>>19)
+      + (t%100*t&128)*Math.min(.2, (1e1/((t>>3)%512))) * !!(t>>19)
 
       // arpeggio
       + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20)
