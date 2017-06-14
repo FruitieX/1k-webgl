@@ -17,9 +17,7 @@ s=(notes,octave,rate,len) =>
 
 // music
 X = a.onaudioprocess = e => {
-  L = e.outputBuffer.getChannelData(i=0);
-
-  for(;i++<512;t++) {
+  for(L = e.outputBuffer.getChannelData(i=0);i++<512;t++) {
     // TODO: golf
     /*
     X = Math.max(0., Math.min(
@@ -29,10 +27,11 @@ X = a.onaudioprocess = e => {
     //X = t/1e5
     //if(!i) console.log(X);
     X = 1 // debug
+    //if (i===1) console.log(X);
 
     // kick drum with variation
     L[i] = (((K=1e4/(t&16383*(
-      (t>>15)%16 - 15 ? 1 : 0.75
+      (t>>15)%16 - 15 ? 1 : .75
     )))&1)*35)
 
     // bass
@@ -42,7 +41,7 @@ X = a.onaudioprocess = e => {
 
     // LEFT CHANNEL
     // hihat TODO improve/golf envelope
-    L[i] += ((t%150*t%130*t)&128)*Math.min(0.2, (1e1/((t>>3)%512))) * !!(t>>19)
+    L[i] += ((t%150*t%130*t)&128)*Math.min(.2, (1e1/((t>>3)%512))) * !!(t>>19)
     // arpeggio
     + (s((t>>17)%2 ? '027' : '037',1,13-(3*(t>>20)%12),4)) / K * !!(t>>20);
 
@@ -55,7 +54,7 @@ X = a.onaudioprocess = e => {
 }
 
 // gfx
-g=c.getContext`webgl`;
+g = c.getContext`webgl`;
 P = g.createProgram();
 
 // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
@@ -67,11 +66,11 @@ r = time => g.drawArrays(g.TRIANGLE_FAN,
 );
 
 // vertex shader
-g.shaderSource(S=g.createShader(g.VERTEX_SHADER), require('./vertex.glsl'));
+g.shaderSource(S=g.createShader(g.VERTEX_SHADER), require("./vertex.glsl"));
 g.compileShader(S);g.attachShader(P,S);
 
 // fragment shader
-g.shaderSource(S=g.createShader(g.FRAGMENT_SHADER), require('./fragment.glsl'));
+g.shaderSource(S=g.createShader(g.FRAGMENT_SHADER), require("./fragment.glsl"));
 g.compileShader(S);g.attachShader(P,S);
 
 // Log compilation errors
