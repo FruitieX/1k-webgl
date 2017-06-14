@@ -10,29 +10,6 @@ uniform vec4 a;
 // b.z = kick drum volume
 uniform vec4 b;
 
-// x = distance to sdf
-// y = material color
-// z = unused
-/*
-vec3 map(vec3 p) {
-  return vec3(
-    // sphere
-    length(p) - 1. +
-
-    // plasma
-    .1 * sin(
-      // horizontal-ish sinusoid
-      sin(1e1 * p.x) +
-
-      // circular-ish sinusoid
-      //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
-
-      b.z + a.z
-    )
-  );
-}
-*/
-
 void main() {
   // ray origin
   //vec3 ro = vec3( sin(a.z), b.x, sin(b.x - a.z) ), // rotating
@@ -57,6 +34,10 @@ void main() {
 
         // Used to be:
         // map(b.xxy+rd*cu)
+
+				// x = distance to sdf
+				// y = material color
+				// z = unused
         vec3(
           // sphere
           length(b.xxy+rd*cu) - 1. +
