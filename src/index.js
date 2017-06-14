@@ -1,6 +1,6 @@
 // cheap way of doing AA
-c.width = 3200, c.height = 1800; // 16:9 aspect ratio
-//c.width = 192, c.height = 108; // battery saving
+//c.width = 3200, c.height = 1800; // 16:9 aspect ratio
+c.width = 192, c.height = 108; // battery saving
 
 f = new AudioContext;
 a = f.createScriptProcessor(512, t = 1, K = 1);
@@ -26,8 +26,9 @@ X = a.onaudioprocess = e => {
     */
     //X = t/1e5
     //if(!i) console.log(X);
-    X = 1 // debug
-    //if (i===1) console.log(X);
+    //X = 1 // debug
+    X = Math.min(1, Math.max(1e-9, 1e1-t/5e5));
+    //if (i===1) console.log(1e1-t/5e5);
 
     // kick drum with variation
     L[i] = (
