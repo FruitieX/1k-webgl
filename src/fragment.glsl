@@ -25,7 +25,7 @@ void main() {
     b.yxy,
     //cross(cu, cw),
     -b.xxy
-  ) * */-b.xxx + vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
+  ) * */-cu + vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
