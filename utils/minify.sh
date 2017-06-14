@@ -40,10 +40,10 @@ node ../node_modules/.bin/regpack temp/temp4.js \
   --hashWebGLContext \
   --hashAudioContext \
   --reassignVars \
-  --varsNotReassigned false \
+  --varsNotReassigned [] \
   --crushTiebreakerFactor 1 \
-  --crushGainFactor 2 \
-  --crushLengthFactor 2 \
+  --crushGainFactor 1 \
+  --crushLengthFactor 1 \
   --crushCopiesFactor 0 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
