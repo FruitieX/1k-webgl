@@ -19,7 +19,7 @@ vec3 map(vec3 p) {
     length(p) - 1. +
 
     // plasma
-    0.1 * sin(
+    .1 * sin(
       // horizontal-ish sinusoid
       sin(1e1 * p.x) +
 
@@ -42,13 +42,13 @@ void main() {
   cu = b.xxx,
 
   // ray direction
-  rd = mat3(
+  rd = /*mat3(
     b.xyx,
     //b.yxy,
     b.yxy,
     //cross(cu, cw),
     -b.xxy
-  ) * vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
+  ) * */-b.xxx + vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
