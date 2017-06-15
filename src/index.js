@@ -6,7 +6,9 @@ s = new AudioContext;
 a = s.createScriptProcessor(512, t = 1, K = 1);
 a.connect(s.destination);
 
-// sequencer thing
+// bass & arpeggio sequencers
+// (compresses better when inlined)
+
 // s=(notes,octave,rate,len) =>
 //   31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
 
@@ -29,14 +31,6 @@ X = a.onaudioprocess = a =>
         ) & 1) * 30
 
         // bass
-        /*
-        + s(
-          '7050', // melody
-          4,      // octave
-          17,     // rate
-          4       // melody length
-        ) / K
-        */
         + (31 & t * Math.pow(2,
           // melody
           '7050'
