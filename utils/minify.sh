@@ -30,8 +30,6 @@ echo "uglifying..."
 
 ../node_modules/.bin/uglifyjs -V
 ../node_modules/.bin/uglifyjs temp/temp3.js \
-  -m \
-    toplevel,eval \
 > temp/temp4.js
 
 echo "s/100/1e2/"
