@@ -34,8 +34,14 @@ echo "uglifying..."
     toplevel,eval \
 > temp/temp4.js
 
+echo "s/100/1e2/"
+sed -e 's/100/1e2/g' temp/temp4.js > temp/temp5.js
+
+echo "s/10/1e1/"
+sed -e 's/10/1e1/g' temp/temp5.js > temp/temp6.js
+
 echo "running regpack..."
-node ../node_modules/.bin/regpack temp/temp4.js \
+node ../node_modules/.bin/regpack temp/temp6.js \
   --useES6 \
   --hashWebGLContext \
   --hashAudioContext \
@@ -44,7 +50,7 @@ node ../node_modules/.bin/regpack temp/temp4.js \
   --crushTiebreakerFactor 1 \
   --crushGainFactor 1 \
   --crushLengthFactor 1 \
-  --crushCopiesFactor 0 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
+  --crushCopiesFactor 2 | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp.html
 
 cp temp/temp.html index.html
 

@@ -111,4 +111,4 @@ g.vertexAttribPointer(
   g.enableVertexAttribArray(
     g.bufferData(g.ARRAY_BUFFER, Int8Array.of(-3, 1, 1, -3, 1, 1), g.STATIC_DRAW)
   ),
-2, g.BYTE, r(c.style.height = '100vh'), g.linkProgram(P), g.useProgram(P));
+2, g.BYTE, r(c.style.height = '1e2vh'), g.linkProgram(P), g.useProgram(P));
