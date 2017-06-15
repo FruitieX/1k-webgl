@@ -3,8 +3,8 @@ c.width = 32e2, c.height = 18e2, // 16:9 aspect ratio
 //c.width = 192, c.height = 108; // battery saving
 
 s = new AudioContext;
-c = s.createScriptProcessor(512, t = 1, K = 1);
-c.connect(s.destination);
+a = s.createScriptProcessor(512, t = 1, K = 1);
+a.connect(s.destination);
 
 // bass & arpeggio sequencers
 // (compresses better when inlined)
@@ -13,9 +13,9 @@ c.connect(s.destination);
 //   31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
 
 // music
-X = c.onaudioprocess = c =>
-  c.outputBuffer.getChannelData(i=0).map(_ =>
-    c.outputBuffer.getChannelData(0)[i++] =
+X = a.onaudioprocess = a =>
+  a.outputBuffer.getChannelData(i=0).map(_ =>
+    a.outputBuffer.getChannelData(0)[i++] =
     (
       (
         // kick drum
