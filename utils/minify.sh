@@ -32,14 +32,16 @@ echo "uglifying..."
 ../node_modules/.bin/uglifyjs temp/temp3.js \
 > temp/temp4.js
 
-echo "s/100/1e2/"
-sed -e 's/100/1e2/g' temp/temp4.js > temp/temp5.js
-
-echo "s/10/1e1/"
-sed -e 's/10/1e1/g' temp/temp5.js > temp/temp6.js
+echo "find and replace..."
+sed \
+  -e 's/100/1e2/g' \
+  -e 's/10/1e1/g' \
+  -e 's/3200/32e2/' \
+  -e 's/1800/18e2/' \
+  temp/temp4.js > temp/temp5.js
 
 echo "running regpack..."
-node ../node_modules/.bin/regpack temp/temp6.js \
+node ../node_modules/.bin/regpack temp/temp5.js \
   --useES6 \
   --hashWebGLContext \
   --hashAudioContext \
