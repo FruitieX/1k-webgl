@@ -7,8 +7,8 @@ a = s.createScriptProcessor(512, t = 1, K = 1);
 a.connect(s.destination);
 
 // sequencer thing
-s=(notes,octave,rate,len) =>
-  31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
+// s=(notes,octave,rate,len) =>
+//   31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
 
 // music
 X = a.onaudioprocess = a =>
@@ -29,12 +29,27 @@ X = a.onaudioprocess = a =>
         ) & 1) * 30
 
         // bass
+        /*
         + s(
           '7050', // melody
           4,      // octave
           17,     // rate
           4       // melody length
         ) / K
+        */
+        + (31 & t * Math.pow(2,
+          // melody
+          '7050'
+        [(t>>
+          // rate
+          17
+        ) %
+          // melody length
+          4
+        ] / 12 -
+          // octave
+          4
+        )) / K
       )
 
       // turn off above instruments after a while
@@ -47,12 +62,19 @@ X = a.onaudioprocess = a =>
       * !!(t>>19)
 
       // arpeggio
-      + s(
-        (t>>17) % 2 ? '027' : '037',  // melody
-        1,                            // octave
-        13 - 3 * (t>>20) % 12,        // rate
-        4                             // melody length
-      ) / K
+      + (31 & t * Math.pow(2, (
+        // melody
+        ((t>>17) % 2 ? '027' : '037')
+      )[(t>>(
+        // rate
+        13 - 3 * (t>>20) % 12
+      )) %
+        // melody length
+        4
+      ] / 12 -
+        // octave
+        1
+      )) / K
 
       // enable arpeggio after t>>20
       * !!(t>>20)
