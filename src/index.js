@@ -2,9 +2,9 @@
 c.width = 32e2, c.height = 18e2, // 16:9 aspect ratio
 //c.width = 192, c.height = 108; // battery saving
 
-s = new AudioContext;
-a = s.createScriptProcessor(512, t = 1, K = 1);
-a.connect(s.destination);
+b = new AudioContext;
+a = b.createScriptProcessor(512, t = 1, K = 1);
+a.connect(b.destination);
 
 // bass & arpeggio sequencers
 // (compresses better when inlined)
@@ -14,8 +14,8 @@ a.connect(s.destination);
 
 // music
 X = a.onaudioprocess = a =>
-  a.outputBuffer.getChannelData(i=0).map(_ =>
-    a.outputBuffer.getChannelData(0)[i++] =
+  a.outputBuffer.getChannelData(f=0).map(_ =>
+    a.outputBuffer.getChannelData(0)[f++] =
     (
       (
         // kick drum
@@ -83,9 +83,9 @@ g = c.getContext`webgl`;
 P = g.createProgram();
 
 // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
-r = t => g.drawArrays(g.TRIANGLE_FAN,
+r = a => g.drawArrays(g.TRIANGLE_FAN,
   // x-res, y-res, time (s), fade out
-  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, t / 1e3, X),
+  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, a / 1e3, X),
   3,
   // 1, 0, kick envelope, unused
   g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
