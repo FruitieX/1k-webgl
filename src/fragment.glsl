@@ -25,7 +25,7 @@ void main() {
     b.yxy,
     //cross(cu, cw),
     -b.xxy
-  ) * */-cu + vec3(-a.xy + 2. * gl_FragCoord.xy, a.y) / a.y;
+  ) * */vec3(2. * gl_FragCoord.xy - a.xy, a.y) / a.y - cu;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
@@ -40,28 +40,28 @@ void main() {
 				// z = unused
         vec3(
           // sphere
-          length(b.xxy+rd*cu) - 1. +
+          length(b.xxz+rd*cu) - 1e0 +
 
           // plasma
-          .1 * sin(
+          .1 * sin(b.z + 1e1 * rd.x*cu.x + a.z
             // horizontal-ish sinusoid
-            sin(1e1 * rd.x*cu.x) +
+            //sin() +
 
             // circular-ish sinusoid
             //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
 
-            b.z + a.z
+            //b.z + a.z
           )
         )
       );
   }
 
   // color of surface
-  gl_FragColor = a.w * vec4(
+  gl_FragColor = vec4(
     // material color
-    sin(e.y + sin(b.zyz)),
+    a.w * sin(e.y + sin(b.zyz)),
 
     // fade in/out
-    b.x/a.w
+		1e0
   );
 }

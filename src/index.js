@@ -74,7 +74,7 @@ X = a.onaudioprocess = a =>
       * !!(t>>20)
     ) * (
       // fade out
-      X = Math.min(1, Math.max(1e-9, 1e1-t++/5e5))
+      X = Math.min(1, Math.max(0, 1e1-t++/5e5))
     ) / 200
   );
 
