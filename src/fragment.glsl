@@ -19,7 +19,7 @@ void main() {
   rd = vec4(2. * gl_FragCoord.xy - a.xy, a.xy) / a.y - cu;
 
   // ray marcher
-  for( float i=1.; i<1e1; i++ ) {
+  for( float i=1e0; i<1e1; i++ ) {
     if(e.x < 1e0) // results in trippy background
       cu += (e =
 				// x = distance to sdf
@@ -30,7 +30,7 @@ void main() {
           length(b.xxyy+rd*cu) - 1e0 +
 
           // plasma
-          .1 * sin(b.z + 1e1 * rd.x*cu.x + a.z)
+          sin(b.z + 1e1 * rd.x*cu.x + a.z) / 1e1
         )
       );
   }
