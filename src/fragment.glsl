@@ -45,7 +45,7 @@ void main() {
           // plasma
           .1 * sin(
             // horizontal-ish sinusoid
-            sin(1e1 * rd.x) +
+            sin(1e1 * rd.x*cu.x) +
 
             // circular-ish sinusoid
             //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
