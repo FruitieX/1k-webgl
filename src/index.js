@@ -46,7 +46,7 @@ X = a.onaudioprocess = a =>
       * !(t>>22)
 
       // hihat TODO improve/golf envelope
-      + (t % 100 * t & 128) * Math.min(.2, (1e1 / ((t>>3) % 512)))
+      + (t % 100 * t & 128) * Math.min(.2, 1e1 / ((t>>3) % 512))
 
       // enable hihat after t>>19
       * !!(t>>19)
@@ -70,7 +70,7 @@ X = a.onaudioprocess = a =>
       * !!(t>>20)
     ) * (
       // fade out
-      X = Math.min(1, Math.max(0, 1e1-t++/5e5))
+      X = Math.min(Math.max(0, 1e1-t++/5e5), 1)
     ) / 2e2
   );
 
