@@ -25,13 +25,13 @@ void main() {
 				// x = distance to sdf
 				// y = material color
 				// z = unused
-        vec4(
+        //vec4(
           // sphere
-          length(b.xxyy+rd*cu) - 1e0 +
+          length(b.xxyy+rd*cu) - 1e0
 
           // plasma
-          sin(b + 1e1 * rd*cu + a) / 1e1
-        )
+          + sin(b + 1e1 * rd*cu + a) / 1e1
+        //)
       );
   }
 
