@@ -75,7 +75,7 @@ X = a.onaudioprocess = a =>
     ) * (
       // fade out
       X = Math.min(1, Math.max(0, 1e1-t++/5e5))
-    ) / 200
+    ) / 2e2
   );
 
 // gfx

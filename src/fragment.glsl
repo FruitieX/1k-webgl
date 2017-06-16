@@ -30,7 +30,7 @@ void main() {
           length(b.xxyy+rd*cu) - 1e0 +
 
           // plasma
-          sin(b.z + 1e1 * rd.x*cu.x + a.z) / 1e1
+          sin(b + 1e1 * rd*cu + a) / 1e1
         )
       );
   }
