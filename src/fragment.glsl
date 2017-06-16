@@ -11,30 +11,17 @@ uniform vec4 a;
 uniform vec4 b;
 
 void main() {
-  // ray origin
-  //vec3 ro = vec3( sin(a.z), b.x, sin(b.x - a.z) ), // rotating
-  //vec3 ro = b.xxy,
-	vec3 e = b.yyy, // e = ray marcher temp result
-	//cu = cross(cw, b.yxy);
+  // ray marcher temp result
+	vec3 e = b.yyy,
   cu = b.xxx,
 
   // ray direction
-  rd = /*mat3(
-    b.xyx,
-    //b.yxy,
-    b.yxy,
-    //cross(cu, cw),
-    -b.xxy
-  ) * */vec3(2. * gl_FragCoord.xy - a.xy, a.y) / a.y - cu;
+  rd = vec3(2. * gl_FragCoord.xy - a.xy, a.y) / a.y - cu;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
     if(e.x < 1e0) // results in trippy background
       cu += (e =
-
-        // Used to be:
-        // map(b.xxy+rd*cu)
-
 				// x = distance to sdf
 				// y = material color
 				// z = unused
@@ -43,25 +30,15 @@ void main() {
           length(b.xxz+rd*cu) - 1e0 +
 
           // plasma
-          .1 * sin(b.z + 1e1 * rd.x*cu.x + a.z
-            // horizontal-ish sinusoid
-            //sin() +
-
-            // circular-ish sinusoid
-            //sin(1e1 * (p.y + sin(b.x - a.z / 1e1)))
-
-            //b.z + a.z
-          )
+          .1 * sin(b.z + 1e1 * rd.x*cu.x + a.z)
         )
       );
   }
 
-  // color of surface
   gl_FragColor = vec4(
     // material color
     a.w * sin(e.y + sin(b.zyz)),
 
-    // fade in/out
 		1e0
   );
 }
