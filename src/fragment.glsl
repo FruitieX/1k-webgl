@@ -12,7 +12,7 @@ uniform vec4 b;
 
 void main() {
   // ray marcher temp result
-	vec4 e = b.yyyy,
+	vec4 e = -b.xxxx,
   cu = b.xxxx,
 
   // ray direction

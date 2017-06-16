@@ -23,10 +23,6 @@ X = a.onaudioprocess = a =>
           // envelope
           K = 1e4 / (
             t & 16382
-            // nice pattern variation if it fits
-            /* * (
-              (t>>14) % 16 - 15 ? 1 : .75
-            )*/
           )
         ) & 1) * 30
 
