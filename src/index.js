@@ -24,7 +24,7 @@ X = a.onaudioprocess = a =>
           K = 1e4 / (
             t & 16382
           )
-        ) & 1) * 30
+        ) & 1) * 31
 
         // bass
         + (31 & t * Math.pow(2,
@@ -81,7 +81,7 @@ P = g.createProgram();
 // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
 r = a => g.drawArrays(g.TRIANGLE_FAN,
   // x-res, y-res, time (s), fade out
-  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, a / 1e3, X),
+  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, a / 512, X),
   3,
   // 1, 0, kick envelope, unused
   g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
