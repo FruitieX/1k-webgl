@@ -70,7 +70,7 @@ X = a.onaudioprocess = a =>
       * !!(t>>20)
     ) * (
       // fade out
-      X = Math.min(Math.max(0, 1e1-t++/5e5), 1)
+      X = Math.min(Math.max(0, 1e1 - ++t / 5e5), 1)
     ) / 212
   );
 
@@ -79,12 +79,12 @@ g = c.getContext`webgl`;
 P = g.createProgram();
 
 // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
-r = a => g.drawArrays(g.TRIANGLE_FAN,
+r = _ => g.drawArrays(g.TRIANGLE_FAN,
   // x-res, y-res, time (s), fade out
-  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, a / 512, X),
+  g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, t / 5e5, X),
   3,
   // 1, 0, kick envelope, unused
-  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, .2/K, requestAnimationFrame(r))
+  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 0, 1/K, t>>17, requestAnimationFrame(r))
 );
 
 // vertex shader
