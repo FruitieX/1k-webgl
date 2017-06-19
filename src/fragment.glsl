@@ -13,7 +13,7 @@ uniform vec4 b;
 void main() {
   // ray marcher temp result
 	vec3 e = b.xxx,
-  cu = -b.xxx,
+  cu = -b.xxx + sin(a.z),
 
   // ray direction
   rd = vec3(2. * gl_FragCoord.xy - a.xy, a.y) / a.y - cu;
@@ -23,16 +23,16 @@ void main() {
     //if(e.x < 1e0) // results in trippy background
       cu += (e =
         // sphere
-        length(rd*cu) - 1e0
+        length(sin(rd*cu)) - 1e0
 
         // plasma
-        + sin(b.xyz + 1e1 * a.z + 1e1 * rd*cu) / 1e1
+        + sin(0.2 * b.y * min(b.z, 1e0) + 1e1 * a.z + 1e1 * rd*cu) / 1e1
       );
   }
 
   gl_FragColor = vec4(
     // material color
-    a.w * sin((a.zww * b.zyz) / 1e1 + e.y),
+    a.w * sin(sin(a.xyw * a.z / 1e3) * e.y),
 
 		1e0
   );
