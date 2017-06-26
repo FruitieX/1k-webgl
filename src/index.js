@@ -12,8 +12,6 @@ a.connect(b.destination);
 // s=(notes,octave,rate,len) =>
 //   31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
 
-t = 1500000;
-
 // music
 X = a.onaudioprocess = a =>
   a.outputBuffer.getChannelData(f=0).map(_ =>
