@@ -22,16 +22,16 @@ void main() {
   for( float i=1e0; i<1e1; i++ ) {
     cu += (e =
       // sphere
-      length(sin(rd*cu))
+      length(sin(cu))
 
       // plasma
-      + sin(b.y * b.z / 512e0 + rd*cu) * 0.5
+      + sin(b.z + rd*cu) / 2.
     );
   }
 
   gl_FragColor = vec4(
     // material color
-    a.w * sin(sin(a.xyw + a.z) * e.y * a.z / 4. + a.z),
+    a.w * sin(sin(-a.xyw + a.z) / 4. + a.z * e.y + a.z + b.y),
 
 		1e0
   );
