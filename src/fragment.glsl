@@ -16,16 +16,13 @@ void main() {
   cu = -e + sin(a.z + b.z),
 
   // ray direction
-  rd = gl_FragCoord.xyz / a.y - a.xyz / a.y + cu;
+  rd = 2. * gl_FragCoord.xyz / a.y - 2. * a.xyz / a.y + cu;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
     cu += (e =
-      // sphere
-      sin(sin(rd*cu) + length(sin(rd*cu))) * b.z / 8.
-
-      // plasma
-      //+ sin(rd) * b.z / 8.
+      // plasma + sphere
+      sin(sin(rd*cu) + length(sin(rd*cu)))
     );
   }
 
