@@ -12,7 +12,7 @@ a.connect(b.destination);
 // s=(notes,octave,rate,len) =>
 //   31 & t * Math.pow(2, notes[(t>>rate) % len] / 12 - octave)
 
-t = 3500000;
+t = 00000;
 
 // music
 X = a.onaudioprocess = a =>
@@ -86,7 +86,7 @@ r = _ => g.drawArrays(g.TRIANGLE_FAN,
   g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, t / 5e5, X),
   3,
   // 1, 0, kick envelope, unused
-  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>19, requestAnimationFrame(r))
+  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, 8 + (t>>19), requestAnimationFrame(r))
 );
 
 // vertex shader

@@ -12,26 +12,26 @@ uniform vec4 b;
 
 void main() {
   // ray marcher temp result
-	vec3 e = -b.xxx,
-  cu = -b.xxx + sin(a.z),
+	vec3 e = b.xxx,
+  cu = -e + sin(a.z + b.z),
 
   // ray direction
-  rd = vec3(2. * gl_FragCoord.xy - a.xy, a.y) / a.y - cu;
+  rd = gl_FragCoord.xyz / a.y - a.xyz / a.y + cu;
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
     cu += (e =
       // sphere
-      length(sin(cu))
+      sin(sin(rd*cu) + length(sin(rd*cu))) * b.z / 8.
 
       // plasma
-      + sin(b.z + rd*cu) / 2.
+      //+ sin(rd) * b.z / 8.
     );
   }
 
   gl_FragColor = vec4(
     // material color
-    a.w * sin(sin(-a.xyw + a.z) / 4. + a.z * e.y + a.z + b.y),
+    a.w * sin(sin(a.xyw + a.z + b.y) / 8. + e.y),
 
 		1e0
   );
