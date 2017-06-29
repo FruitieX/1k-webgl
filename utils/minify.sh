@@ -1,20 +1,10 @@
 #!/bin/bash
 
-# install dependencies:
-#
-# npm install -g mishoo/UglifyJS2\#harmony
-# npm install -g glslmin
-# npm install -g regpack
-
 rm -rf dist
 
 mkdir -p dist/temp
 cp mintemplate.html dist/temp/temp1.html
 cd dist
-
-# js src
-#uglifyjs ../src/song.js ../src/player.js ../src/index.js | node ../utils/findandreplace.js --template temp/temp1.html --find '{{javascript}}' > temp/temp2.html
-# crunch with regpack
 
 cp ../src/index.js temp/temp1.js
 

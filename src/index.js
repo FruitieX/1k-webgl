@@ -80,10 +80,10 @@ P = g.createProgram();
 
 // NOTE: 2nd argument to drawArrays used to be 0, but undefined works
 r = _ => g.drawArrays(g.TRIANGLE_FAN,
-  // x-res, y-res, time (s), fade out
+  // x-res, y-res, time, fade out
   g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, t / 5e5, X),
   3,
-  // 1, 0, kick envelope, unused
+  // 1, kick envelope, t>>18, unused
   g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>18, requestAnimationFrame(r))
 );
 

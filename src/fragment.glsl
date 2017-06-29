@@ -19,7 +19,6 @@ void main() {
   rd = (gl_FragCoord.xyz - a.xyz) * 2. / a.y + cu;
 
   // ray marcher
-  //for(float f=1e0; f<1e1; f++)
   for(int f=0; f<9; f++)
     // plasma + sphere
     cu += e = sin(sin(rd*cu) + length(sin(rd*cu)));
