@@ -1,6 +1,6 @@
 // cheap way of doing AA
 c.width = 32e2, c.height = 18e2, // 16:9 aspect ratio
-// c.width = 192, c.height = 108; // battery saving
+// c.width = 193, c.height = 109; // battery saving
 
 b = new AudioContext;
 a = b.createScriptProcessor(512, t = 1, K = 1);
