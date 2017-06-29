@@ -1,6 +1,6 @@
 // cheap way of doing AA
 c.width = 32e2, c.height = 18e2, // 16:9 aspect ratio
-//c.width = 192, c.height = 108; // battery saving
+// c.width = 192, c.height = 108; // battery saving
 
 b = new AudioContext;
 a = b.createScriptProcessor(512, t = 1, K = 1);
@@ -70,7 +70,7 @@ X = a.onaudioprocess = a =>
       * !!(t>>20)
     ) * (
       // fade out
-      X = Math.min(Math.max(0, 1e1 - ++t / 5e5), 1)
+      X = Math.min(Math.max(1e1 - ++t / 5e5, 0), 1)
     ) / 212
   );
 
