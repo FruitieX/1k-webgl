@@ -7,7 +7,7 @@ uniform vec4 a;
 
 // b.x = 1
 // b.y = kick drum volume
-// b.z = t>>18
+// b.z = t>>19
 uniform vec4 b;
 
 void main() {

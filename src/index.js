@@ -84,7 +84,7 @@ r = _ => g.drawArrays(g.TRIANGLE_FAN,
   g.uniform4f(g.getUniformLocation(P, 'a'), c.width, c.height, t / 5e5, X),
   3,
   // 1, kick envelope, t>>18, unused
-  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>18, requestAnimationFrame(r))
+  g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>19, requestAnimationFrame(r))
 );
 
 // vertex shader
