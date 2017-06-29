@@ -7,7 +7,7 @@ uniform vec4 a;
 
 // b.x = 1
 // b.y = kick drum volume
-// b.z = t>>17
+// b.z = t>>18
 uniform vec4 b;
 
 void main() {
@@ -20,10 +20,8 @@ void main() {
 
   // ray marcher
   for( float i=1e0; i<1e1; i++ ) {
-    cu += (e =
-      // plasma + sphere
-      sin(sin(rd*cu) + length(sin(rd*cu)))
-    );
+    // plasma + sphere
+    cu += e = sin(sin(rd*cu) + length(sin(rd*cu)));
   }
 
   gl_FragColor = vec4(
