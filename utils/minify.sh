@@ -54,4 +54,4 @@ node ../node_modules/.bin/regpack temp/temp5.js \
 
 cp temp/temp.html index.html
 
-echo "wrote index.html ($(cat index.html | wc -c)b , $(($(cat index.html | wc -c)-1024))b over budget)"
+echo "wrote index.html ($(cat index.html | wc -c)b, $(($(cat index.html | wc -c)-1024))b over budget)"
