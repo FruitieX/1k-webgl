@@ -17,34 +17,6 @@ X = a.onaudioprocess = a =>
   a.outputBuffer.getChannelData(f=0).map(_ =>
     a.outputBuffer.getChannelData(0)[f++] =
     (
-      (
-        // kick drum
-        ((
-          // envelope
-          K = 1e4 / (
-            t & 16382
-          )
-        ) & 1) * 31
-
-        // bass
-        + (31 & t * Math.pow(2,
-          // melody
-          '7050'
-        [(t>>
-          // rate
-          17
-        ) %
-          // melody length
-          4
-        ] / 12 -
-          // octave
-          4
-        )) / K
-      )
-
-      // turn off above instruments after a while
-      * !(t>>22)
-
       // hihat TODO improve/golf envelope
       + (t % 100 * t & 128) * Math.min(.2, 1e1 / ((t>>3) % 512))
 
@@ -68,6 +40,32 @@ X = a.onaudioprocess = a =>
 
       // enable arpeggio after t>>20
       * !!(t>>20)
+
+      // kick drum
+      + ((
+        // envelope
+        K = 1e4 / (
+          t & 16382
+        )
+      ) & 1) * 31
+
+      // turn off kick drum after t>>22
+      * !(t>>22)
+
+      // bass
+      + (31 & t * Math.pow(2,
+        // melody
+        '7050'
+      [(t>>
+        // rate
+        17
+      ) %
+        // melody length
+        4
+      ] / 12 -
+        // octave
+        4
+      )) / K
     ) * (
       // fade out
       X = Math.min(Math.max(1e1 - ++t / 5e5, 0), 1)
