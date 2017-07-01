@@ -13,7 +13,7 @@ uniform vec4 b;
 void main() {
   // ray marcher temp result
 	vec3 e = b.xxx,
-  cu = -e + sin(a.z - b.z),
+  cu = sin(a.z - b.z) - e,
 
   // ray direction
   rd = (gl_FragCoord.xyz - a.xyz) * a.z / a.x + cu;
@@ -25,7 +25,7 @@ void main() {
 
   gl_FragColor = vec4(
     // material color
-    sin(a.xyz + rd*cu) / 1e1 + e.z,
+    sin(a.xyz + sin(rd*cu) * b.y + a.z) / 1e1 + e.z,
 
 		.5 / e.z * a.w
   );
