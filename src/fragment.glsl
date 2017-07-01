@@ -13,7 +13,7 @@ uniform vec4 b;
 void main() {
   // ray marcher temp result
 	vec3 e = b.xxx,
-  cu = -e + sin(a.z + b.z),
+  cu = -e + sin(a.z - b.z),
 
   // ray direction
   rd = (gl_FragCoord.xyz - a.xyz) * a.z / a.x + cu;
