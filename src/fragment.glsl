@@ -16,7 +16,7 @@ void main() {
   cu = -e + sin(a.z + b.z),
 
   // ray direction
-  rd = (gl_FragCoord.xyz - a.xyz) * 2. / a.y + cu;
+  rd = (gl_FragCoord.xyz - a.xyz) * a.z / a.x + cu;
 
   // ray marcher
   for(int f=0; f<9; f++)
