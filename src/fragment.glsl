@@ -27,6 +27,6 @@ void main() {
     // material color
     sin(sin(sin(e.z - a.xyz) * a.z + b.y) / 1e1 + e.z) * a.w,
 
-		1e0
+		.5 / e.z
   );
 }
