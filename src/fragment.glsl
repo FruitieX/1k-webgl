@@ -25,8 +25,8 @@ void main() {
 
   gl_FragColor = vec4(
     // material color
-    sin(a.xyz + sin(rd*cu) * b.y + a.z) / 1e1 + e.z,
+    sin(a.xyz + sin(rd*cu)) / 1e1 + e.z,
 
-		.5 / e.z * a.w
-  );
+		.5 / e.z
+  ) * a.w;
 }
