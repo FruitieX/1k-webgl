@@ -28,7 +28,7 @@ X = a.onaudioprocess = a =>
         ((t>>17) % 2 ? '027' : '037')
       )[(t>>(
         // rate
-        13 - 3 * (t>>20) % 12
+        16 - 3 * (t>>19) % 13
       )) %
         // melody length
         4
@@ -38,7 +38,7 @@ X = a.onaudioprocess = a =>
       )) / K
 
       // enable arpeggio after t>>20
-      * !!(t>>20)
+      * (t>>20 && t<3.4e6)
 
       // kick drum
       + ((
@@ -47,9 +47,6 @@ X = a.onaudioprocess = a =>
           t & 16383
         )
       ) & 1) * 31
-
-      // turn off kick drum after t>>22
-      * !(t>>22)
 
       // bass
       + (31 & t * Math.pow(2,
