@@ -18,7 +18,7 @@ X = a.onaudioprocess = a =>
     a.outputBuffer.getChannelData(0)[f++] =
     (
       // hihat TODO improve/golf envelope
-      (t % 100 * t & 128) * Math.min(.2, 1e1 / ((t>>3) % 512))
+      (t % 100 * t & 128) / (3 + ((t>>7) % 32))
 
       // enable hihat after t>>19
       * !!(t>>19)
