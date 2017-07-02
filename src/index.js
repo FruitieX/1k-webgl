@@ -1,6 +1,5 @@
 // cheap way of doing AA
 c.width = 32e2, c.height = 18e2, // 16:9 aspect ratio
-// c.width = 193, c.height = 109; // battery saving
 
 b = new AudioContext;
 a = b.createScriptProcessor(512, t = 1, K = 1);
@@ -79,6 +78,9 @@ r = _ => g.drawArrays(g.TRIANGLE_FAN,
   3,
   // 1, kick envelope, t>>18, unused
   g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>19, requestAnimationFrame(r))
+
+  // battery saving
+  // g.uniform4f(g.getUniformLocation(P, 'b'), 1, 1/K, t>>19, setTimeout(() => requestAnimationFrame(r), 200))
 );
 
 // vertex shader
