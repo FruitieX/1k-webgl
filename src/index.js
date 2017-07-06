@@ -97,6 +97,8 @@ g.compileShader(S);g.attachShader(P,S);
 // }
 
 g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer(c.parentElement.style.margin = 0));
+
+c.parentElement.style.cursor = 'none';
 // 1st argument to enableVertexAttribArray used to be 0, but undefined works
 // 1st argument to vertexAttribPointer used to be 0, but undefined works
 g.vertexAttribPointer(
